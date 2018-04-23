@@ -1,0 +1,13 @@
+<resources>
+
+    <!-- Default screen margins, per the Android Design guidelines. -->
+	<dimen name="font_com_size_12">12sp</dimen>
+
+    <dimen name="main_btn_com_margin_20">18dp</dimen>
+	<dimen name="main_btn_com_margin_16">14dp</dimen>
+	<dimen name="main_btn_com_margin_24">15dp</dimen>
+
+	<dimen name="videolayout_btn_com_margin_4">4dp</dimen>
+	<dimen name="videolayout_btn_com_margin_6">6dp</dimen>
+	<dimen name="videolayout_btn_com_margin_8">8dp</dimen>
+</resources>

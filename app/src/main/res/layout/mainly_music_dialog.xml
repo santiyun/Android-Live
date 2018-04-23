@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+				android:layout_width="297dp"
+				android:layout_height="wrap_content"
+				android:layout_gravity="center"
+				android:background="@drawable/ditu"
+				android:orientation="vertical">
+
+	<LinearLayout
+		android:id="@+id/test1"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_marginLeft="30dp"
+		android:layout_marginRight="30dp"
+		android:layout_marginTop="30dp">
+
+		<include
+			android:id="@+id/music_dialog_item_one"
+			layout="@layout/musiclayout_block"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"
+			android:visibility="invisible"/>
+
+		<include
+			android:id="@+id/music_dialog_item_two"
+			layout="@layout/musiclayout_block"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:layout_marginLeft="10dp"
+			android:layout_marginRight="10dp"
+			android:layout_weight="1"
+			android:visibility="invisible"/>
+
+		<include
+			android:id="@+id/music_dialog_item_three"
+			layout="@layout/musiclayout_block"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"
+			android:visibility="invisible"/>
+	</LinearLayout>
+
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_below="@+id/test1"
+		android:layout_marginLeft="30dp"
+		android:layout_marginRight="30dp"
+		android:layout_marginTop="15dp">
+
+		<include
+			android:id="@+id/music_dialog_item_four"
+			layout="@layout/musiclayout_block"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"
+			android:visibility="invisible"/>
+
+		<include
+			android:id="@+id/music_dialog_item_five"
+			layout="@layout/musiclayout_block"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:layout_marginLeft="10dp"
+			android:layout_marginRight="10dp"
+			android:layout_weight="1"
+			android:visibility="invisible"/>
+
+		<include
+			android:id="@+id/music_dialog_item_six"
+			layout="@layout/musiclayout_block"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"
+			android:visibility="invisible"/>
+	</LinearLayout>
+</RelativeLayout>

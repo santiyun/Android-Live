@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<color name="font_com_color_white">#FFFFFF</color>
+	<color name="bg_videoly_dialog">#e6ffffff</color>
+	<color name="font_videoly_dialog_color">#666666</color>
+	<color name="font_videoly_dialog_color_click">#b1b1b1</color>
+
+	<color name="colorPrimary">#3F51B5</color>
+	<color name="colorPrimaryDark">#303F9F</color>
+	<color name="colorAccent">#FF4081</color>
+	<color name="link_video_info_color">#00F5FF</color>
+	<color name="normal_color">#00F5FF</color>
+	<color name="transparent">#0000</color>
+	<color name="half_transparent">#40FFFFFF</color>
+	<color name="weibo_listtab_off">#8d8d8d</color>
+	<color name="ijk_transparent_dark">#77000000</color>
+	<color name="role_selected">#003734</color>
+	<color name="role_un_selected">#FFFFFF</color>
+</resources>

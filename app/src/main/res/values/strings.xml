@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">连麦直播</string>
+    <string name="version_info">http://www.3ttech.cn version %1$s</string>
+    <string name="main_title">房号：%1$s</string>
+    <string name="main_broadcaster">主播：%1$s</string>
+    <string name="main_secondAnchor">副播%1$s</string>
+    <string name="main_viewer">观众%1$s</string>
+    <string name="main_local_role">角色：%1$s</string>
+    <string name="main_audioup">A-%1$skbps\u2191</string>
+    <string name="main_videoups">V-%1$skbps\u2191</string>
+    <string name="videoly_speaking">发言中&#8230;</string>
+    <string name="videoly_videodown">V-%1$skbps\u2193</string>
+    <string name="videoly_audiodown">A-%1$skbps\u2193</string>
+</resources>

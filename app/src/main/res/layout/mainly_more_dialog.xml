@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+				android:layout_width="297dp"
+				android:layout_height="wrap_content"
+				android:layout_gravity="center"
+				android:background="@drawable/ditu"
+				android:padding="8dp">
+
+	<TextView
+		android:id="@+id/main_btn_secondAnchor"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_marginLeft="21dp"
+		android:layout_marginTop="28dp"
+		android:singleLine="true"
+		android:text="副播12"
+		android:textColor="#6a6a6a"
+		android:textSize="11sp"/>
+
+	<TextView
+		android:id="@+id/main_btn_viewers"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_marginLeft="13dp"
+		android:layout_marginTop="28dp"
+		android:layout_toRightOf="@+id/main_btn_secondAnchor"
+		android:text="观众9"
+		android:textColor="#6a6a6a"
+		android:textSize="11sp"/>
+
+	<TextView
+		android:id="@+id/textview111"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_below="@+id/main_btn_secondAnchor"
+		android:layout_alignLeft="@+id/main_btn_secondAnchor"
+		android:layout_marginTop="16dp"
+		android:text="关闭网络显示"
+		android:textColor="#6a6a6a"
+		android:textSize="11sp"/>
+
+	<ImageView
+		android:id="@+id/mainly_dialog_show_info"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_alignParentRight="true"
+		android:layout_below="@+id/main_btn_secondAnchor"
+		android:layout_marginTop="19dp"
+		android:layout_marginRight="21dp"
+		android:src="@drawable/dakai"/>
+
+	<EditText
+		android:id="@+id/mainly_dialog_cdn"
+		android:layout_width="match_parent"
+		android:layout_height="26dp"
+		android:layout_alignStart="@+id/textview111"
+		android:layout_below="@+id/textview111"
+		android:layout_marginRight="11dp"
+		android:layout_marginTop="28dp"
+		android:layout_toLeftOf="@+id/mainly_dialog_copy"
+		android:background="@drawable/mainly_dialog_btn_cdnedit"
+		android:editable="false"
+		android:singleLine="true"
+		android:text=""
+		android:textColor="#6a6a6a"
+		android:textSize="12sp"/>
+
+	<TextView
+		android:id="@+id/mainly_dialog_copy"
+		android:layout_width="46dp"
+		android:layout_height="26dp"
+		android:layout_alignParentRight="true"
+		android:layout_below="@+id/textview111"
+		android:layout_marginRight="21dp"
+		android:layout_marginTop="28dp"
+		android:background="@drawable/mainly_dialog_btn_copy_selector"
+		android:gravity="center"
+		android:text="复制"
+		android:textColor="#FFFFFF"
+		android:textSize="11sp"/>
+
+	<TextView
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_centerHorizontal="true"
+		android:text="cdn拉流地址"
+		android:textColor="#b7b7b7"
+		android:layout_below="@+id/mainly_dialog_cdn"
+		android:textSize="11sp"/>
+</RelativeLayout>
