@@ -95,8 +95,8 @@
 					android:background="@drawable/luping_read"
 					android:gravity="center"
 					android:text="00:00:00"
-					android:visibility="gone"
-					android:textSize="9.6sp"/>
+					android:textSize="9.6sp"
+					android:visibility="gone"/>
 			</RelativeLayout>
 		</ScrollView>
 
@@ -400,5 +400,7 @@
 			android:layout_height="wrap_content"
 			android:layout_alignParentBottom="true"
 			android:background="@drawable/dibuyinying"/>
+
 	</RelativeLayout>
+
 </FrameLayout>

@@ -11,7 +11,7 @@
 		android:layout_height="wrap_content"
 		android:layout_centerHorizontal="true"
 		android:layout_marginTop="37dp"
-		android:text="是否退出房间"
+		android:text="@string/exit_window_title"
 		android:textColor="#6a6a6a"
 		android:textSize="18sp"/>
 
@@ -22,7 +22,7 @@
 		android:layout_below="@+id/textview12"
 		android:layout_marginLeft="27dp"
 		android:layout_marginTop="37dp"
-		android:text="是"
+		android:text="@string/exit_window_yes"
 		android:textColor="#6a6a6a"
 		android:textSize="15sp"/>
 
@@ -34,7 +34,7 @@
 		android:layout_below="@+id/textview12"
 		android:layout_marginRight="27dp"
 		android:layout_marginTop="37dp"
-		android:text="否"
+		android:text="@string/exit_window_cancel"
 		android:textColor="#6a6a6a"
 		android:textSize="15sp"/>
 </RelativeLayout>

@@ -13,7 +13,7 @@
 		android:layout_marginLeft="21dp"
 		android:layout_marginTop="28dp"
 		android:singleLine="true"
-		android:text="副播12"
+		android:text="@string/info_window_auxiliary"
 		android:textColor="#6a6a6a"
 		android:textSize="11sp"/>
 
@@ -24,7 +24,7 @@
 		android:layout_marginLeft="13dp"
 		android:layout_marginTop="28dp"
 		android:layout_toRightOf="@+id/main_btn_secondAnchor"
-		android:text="观众9"
+		android:text="@string/info_window_audience"
 		android:textColor="#6a6a6a"
 		android:textSize="11sp"/>
 
@@ -35,7 +35,7 @@
 		android:layout_below="@+id/main_btn_secondAnchor"
 		android:layout_alignLeft="@+id/main_btn_secondAnchor"
 		android:layout_marginTop="16dp"
-		android:text="关闭网络显示"
+		android:text="@string/info_window_closeshow"
 		android:textColor="#6a6a6a"
 		android:textSize="11sp"/>
 
@@ -75,7 +75,7 @@
 		android:layout_marginTop="28dp"
 		android:background="@drawable/mainly_dialog_btn_copy_selector"
 		android:gravity="center"
-		android:text="复制"
+		android:text="@string/info_window_copy"
 		android:textColor="#FFFFFF"
 		android:textSize="11sp"/>
 
@@ -83,7 +83,7 @@
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_centerHorizontal="true"
-		android:text="cdn拉流地址"
+		android:text="@string/info_window_cdnpullurl"
 		android:textColor="#b7b7b7"
 		android:layout_below="@+id/mainly_dialog_cdn"
 		android:textSize="11sp"/>

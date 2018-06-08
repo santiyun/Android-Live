@@ -2,13 +2,14 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 27
-    buildToolsVersion "27.0.2"
+    buildToolsVersion '27.0.3'
     defaultConfig {
         applicationId "com.tttrtclive"
         minSdkVersion 17
-        targetSdkVersion 22
+        targetSdkVersion 27
         versionCode 1
         versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         ndk {
             // 设置支持的SO库架构
             abiFilters 'armeabi-v7a' //, 'x86', 'armeabi-v7a', 'x86_64', 'arm64-v8a'
@@ -16,9 +17,15 @@ android {
 
         lintOptions {
             abortOnError false
+            // 防止在发布的时候出现因MissingTranslation导致Build Failed!
+            disable 'MissingTranslation'
+            ignoreWarnings true
         }
-        jackOptions{
-            enabled true
+
+        buildTypes {
+            release {
+                proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            }
         }
     }
     sourceSets {
@@ -26,6 +33,7 @@ android {
             jniLibs.srcDirs = ['libs']
             assets.srcDirs = ['assets']
         }
+        release.setRoot('build-types/release')
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -40,13 +48,15 @@ repositories {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    testCompile 'junit:junit:4.12'
-    compile 'com.android.support.constraint:constraint-layout:1.0.2'
-    compile 'com.jaeger.statusbarutil:library:1.4.0'
-    compile 'com.android.support:appcompat-v7:27.0.2'
-    compile files('libs/TTT_VIDEOSDK(0128).aar')
+    testImplementation 'junit:junit:4.12'
+    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+    implementation 'com.jaeger.statusbarutil:library:1.4.0'
+    implementation 'com.android.support:appcompat-v7:27.0.2'
+    implementation 'com.tencent.bugly:crashreport:latest.release' //其中latest.release指代最新Bugly SDK版本号，也可以指定明确的版本号，例如2.1.9
+    implementation 'com.tencent.bugly:nativecrashreport:latest.release' //其中latest.release指代最新Bugly NDK版本号，也可以指定明确的版本号，例如3.0
+    implementation (name:'TTT_VIDEOSDK(0525)', ext:'aar')
 }

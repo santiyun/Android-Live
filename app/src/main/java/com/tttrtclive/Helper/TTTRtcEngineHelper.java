@@ -176,7 +176,7 @@ public class TTTRtcEngineHelper {
             obj.mMuteVoiceBT = superRoot.findViewById(R.id.videoly_dialog_mute);
             obj.mMuteVoiceIcon = superRoot.findViewById(R.id.videolayout_muted);
             ImageView videoDialogMore = obj.mContentRoot.findViewById(R.id.videoly_more);
-            if (LocalConfig.mRole == Constants.CLIENT_ROLE_BROADCASTER) {
+            if (LocalConfig.mRole == Constants.CLIENT_ROLE_ANCHOR) {
                 videoDialogMore.setVisibility(View.VISIBLE);
             } else {
                 videoDialogMore.setVisibility(View.INVISIBLE);
@@ -208,18 +208,19 @@ public class TTTRtcEngineHelper {
             });
 
             // 禁言按钮
-            obj.mMuteVoiceBT = obj.mContentRoot.findViewById(R.id.videoly_dialog_mute);
+            obj.mMuteVoiceBT = obj.mContentRoot.
+                    findViewById(R.id.videoly_dialog_mute);
             obj.mMuteVoiceBT.setOnClickListener(v -> {
                 if (obj.mIsMuted) {
                     mTTTEngine.muteRemoteSpeaking((int) obj.mBindUid, false);
                     obj.mIsMuted = false;
                     obj.mMuteVoiceIcon.setVisibility(View.INVISIBLE);
-                    obj.mMuteVoiceBT.setText("禁言");
+                    obj.mMuteVoiceBT.setText(mActivity.getResources().getString(R.string.remote_window_ban));
                 } else {
                     mTTTEngine.muteRemoteSpeaking((int) obj.mBindUid, true);
                     obj.mIsMuted = true;
                     obj.mMuteVoiceIcon.setVisibility(View.VISIBLE);
-                    obj.mMuteVoiceBT.setText("取消禁言");
+                    obj.mMuteVoiceBT.setText(mActivity.getResources().getString(R.string.remote_window_cancel_ban));
                 }
 
                 mRemoteDialog.setVisibility(View.INVISIBLE);
@@ -248,8 +249,8 @@ public class TTTRtcEngineHelper {
         SurfaceView mSurfaceView;
         long id = info.getId();
         if (isVisibile) {
-            if (LocalConfig.mRole != Constants.CLIENT_ROLE_BROADCASTER) {
-                if (info.getRole() != Constants.CLIENT_ROLE_BROADCASTER) {
+            if (LocalConfig.mRole != Constants.CLIENT_ROLE_ANCHOR) {
+                if (info.getRole() != Constants.CLIENT_ROLE_ANCHOR) {
                     boolean checkRes = checkVideoExist(info.mShowIndex);
                     if (checkRes) {
                         return;
@@ -271,33 +272,26 @@ public class TTTRtcEngineHelper {
                         RENDER_MODE_HIDDEN, mSurfaceView));
             }
 
-            if (info.getRole() == Constants.CLIENT_ROLE_BROADCASTER) {
+            if (info.getRole() == Constants.CLIENT_ROLE_ANCHOR) {
                 mSurfaceView.setZOrderMediaOverlay(false);
                 mActivity.mFullScreenShowView.addView(mSurfaceView, 0);
             } else {
                 VideoViewObj obj;
-                if (LocalConfig.mRole == Constants.CLIENT_ROLE_BROADCASTER) {
+                if (LocalConfig.mRole == Constants.CLIENT_ROLE_ANCHOR) {
                     obj = getRemoteViewParentLayout();
                 } else {
                     obj = getRemoteViewParentLayout(info);
                 }
                 if (obj != null) {
-                    if (obj.mIsMuted) {
-                        obj.mMuteVoiceIcon.setVisibility(View.VISIBLE);
-                        obj.mSpeakImage.setVisibility(View.INVISIBLE);
-                        obj.mMuteVoiceBT.setText("取消禁言");
-                    } else {
-                        obj.mMuteVoiceIcon.setVisibility(View.INVISIBLE);
-                        obj.mSpeakImage.setVisibility(View.VISIBLE);
-                        obj.mMuteVoiceBT.setText("禁言");
-                    }
+                    obj.mMuteVoiceIcon.setVisibility(View.INVISIBLE);
+                    obj.mSpeakImage.setVisibility(View.VISIBLE);
+                    obj.mMuteVoiceBT.setText(mActivity.getResources().getString(R.string.remote_window_ban));
                     ViewGroup mRemoteChildLayout = obj.mRoot;
                     mSurfaceView.setZOrderMediaOverlay(true);
                     mRemoteChildLayout.addView(mSurfaceView, 0);
                     obj.mRootBG.setVisibility(View.INVISIBLE);
                     obj.mContentRoot.setVisibility(View.VISIBLE);
                     obj.mBindUid = info.getId();
-//                    Log.d("zhx", "adJustRemoteViewDisplay: add obj.mBindUid:" + obj.mBindUid);
                     obj.mRemoteUserID.setText(String.valueOf(info.getId()));
                     if (id == LocalConfig.mLoginUserID) {
                         obj.mReserveCamera.setVisibility(View.VISIBLE);
@@ -335,14 +329,14 @@ public class TTTRtcEngineHelper {
                 }
             }
         } else {
-            if (info.getRole() == Constants.CLIENT_ROLE_BROADCASTER) {
+            if (info.getRole() == Constants.CLIENT_ROLE_ANCHOR) {
                 mActivity.mFullScreenShowView.removeViewAt(0);
             } else {
                 removeUserByView(info.getId());
             }
         }
 
-        if (LocalConfig.mRole == Constants.CLIENT_ROLE_BROADCASTER) {
+        if (LocalConfig.mRole == Constants.CLIENT_ROLE_ANCHOR) {
             VideoCompositingLayout layout = new VideoCompositingLayout();
             layout.regions = buildRemoteLayoutLocation();
             mTTTEngine.setVideoCompositingLayout(layout);
@@ -439,6 +433,15 @@ public class TTTRtcEngineHelper {
             }
         }
 
+        VideoCompositingLayout.Region mRegion = new VideoCompositingLayout.Region();
+        mRegion.mUserID = LocalConfig.mLoginUserID;
+        mRegion.x = 0;
+        mRegion.y = 0;
+        mRegion.width = 1;
+        mRegion.height = 1;
+        mRegion.zOrder = 0;
+        tempList.add(mRegion);
+
         VideoCompositingLayout.Region[] mRegions = new VideoCompositingLayout.Region[tempList.size()];
         for (int k = 0; k < tempList.size(); k++) {
             VideoCompositingLayout.Region region = tempList.get(k);
@@ -504,7 +507,7 @@ public class TTTRtcEngineHelper {
      * @param mLocalVideoStats the m local video stats
      */
     public void localVideoStatus(LocalVideoStats mLocalVideoStats) {
-        if (LocalConfig.mRole == Constants.CLIENT_ROLE_BROADCASTER) {
+        if (LocalConfig.mRole == Constants.CLIENT_ROLE_ANCHOR) {
             mActivity.setTextViewContent(mActivity.mVideoSpeedShow, R.string.main_videoups, String.valueOf(mLocalVideoStats.getSentBitrate()));
         } else {
             Set<Map.Entry<Long, DisplayDevice>> entries = mActivity.mShowingDevices.entrySet();
@@ -527,7 +530,7 @@ public class TTTRtcEngineHelper {
      * @param mLocalAudioStats the m local audio stats
      */
     public void LocalAudioStatus(LocalAudioStats mLocalAudioStats) {
-        if (LocalConfig.mRole == Constants.CLIENT_ROLE_BROADCASTER) {
+        if (LocalConfig.mRole == Constants.CLIENT_ROLE_ANCHOR) {
             mActivity.setTextViewContent(mActivity.mAudioSpeedShow, R.string.main_audioup, String.valueOf(mLocalAudioStats.getSentBitrate()));
         } else {
             Set<Map.Entry<Long, DisplayDevice>> entries = mActivity.mShowingDevices.entrySet();
@@ -550,13 +553,13 @@ public class TTTRtcEngineHelper {
      * @param volumeUserID
      * @param volumeLevel
      */
-    public void audioVolumeIndication(long volumeUserID, int volumeLevel , boolean mIsMuteRemote) {
+    public void audioVolumeIndication(long volumeUserID, int volumeLevel, boolean mIsMuteRemote) {
         if (volumeUserID == LocalConfig.mBroadcasterID) {
             if (mIsMuteRemote) {
-                return ;
+                return;
             }
 
-            if (LocalConfig.mRole == Constants.CLIENT_ROLE_BROADCASTER) {
+            if (LocalConfig.mRole == Constants.CLIENT_ROLE_ANCHOR) {
                 if (mActivity.mIsHeadset) {
                     if (volumeLevel >= 0 && volumeLevel <= 3) {
                         mActivity.mAudioChannel.setImageResource(R.drawable.mainly_btn_headset_selector);
@@ -588,7 +591,7 @@ public class TTTRtcEngineHelper {
                 if (obj.mBindUid == volumeUserID && obj.mSpeakImage != null) {
                     if (obj.mBindUid == LocalConfig.mLoginUserID) {
                         if (obj.mIsMuteRemote || obj.mIsRemoteDisableAudio) {
-                            return ;
+                            return;
                         }
 
                         if (mActivity.mIsHeadset) {
@@ -610,7 +613,7 @@ public class TTTRtcEngineHelper {
                         }
                     } else {
                         if (obj.mIsMuteRemote || obj.mIsRemoteDisableAudio) {
-                            return ;
+                            return;
                         }
 
                         if (obj.mSpeakImage.getVisibility() != View.VISIBLE) {
@@ -731,8 +734,7 @@ public class TTTRtcEngineHelper {
     /**
      * Checks if the device is a tablet or a phone
      *
-     * @param activityContext
-     *            The Activity Context.
+     * @param activityContext The Activity Context.
      * @return Returns true if the device is a Tablet
      */
     public static boolean isTabletDevice(Context activityContext) {

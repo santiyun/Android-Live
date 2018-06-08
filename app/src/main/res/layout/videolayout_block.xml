@@ -38,7 +38,7 @@
 		android:layout_marginLeft="@dimen/videolayout_btn_com_margin_8"
 		android:layout_marginTop="@dimen/videolayout_btn_com_margin_8"
 		android:src="@drawable/jinyan"
-		android:visibility="invisible" />
+		android:visibility="invisible"/>
 
 	<ImageView
 		android:id="@+id/videoly_btn_camera"
@@ -117,7 +117,7 @@
 				android:layout_gravity="center_horizontal"
 				android:layout_weight="1"
 				android:gravity="center_vertical"
-				android:text="禁言"
+				android:text="@string/remote_window_ban"
 				android:textColor="@drawable/videoly_dialog_font_selector"
 				android:textSize="12sp"/>
 
@@ -128,7 +128,7 @@
 				android:layout_gravity="center_horizontal"
 				android:layout_weight="1"
 				android:gravity="center_vertical"
-				android:text="请出"
+				android:text="@string/remote_window_out"
 				android:textColor="@drawable/videoly_dialog_font_selector"
 				android:textSize="12sp"/>
 		</LinearLayout>

@@ -6,6 +6,7 @@ import android.content.Intent;
 import com.tttrtclive.LocalConfig;
 import com.tttrtclive.bean.JniObjs;
 import com.tttrtclive.utils.MyLog;
+import com.wushuangtech.bean.ChatInfo;
 import com.wushuangtech.bean.ConfVideoFrame;
 import com.wushuangtech.bean.LocalAudioStats;
 import com.wushuangtech.bean.LocalVideoStats;
@@ -43,8 +44,8 @@ import static com.tttrtclive.LocalConstans.CALL_BACK_ON_USER_OFFLINE;
 
 public class MyTTTRtcEngineEventHandler extends TTTRtcEngineEventHandler {
 
-    public static final String TAG = "MyTTTRtcEngineEventHandler";
-    public static final String MSG_TAG = "MyTTTRtcEngineEventHandlerMSG";
+    public static final String TAG = "MyTTTRtcEngineEventHandlerMM";
+    public static final String MSG_TAG = "MyTTTRtcEngineEventHandlerMSGMM";
     private boolean mIsSaveCallBack;
     private List<JniObjs> mSaveCallBack;
     private Context mContext;
@@ -82,7 +83,7 @@ public class MyTTTRtcEngineEventHandler extends TTTRtcEngineEventHandler {
     public void onUserJoined(long nUserId, int identity) {
         MyLog.i("wzg", "onUserJoined.... nUserId ： " + nUserId + " | identity : " + identity
                 + " | mIsSaveCallBack : " + mIsSaveCallBack);
-        if (mRole == Constants.CLIENT_ROLE_BROADCASTER) {
+        if (mRole == Constants.CLIENT_ROLE_ANCHOR) {
             mUserEnterOrder.add(nUserId);
         }
 
@@ -100,7 +101,7 @@ public class MyTTTRtcEngineEventHandler extends TTTRtcEngineEventHandler {
     @Override
     public void onUserOffline(long nUserId, int reason) {
         MyLog.i("wzg", "onUserOffline.... nUserId ： " + nUserId + " | reason : " + reason);
-        if (mRole == Constants.CLIENT_ROLE_BROADCASTER) {
+        if (mRole == Constants.CLIENT_ROLE_ANCHOR) {
             mUserEnterOrder.remove(nUserId);
         }
 
@@ -287,7 +288,7 @@ public class MyTTTRtcEngineEventHandler extends TTTRtcEngineEventHandler {
     }
 
     @Override
-    public void OnChatMessageSent(String sSeqID, int error) {
+    public void OnChatMessageSent(ChatInfo chatInfo, int error) {
         MyLog.i("wzg", "OnChatMessageSent: ");
     }
 
@@ -297,7 +298,7 @@ public class MyTTTRtcEngineEventHandler extends TTTRtcEngineEventHandler {
     }
 
     @Override
-    public void OnChatMessageRecived(long nSrcUserID, int type, String sSeqID, String strData) {
+    public void OnChatMessageRecived(long nSrcUserID, ChatInfo chatInfo) {
         MyLog.i("wzg", "OnChatMessageRecived: ");
     }
 
@@ -307,7 +308,7 @@ public class MyTTTRtcEngineEventHandler extends TTTRtcEngineEventHandler {
     }
 
     @Override
-    public void onPlayChatAudioCompletion() {
+    public void onPlayChatAudioCompletion(String filePath) {
         MyLog.d("wzg", "onPlayChatAudioCompletion: ");
     }
 

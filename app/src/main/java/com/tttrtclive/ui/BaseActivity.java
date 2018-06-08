@@ -33,4 +33,13 @@ public class BaseActivity extends Activity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON,
                 WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     }
+
+    /*@Override
+    protected void attachBaseContext(Context newBase) {
+        Configuration configuration = newBase.getResources().getConfiguration();
+        configuration.setLocale(Locale.CHINA);
+//        configuration.setLocale(Locale.ENGLISH);
+        Context context = newBase.createConfigurationContext(configuration);
+        super.attachBaseContext(context);
+    }*/
 }

@@ -12,9 +12,9 @@ public class LocalConfig {
 
     public static int mRole;
 
-    public static String mIP = "";
+    public static String mIP;
 
-    public static int mPort = 5000;
+    public static int mPort;
 
     public static String mPushUrl;
     //rtmp://cc-push.3ttech.cn/sdk/
@@ -22,9 +22,11 @@ public class LocalConfig {
     //rtmp://push.3ttech.cn/sdk/
     public static String mPushUrlPrefix = "rtmp://push.3ttech.cn/sdk/";
 
+    public static String mPullUrlPrefix = "rtmp://pull.3ttech.cn/sdk/";
+
     public static long mLoginUserID;
 
-    public static int mLoginRoomID;
+    public static long mLoginRoomID;
 
     public static long mBroadcasterID;
 
