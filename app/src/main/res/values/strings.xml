@@ -12,8 +12,8 @@
     <string name="videoly_videodown">V-%1$skbps\u2193</string>
     <string name="videoly_audiodown">A-%1$skbps\u2193</string>
 
-	<string name="title_name_open">测试窗口(按住拖动) \u2191</string>
-	<string name="title_name_close">测试窗口(按住拖动) \u2193</string>
+    <string name="title_name_open">测试窗口(按住拖动) \u2191</string>
+    <string name="title_name_close">测试窗口(按住拖动) \u2193</string>
 
     <string name="welcome_role">角色</string>
     <string name="welcome_anchor">主播</string>
@@ -36,8 +36,6 @@
     <string name="error_noaudio">长时间没有上行音频数据</string>
     <string name="error_novideo">长时间没有上行视频数据</string>
     <string name="error_otherenter">其他人以主播身份进入</string>
-    <string name="error_keyfailure">Channel Key失效</string>
-    <string name="error_unknow">未知错误</string>
     <string name="error_timeout">超时，10秒未收到服务器返回结果</string>
     <string name="error_noroom">该直播间不存在</string>
     <string name="error_version">版本错误</string>
@@ -53,4 +51,7 @@
     <string name="permission_camera">程序需要使用摄像头权限用来音视频通话，否则无法运行。</string>
     <string name="permission_record_audio">程序需要录音权限用来音视频通话，否则无法运行。</string>
     <string name="permission_read_phone_state">程序需要电话监听权限用来音视频通话，否则无法运行。</string>
+    <string name="sp_videoinfo_resolution">分辨率</string>
+    <string name="sp_videoinfo_rate">帧率</string>
+    <string name="sp_videoinfo_codingformat">编码格式</string>
 </resources>

@@ -95,6 +95,10 @@ public class EnterUserInfo implements Comparable<EnterUserInfo> {
         return mRole;
     }
 
+    public void setRole(int role) {
+        this.mRole = role;
+    }
+
     @Override
     public int compareTo(@NonNull EnterUserInfo o) {
         if (mYLocation > o.mYLocation) {

@@ -1,90 +1,188 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-				android:layout_width="297dp"
-				android:layout_height="wrap_content"
-				android:layout_gravity="center"
-				android:background="@drawable/ditu"
-				android:padding="8dp">
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:id="@+id/relativeLayout2"
+	android:layout_width="297dp"
+	android:layout_height="wrap_content"
+	android:layout_gravity="center"
+	android:background="@drawable/ditu"
+	android:padding="8dp">
 
 	<TextView
-		android:id="@+id/main_btn_secondAnchor"
+		android:id="@+id/mainly_dialog_share_textview"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:layout_marginLeft="21dp"
-		android:layout_marginTop="28dp"
-		android:singleLine="true"
-		android:text="@string/info_window_auxiliary"
+		android:layout_marginStart="26dp"
+		android:layout_marginTop="33dp"
+		android:text="屏幕共享"
 		android:textColor="#6a6a6a"
-		android:textSize="11sp"/>
+		android:textSize="11sp"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toTopOf="parent" />
 
-	<TextView
-		android:id="@+id/main_btn_viewers"
+	<ImageView
+		android:id="@+id/mainly_dialog_share"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:layout_marginLeft="13dp"
-		android:layout_marginTop="28dp"
-		android:layout_toRightOf="@+id/main_btn_secondAnchor"
-		android:text="@string/info_window_audience"
-		android:textColor="#6a6a6a"
-		android:textSize="11sp"/>
+		android:layout_marginRight="25dp"
+		android:src="@drawable/guanbi"
+		app:layout_constraintBottom_toBottomOf="@+id/mainly_dialog_share_textview"
+		app:layout_constraintRight_toRightOf="parent"
+		app:layout_constraintTop_toTopOf="@+id/mainly_dialog_share_textview" />
 
 	<TextView
-		android:id="@+id/textview111"
+		android:id="@+id/mainly_dialog_recard_textview"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:layout_below="@+id/main_btn_secondAnchor"
-		android:layout_alignLeft="@+id/main_btn_secondAnchor"
+		android:layout_marginStart="26dp"
 		android:layout_marginTop="16dp"
-		android:text="@string/info_window_closeshow"
+		android:text="开启录制"
 		android:textColor="#6a6a6a"
-		android:textSize="11sp"/>
+		android:textSize="11sp"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toBottomOf="@+id/mainly_dialog_share_textview" />
+
+	<ImageView
+		android:id="@+id/mainly_dialog_recard"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_marginRight="25dp"
+		android:src="@drawable/guanbi"
+		app:layout_constraintBottom_toBottomOf="@+id/mainly_dialog_recard_textview"
+		app:layout_constraintRight_toRightOf="parent"
+		app:layout_constraintTop_toTopOf="@+id/mainly_dialog_recard_textview" />
+
+	<TextView
+		android:id="@+id/mainly_dialog_earback_textview"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_marginStart="26dp"
+		android:layout_marginTop="16dp"
+		android:text="开启耳返"
+		android:textColor="#6a6a6a"
+		android:textSize="11sp"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toBottomOf="@+id/mainly_dialog_recard_textview" />
+
+	<ImageView
+		android:id="@+id/mainly_dialog_earback"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_marginRight="25dp"
+		android:src="@drawable/guanbi"
+		app:layout_constraintBottom_toBottomOf="@+id/mainly_dialog_earback_textview"
+		app:layout_constraintRight_toRightOf="parent"
+		app:layout_constraintTop_toTopOf="@+id/mainly_dialog_earback_textview" />
+
+	<TextView
+		android:id="@+id/mainly_dialog_switch_role_textview"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_marginStart="26dp"
+		android:layout_marginTop="16dp"
+		android:text="切为副播"
+		android:textColor="#6a6a6a"
+		android:textSize="11sp"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toBottomOf="@+id/mainly_dialog_earback_textview" />
+
+	<ImageView
+		android:id="@+id/mainly_dialog_switch_role"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_marginRight="25dp"
+		android:src="@drawable/guanbi"
+		app:layout_constraintBottom_toBottomOf="@+id/mainly_dialog_switch_role_textview"
+		app:layout_constraintRight_toRightOf="parent"
+		app:layout_constraintTop_toTopOf="@+id/mainly_dialog_switch_role_textview" />
+
+	<TextView
+		android:id="@+id/mainly_dialog_show_info_textview"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_marginStart="26dp"
+		android:layout_marginTop="16dp"
+		android:text="网络显示"
+		android:textColor="#6a6a6a"
+		android:textSize="11sp"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toBottomOf="@+id/mainly_dialog_switch_role_textview" />
 
 	<ImageView
 		android:id="@+id/mainly_dialog_show_info"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:layout_alignParentRight="true"
-		android:layout_below="@+id/main_btn_secondAnchor"
-		android:layout_marginTop="19dp"
-		android:layout_marginRight="21dp"
-		android:src="@drawable/dakai"/>
+		android:layout_marginRight="25dp"
+		android:src="@drawable/dakai"
+		app:layout_constraintBottom_toBottomOf="@+id/mainly_dialog_show_info_textview"
+		app:layout_constraintRight_toRightOf="parent"
+		app:layout_constraintTop_toTopOf="@+id/mainly_dialog_show_info_textview" />
+
+	<TextView
+		android:id="@+id/main_btn_viewers"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_marginStart="26dp"
+		android:layout_marginTop="26dp"
+		android:text="@string/info_window_audience"
+		android:textColor="#6a6a6a"
+		android:textSize="11sp"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toBottomOf="@+id/mainly_dialog_show_info_textview" />
+
+	<TextView
+		android:id="@+id/main_btn_secondAnchor"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_marginStart="30dp"
+		android:singleLine="true"
+		android:text="@string/info_window_auxiliary"
+		android:textColor="#6a6a6a"
+		android:textSize="11sp"
+		app:layout_constraintBottom_toBottomOf="@+id/main_btn_viewers"
+		app:layout_constraintStart_toEndOf="@+id/main_btn_viewers" />
 
 	<EditText
 		android:id="@+id/mainly_dialog_cdn"
-		android:layout_width="match_parent"
+		android:layout_width="172dp"
 		android:layout_height="26dp"
-		android:layout_alignStart="@+id/textview111"
-		android:layout_below="@+id/textview111"
-		android:layout_marginRight="11dp"
-		android:layout_marginTop="28dp"
-		android:layout_toLeftOf="@+id/mainly_dialog_copy"
+		android:layout_marginStart="26dp"
+		android:layout_marginTop="16dp"
 		android:background="@drawable/mainly_dialog_btn_cdnedit"
 		android:editable="false"
 		android:singleLine="true"
 		android:text=""
 		android:textColor="#6a6a6a"
-		android:textSize="12sp"/>
+		android:textSize="12sp"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toBottomOf="@+id/main_btn_secondAnchor" />
 
 	<TextView
 		android:id="@+id/mainly_dialog_copy"
 		android:layout_width="46dp"
 		android:layout_height="26dp"
-		android:layout_alignParentRight="true"
-		android:layout_below="@+id/textview111"
-		android:layout_marginRight="21dp"
-		android:layout_marginTop="28dp"
+		android:layout_marginEnd="25dp"
 		android:background="@drawable/mainly_dialog_btn_copy_selector"
 		android:gravity="center"
 		android:text="@string/info_window_copy"
 		android:textColor="#FFFFFF"
-		android:textSize="11sp"/>
+		android:textSize="11sp"
+		app:layout_constraintBottom_toBottomOf="@+id/mainly_dialog_cdn"
+		app:layout_constraintEnd_toEndOf="parent" />
 
 	<TextView
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:layout_centerHorizontal="true"
+		android:layout_marginBottom="30dp"
+		android:layout_marginEnd="8dp"
+		android:layout_marginStart="8dp"
+		android:layout_marginTop="8dp"
 		android:text="@string/info_window_cdnpullurl"
 		android:textColor="#b7b7b7"
-		android:layout_below="@+id/mainly_dialog_cdn"
-		android:textSize="11sp"/>
-</RelativeLayout>
+		android:textSize="11sp"
+		app:layout_constraintBottom_toBottomOf="parent"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toBottomOf="@+id/mainly_dialog_cdn" />
+</android.support.constraint.ConstraintLayout>

@@ -36,9 +36,7 @@
     <string name="error_noaudio">No uplink audio data for a long time</string>
     <string name="error_novideo">No uplink video data for a long time</string>
     <string name="error_otherenter">Others enter as an anchor</string>
-    <string name="error_keyfailure">Channel Key failure</string>
-    <string name="error_unknow">unknown error</string>
-    <string name="error_timeout">Timeout, 10 seconds without receiving a server return</string>
+	<string name="error_timeout">Timeout, 10 seconds without receiving a server return</string>
     <string name="error_noroom">The live room does not exist</string>
     <string name="error_version">Version error</string>
     <string name="sys_support_toast">Your system version does not support this function temporarily</string>
@@ -53,4 +51,7 @@
     <string name="permission_camera">The program needs to use camera permissions for audio and video calls, otherwise it will not work.</string>
     <string name="permission_record_audio">The program needs recording permission for audio and video calls, otherwise it cannot run.</string>
     <string name="permission_read_phone_state">The program needs phone monitoring permission for audio and video calls, otherwise it cannot run.</string>
+    <string name="sp_videoinfo_resolution">Resolution</string>
+    <string name="sp_videoinfo_rate">Frame Rate</string>
+    <string name="sp_videoinfo_codingformat">Coding Format</string>
 </resources>

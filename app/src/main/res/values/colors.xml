@@ -8,12 +8,8 @@
 	<color name="colorPrimary">#3F51B5</color>
 	<color name="colorPrimaryDark">#303F9F</color>
 	<color name="colorAccent">#FF4081</color>
-	<color name="link_video_info_color">#00F5FF</color>
-	<color name="normal_color">#00F5FF</color>
 	<color name="transparent">#0000</color>
 	<color name="half_transparent">#40FFFFFF</color>
-	<color name="weibo_listtab_off">#8d8d8d</color>
-	<color name="ijk_transparent_dark">#77000000</color>
 	<color name="role_selected">#003734</color>
 	<color name="role_un_selected">#FFFFFF</color>
 </resources>

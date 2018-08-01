@@ -23,6 +23,7 @@ import com.tttrtclive.bean.DisplayDevice;
 import com.tttrtclive.bean.EnterUserInfo;
 import com.tttrtclive.bean.VideoViewObj;
 import com.tttrtclive.ui.MainActivity;
+import com.tttrtclive.ui.SplashActivity;
 import com.tttrtclive.utils.DensityUtils;
 import com.tttrtclive.utils.MyLog;
 import com.wushuangtech.bean.LocalAudioStats;
@@ -140,26 +141,32 @@ public class TTTRtcEngineHelper {
                 case 0:
                     superRoot = mActivity.findViewById(R.id.main_remotely1);
                     obj.mRootBG = mActivity.findViewById(R.id.main_remotely_bg1);
+                    obj.mRootHead = mActivity.findViewById(R.id.main_remotely_touxiang1);
                     break;
                 case 1:
                     superRoot = mActivity.findViewById(R.id.main_remotely2);
                     obj.mRootBG = mActivity.findViewById(R.id.main_remotely_bg2);
+                    obj.mRootHead = mActivity.findViewById(R.id.main_remotely_touxiang2);
                     break;
                 case 2:
                     superRoot = mActivity.findViewById(R.id.main_remotely3);
                     obj.mRootBG = mActivity.findViewById(R.id.main_remotely_bg3);
+                    obj.mRootHead = mActivity.findViewById(R.id.main_remotely_touxiang3);
                     break;
                 case 3:
                     superRoot = mActivity.findViewById(R.id.main_remotely4);
                     obj.mRootBG = mActivity.findViewById(R.id.main_remotely_bg4);
+                    obj.mRootHead = mActivity.findViewById(R.id.main_remotely_touxiang4);
                     break;
                 case 4:
                     superRoot = mActivity.findViewById(R.id.main_remotely5);
                     obj.mRootBG = mActivity.findViewById(R.id.main_remotely_bg5);
+                    obj.mRootHead = mActivity.findViewById(R.id.main_remotely_touxiang5);
                     break;
                 case 5:
                     superRoot = mActivity.findViewById(R.id.main_remotely6);
                     obj.mRootBG = mActivity.findViewById(R.id.main_remotely_bg6);
+                    obj.mRootHead = mActivity.findViewById(R.id.main_remotely_touxiang6);
                     break;
             }
 
@@ -174,7 +181,6 @@ public class TTTRtcEngineHelper {
             obj.mReserveCamera = superRoot.findViewById(R.id.videoly_btn_camera);
             obj.mRemoteUserID = superRoot.findViewById(R.id.videoly_remote_userid);
             obj.mMuteVoiceBT = superRoot.findViewById(R.id.videoly_dialog_mute);
-            obj.mMuteVoiceIcon = superRoot.findViewById(R.id.videolayout_muted);
             ImageView videoDialogMore = obj.mContentRoot.findViewById(R.id.videoly_more);
             if (LocalConfig.mRole == Constants.CLIENT_ROLE_ANCHOR) {
                 videoDialogMore.setVisibility(View.VISIBLE);
@@ -208,18 +214,15 @@ public class TTTRtcEngineHelper {
             });
 
             // 禁言按钮
-            obj.mMuteVoiceBT = obj.mContentRoot.
-                    findViewById(R.id.videoly_dialog_mute);
+            obj.mMuteVoiceBT = obj.mContentRoot.findViewById(R.id.videoly_dialog_mute);
             obj.mMuteVoiceBT.setOnClickListener(v -> {
-                if (obj.mIsMuted) {
+                if (obj.mIsMuteRemote) {
                     mTTTEngine.muteRemoteSpeaking((int) obj.mBindUid, false);
-                    obj.mIsMuted = false;
-                    obj.mMuteVoiceIcon.setVisibility(View.INVISIBLE);
+                    obj.mIsMuteRemote = false;
                     obj.mMuteVoiceBT.setText(mActivity.getResources().getString(R.string.remote_window_ban));
                 } else {
                     mTTTEngine.muteRemoteSpeaking((int) obj.mBindUid, true);
-                    obj.mIsMuted = true;
-                    obj.mMuteVoiceIcon.setVisibility(View.VISIBLE);
+                    obj.mIsMuteRemote = true;
                     obj.mMuteVoiceBT.setText(mActivity.getResources().getString(R.string.remote_window_cancel_ban));
                 }
 
@@ -230,8 +233,9 @@ public class TTTRtcEngineHelper {
             obj.mReserveCamera.setOnClickListener(v -> mTTTEngine.switchCamera());
 
             obj.mSpeakImage.setOnClickListener(v -> {
+                if (obj.mIsRemoteDisableAudio)
+                    return;
                 speakMuteClick(obj);
-
             });
             mLocalSeiList.add(obj);
         }
@@ -246,13 +250,18 @@ public class TTTRtcEngineHelper {
      * @param info       the info
      */
     public void adJustRemoteViewDisplay(boolean isVisibile, EnterUserInfo info) {
-        SurfaceView mSurfaceView;
+        SurfaceView mSurfaceView = null;
         long id = info.getId();
         if (isVisibile) {
-            if (LocalConfig.mRole != Constants.CLIENT_ROLE_ANCHOR) {
-                if (info.getRole() != Constants.CLIENT_ROLE_ANCHOR) {
+            if (LocalConfig.mRole != Constants.CLIENT_ROLE_ANCHOR && info.getRole() != Constants.CLIENT_ROLE_ANCHOR) {
+                if (LocalConfig.mRoomMode == SplashActivity.VIDEO_MODE) {
                     boolean checkRes = checkVideoExist(info.mShowIndex);
                     if (checkRes) {
+                        return;
+                    }
+                } else {
+                    boolean result = checkEmptyLocation(info);
+                    if (result) {
                         return;
                     }
                 }
@@ -263,18 +272,22 @@ public class TTTRtcEngineHelper {
                 }
             }
 
-            mSurfaceView = mTTTEngine.CreateRendererView(mActivity);
-            if (id == LocalConfig.mLoginUserID) {
-                mTTTEngine.setupLocalVideo(new VideoCanvas(0, Constants.RENDER_MODE_HIDDEN,
-                        mSurfaceView), mActivity.getRequestedOrientation());
-            } else {
-                mTTTEngine.setupRemoteVideo(new VideoCanvas(info.getId(), Constants.
-                        RENDER_MODE_HIDDEN, mSurfaceView));
+            if (LocalConfig.mRoomMode == SplashActivity.VIDEO_MODE) {
+                mSurfaceView = mTTTEngine.CreateRendererView(mActivity);
+                if (id == LocalConfig.mLoginUserID) {
+                    mTTTEngine.setupLocalVideo(new VideoCanvas(0, Constants.RENDER_MODE_HIDDEN,
+                            mSurfaceView), mActivity.getRequestedOrientation());
+                } else {
+                    mTTTEngine.setupRemoteVideo(new VideoCanvas(info.getId(), Constants.
+                            RENDER_MODE_HIDDEN, mSurfaceView));
+                }
             }
 
             if (info.getRole() == Constants.CLIENT_ROLE_ANCHOR) {
-                mSurfaceView.setZOrderMediaOverlay(false);
-                mActivity.mFullScreenShowView.addView(mSurfaceView, 0);
+                if (LocalConfig.mRoomMode == SplashActivity.VIDEO_MODE && mSurfaceView != null) {
+                    mSurfaceView.setZOrderMediaOverlay(false);
+                    mActivity.mFullScreenShowView.addView(mSurfaceView, 0);
+                }
             } else {
                 VideoViewObj obj;
                 if (LocalConfig.mRole == Constants.CLIENT_ROLE_ANCHOR) {
@@ -283,50 +296,61 @@ public class TTTRtcEngineHelper {
                     obj = getRemoteViewParentLayout(info);
                 }
                 if (obj != null) {
-                    obj.mMuteVoiceIcon.setVisibility(View.INVISIBLE);
-                    obj.mSpeakImage.setVisibility(View.VISIBLE);
                     obj.mMuteVoiceBT.setText(mActivity.getResources().getString(R.string.remote_window_ban));
-                    ViewGroup mRemoteChildLayout = obj.mRoot;
-                    mSurfaceView.setZOrderMediaOverlay(true);
-                    mRemoteChildLayout.addView(mSurfaceView, 0);
-                    obj.mRootBG.setVisibility(View.INVISIBLE);
+                    if (LocalConfig.mRoomMode == SplashActivity.VIDEO_MODE) {
+                        ViewGroup mRemoteChildLayout = obj.mRoot;
+                        mSurfaceView.setZOrderMediaOverlay(true);
+                        mRemoteChildLayout.addView(mSurfaceView, 0);
+                        obj.mRootBG.setVisibility(View.INVISIBLE);
+                    }
                     obj.mContentRoot.setVisibility(View.VISIBLE);
                     obj.mBindUid = info.getId();
                     obj.mRemoteUserID.setText(String.valueOf(info.getId()));
-                    if (id == LocalConfig.mLoginUserID) {
-                        obj.mReserveCamera.setVisibility(View.VISIBLE);
-                        obj.mReserveCamera.setImageResource(R.drawable.mainly_btn_camera_selector);
-                    } else {
-                        obj.mReserveCamera.setVisibility(View.INVISIBLE);
+                    if (LocalConfig.mRoomMode == SplashActivity.VIDEO_MODE) {
+                        if (id == LocalConfig.mLoginUserID) {
+                            obj.mReserveCamera.setVisibility(View.VISIBLE);
+                            obj.mReserveCamera.setImageResource(R.drawable.mainly_btn_camera_selector);
+                        } else {
+                            obj.mReserveCamera.setVisibility(View.INVISIBLE);
+                        }
                     }
 
                     Iterator<Long> iterator = mActivity.mMutedAudioUserID.iterator();
-                    boolean isDelete = false;
                     while (iterator.hasNext()) {
                         Long next = iterator.next();
                         if (next == obj.mBindUid) {
-                            PviewLog.i("OnRemoteAudioMuted init it .... " + next);
-                            obj.mIsRemoteDisableAudio = true;
-                            obj.mMuteVoiceIcon.setVisibility(View.VISIBLE);
-                            obj.mSpeakImage.setVisibility(View.INVISIBLE);
-                            isDelete = true;
+                            PviewLog.i("OnRemoteAudioMuted init it .... 1" + next);
+                            obj.mIsMuteRemote = true;
+                            obj.mSpeakImage.setImageResource(R.drawable.jinyan);
+                            mActivity.mMutedAudioUserID.remove(obj.mBindUid);
                             break;
                         }
                     }
-                    if (isDelete) {
-                        mActivity.mMutedAudioUserID.remove(obj.mBindUid);
-                    }
 
-                    if (obj.mBindUid == LocalConfig.mLoginUserID && !obj.mIsRemoteDisableAudio) {
-                        if (mActivity.mIsHeadset) {
-                            obj.mSpeakImage.setImageResource(R.drawable.mainly_btn_headset_selector);
+                    iterator = mActivity.mMutedSpeakUserID.iterator();
+                    while (iterator.hasNext()) {
+                        Long next = iterator.next();
+                        if (next == obj.mBindUid) {
+                            PviewLog.i("zhxtext OnRemoteAudioMuted init it .... 2" + next);
+                            obj.mIsRemoteDisableAudio = true;
+                            obj.mSpeakImage.setImageResource(R.drawable.jinyan);
+                            mActivity.mMutedSpeakUserID.remove(obj.mBindUid);
+                            break;
                         }
                     }
 
+                    /*if (obj.mBindUid == LocalConfig.mLoginUserID && !obj.mIsRemoteDisableAudio) {
+                        if (mActivity.mIsHeadset) {
+                            obj.mSpeakImage.setImageResource(R.drawable.mainly_btn_headset_selector);
+                        }
+                    }*/
+
 
                     mActivity.mShowingDevices.put(info.getId(), new DisplayDevice(obj, info));
-                    LocalConfig.mAuthorSize++;
                 }
+
+                MyLog.d("adJustRemoteViewDisplay" , "add user video : " + info.getId()
+                        + " | VideoViewObj : " + obj);
             }
         } else {
             if (info.getRole() == Constants.CLIENT_ROLE_ANCHOR) {
@@ -336,7 +360,8 @@ public class TTTRtcEngineHelper {
             }
         }
 
-        if (LocalConfig.mRole == Constants.CLIENT_ROLE_ANCHOR) {
+        if (LocalConfig.mRole == Constants.CLIENT_ROLE_ANCHOR && LocalConfig.mRoomMode == SplashActivity.VIDEO_MODE) {
+            Log.d("zhxtest", "fa song sei!!!: ");
             VideoCompositingLayout layout = new VideoCompositingLayout();
             layout.regions = buildRemoteLayoutLocation();
             mTTTEngine.setVideoCompositingLayout(layout);
@@ -589,11 +614,11 @@ public class TTTRtcEngineHelper {
         } else {
             for (final VideoViewObj obj : mActivity.mLocalSeiList) {
                 if (obj.mBindUid == volumeUserID && obj.mSpeakImage != null) {
-                    if (obj.mBindUid == LocalConfig.mLoginUserID) {
-                        if (obj.mIsMuteRemote || obj.mIsRemoteDisableAudio) {
-                            return;
-                        }
+                    if (obj.mIsMuteRemote || obj.mIsRemoteDisableAudio) {
+                        return;
+                    }
 
+                    if (obj.mBindUid == LocalConfig.mLoginUserID) {
                         if (mActivity.mIsHeadset) {
                             if (volumeLevel >= 0 && volumeLevel <= 3) {
                                 obj.mSpeakImage.setImageResource(R.drawable.mainly_btn_headset_selector);
@@ -612,14 +637,6 @@ public class TTTRtcEngineHelper {
                             }
                         }
                     } else {
-                        if (obj.mIsMuteRemote || obj.mIsRemoteDisableAudio) {
-                            return;
-                        }
-
-                        if (obj.mSpeakImage.getVisibility() != View.VISIBLE) {
-                            obj.mSpeakImage.setVisibility(View.VISIBLE);
-                        }
-
                         if (volumeLevel == 0) {
                             obj.mSpeakImage.setImageResource(R.drawable.audio_xiao);
                         } else if (volumeLevel > 0 && volumeLevel <= 3) {
@@ -695,9 +712,8 @@ public class TTTRtcEngineHelper {
         if (mFlagRecord == RECORD_TYPE_FILE) {
             mIsRecordering = true;
             mActivity.mRecordScreen.setVisibility(View.VISIBLE);
-            mActivity.mRecordScreenBT.setBackgroundResource(R.drawable.mainly_btn_video_recording);
             mFlagRecord = 0;
-            mActivity.mHandler.post(new Runnable() {
+            mActivity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     mActivity.mScrollView.fullScroll(ScrollView.FOCUS_DOWN);
@@ -705,7 +721,6 @@ public class TTTRtcEngineHelper {
             });
         } else if (mFlagRecord == RECORD_TYPE_SHARE) {
             mIsShareRecordering = true;
-            mActivity.mRecordScreenShare.setImageResource(R.drawable.mainly_btn_video_sharing);
             mFlagRecord = 0;
         }
     }
@@ -806,6 +821,7 @@ public class TTTRtcEngineHelper {
                 return videoCusSei;
             }
         }
+        MyLog.d("adJustRemoteViewDisplay" , "getRemoteViewParentLayout failed! not find VideoViewObj : " + info.getId());
         return null;
     }
 
@@ -821,10 +837,32 @@ public class TTTRtcEngineHelper {
                 return true;
             }
         }
+        MyLog.d("adJustRemoteViewDisplay" , "checkVideoExist failed! not find VideoViewObj : " + uid);
         return false;
     }
 
-    private void removeUserByView(long uid) {
+    private boolean checkEmptyLocation(EnterUserInfo info) {
+        for (int i = 0; i < mActivity.mLocalSeiList.size(); i++) {
+            VideoViewObj videoViewObj = mActivity.mLocalSeiList.get(i);
+            if (!videoViewObj.mIsUsing) {
+                info.mShowIndex = i;
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public void removeUserByView(long uid) {
+        for (Map.Entry<Long, DisplayDevice> next : mActivity.mShowingDevices.entrySet()) {
+            final DisplayDevice value = next.getValue();
+            MyLog.d("adJustRemoteViewDisplay" , "removeUserByView VideoViewObj : " + value.getDisplayView().mIsUsing
+                    + " | uid : " + value.getDisplayView().mBindUid);
+        }
+
+        for (int i = 0; i < mActivity.mLocalSeiList.size(); i++) {
+            MyLog.d("adJustRemoteViewDisplay" , "removeUserByView VideoViewObj : " + mActivity.mLocalSeiList.get(i).mIsUsing
+                    + " | uid : " + mActivity.mLocalSeiList.get(i).mBindUid);
+        }
         DisplayDevice mRemoteDisplayDevice = mActivity.mShowingDevices.remove(uid);
         if (mRemoteDisplayDevice != null) {
             VideoViewObj videoCusSei = null;
@@ -837,12 +875,13 @@ public class TTTRtcEngineHelper {
             }
 
             if (videoCusSei != null) {
-                SurfaceView childAt = (SurfaceView) videoCusSei.mRoot.getChildAt(0);
-                videoCusSei.mRoot.removeView(childAt);
+                if (LocalConfig.mRoomMode == SplashActivity.VIDEO_MODE) {
+                    SurfaceView childAt = (SurfaceView) videoCusSei.mRoot.getChildAt(0);
+                    videoCusSei.mRoot.removeView(childAt);
+                    videoCusSei.mReserveCamera.setVisibility(View.INVISIBLE);
+                }
                 videoCusSei.mContentRoot.setVisibility(View.INVISIBLE);
                 videoCusSei.mRootBG.setVisibility(View.VISIBLE);
-                videoCusSei.mReserveCamera.setVisibility(View.INVISIBLE);
-                LocalConfig.mAuthorSize--;
             }
         }
     }

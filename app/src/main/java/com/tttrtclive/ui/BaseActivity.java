@@ -2,6 +2,7 @@ package com.tttrtclive.ui;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.Window;
@@ -9,6 +10,8 @@ import android.view.WindowManager;
 
 import com.jaeger.library.StatusBarUtil;
 import com.wushuangtech.wstechapi.TTTRtcEngine;
+
+import java.util.Locale;
 
 /**
  * Created by wangzhiguo on 17/10/12.

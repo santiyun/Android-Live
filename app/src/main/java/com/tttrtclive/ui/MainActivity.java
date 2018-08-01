@@ -5,13 +5,16 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.os.Build;
+import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.OrientationHelper;
+import android.support.v7.widget.RecyclerView;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
@@ -20,7 +23,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.tttrtclive.Helper.TTTRtcEngineHelper;
 import com.tttrtclive.LocalConfig;
@@ -37,8 +39,10 @@ import com.tttrtclive.dialog.DataInfoShowCallback;
 import com.tttrtclive.dialog.ExitRoomDialog;
 import com.tttrtclive.dialog.MoreInfoDialog;
 import com.tttrtclive.dialog.MusicListDialog;
+import com.tttrtclive.test.TestInterfaceListAdapter;
+import com.tttrtclive.test.TestRelativeLayout;
+import com.tttrtclive.test.TestUtils;
 import com.tttrtclive.utils.MyLog;
-import com.wushuangtech.api.EnterConfApi;
 import com.wushuangtech.bean.VideoCompositingLayout;
 import com.wushuangtech.library.Constants;
 import com.wushuangtech.wstechapi.model.VideoCanvas;
@@ -57,8 +61,8 @@ import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static com.wushuangtech.library.Constants.CLIENT_ROLE_ANCHOR;
-import static com.wushuangtech.library.Constants.VIDEO_PROFILE_120P;
-import static com.wushuangtech.library.Constants.VIDEO_PROFILE_360P;
+import static com.wushuangtech.library.Constants.CLIENT_ROLE_AUDIENCE;
+import static com.wushuangtech.library.Constants.CLIENT_ROLE_BROADCASTER;
 import static com.wushuangtech.library.LocalSDKConstants.CAPTURE_REQUEST_CODE;
 
 public class MainActivity extends BaseActivity implements DataInfoShowCallback {
@@ -70,10 +74,9 @@ public class MainActivity extends BaseActivity implements DataInfoShowCallback {
 
     public ArrayList<VideoViewObj> mLocalSeiList;
     public HashSet<Long> mMutedAudioUserID;
+    public HashSet<Long> mMutedSpeakUserID;
     public List<EnterUserInfo> listData;
     public ConcurrentHashMap<Long, DisplayDevice> mShowingDevices;
-
-    public Handler mHandler;
 
     public TextView mAudioSpeedShow;
     public TextView mVideoSpeedShow;
@@ -81,10 +84,8 @@ public class MainActivity extends BaseActivity implements DataInfoShowCallback {
     public ImageView mAudioChannel;
     private View mCannelMusicBT;
     private View mLocalMusicListBT;
-    public View mRecordScreenBT;
-    public TextView mRecordScreen;
-    public ImageView mRecordScreenShare;
     private View mReversalCamera;
+    public TextView mRecordScreen;
     public ScrollView mScrollView;
 
     private MoreInfoDialog mMoreInfoDialog;
@@ -115,10 +116,10 @@ public class MainActivity extends BaseActivity implements DataInfoShowCallback {
         if (mTelephonyManager != null) {
             mTelephonyManager.listen(mPhoneListener, PhoneStateListener.LISTEN_CALL_STATE);
         }
-        if (LocalConfig.mRole == CLIENT_ROLE_ANCHOR)
-            mTTTEngine.setVideoProfile(VIDEO_PROFILE_360P, true);
+        if (LocalConfig.mRole == Constants.CLIENT_ROLE_ANCHOR)
+            mTTTEngine.setVideoProfile(Constants.VIDEO_PROFILE_360P, true);
         else
-            mTTTEngine.setVideoProfile(VIDEO_PROFILE_120P, true);
+            mTTTEngine.setVideoProfile(Constants.VIDEO_PROFILE_120P, true);
         mTTTEngine.enableAudioVolumeIndication(300, 3);
         MyLog.d("MainActivity onCreate");
     }
@@ -133,7 +134,6 @@ public class MainActivity extends BaseActivity implements DataInfoShowCallback {
             if (!mIsMute && !LocalConfig.mLocalMuteAuido) {
                 mTTTEngine.muteLocalAudioStream(false);
             }
-            mTTTEngine.muteLocalVideoStream(false);
         }
         mTTTEngine.muteAllRemoteAudioStreams(false);
     }
@@ -146,7 +146,6 @@ public class MainActivity extends BaseActivity implements DataInfoShowCallback {
         if (LocalConfig.mRole != Constants.CLIENT_ROLE_AUDIENCE) {
             mTTTEngine.pauseAudioMixing();
             mTTTEngine.muteLocalAudioStream(true);
-            mTTTEngine.muteLocalVideoStream(true);
         }
         mTTTEngine.muteAllRemoteAudioStreams(true);
     }
@@ -171,10 +170,12 @@ public class MainActivity extends BaseActivity implements DataInfoShowCallback {
             mPhoneListener = null;
             mTelephonyManager = null;
         }
-        mHandler.removeCallbacksAndMessages(null);
+        TestUtils.unInitTestBroadcast(this);
         unregisterReceiver(mLocalBroadcast);
-        mTTTEngine.stopScreenRecorder();
+        mTTTEngine.stopRecordScreen();
+        mTTTEngine.enableEarsBack(false);
         super.onDestroy();
+        SplashActivity.mIsLoging = false;
         MyLog.d("MainActivity onDestroy");
     }
 
@@ -191,6 +192,7 @@ public class MainActivity extends BaseActivity implements DataInfoShowCallback {
             mTTTRtcEngineHelper.realStartCapture(data);
         } else {
             mTTTRtcEngineHelper.mFlagRecord = 0;
+            mMoreInfoDialog.closeShareScreen();
         }
     }
 
@@ -201,14 +203,35 @@ public class MainActivity extends BaseActivity implements DataInfoShowCallback {
         mBroadcasterID = findViewById(R.id.main_btn_host);
         mCannelMusicBT = findViewById(R.id.main_btn_cannel_music);
         mLocalMusicListBT = findViewById(R.id.main_btn_music_channel);
+        mRecordScreen = findViewById(R.id.main_btn_video_recorder_time);
         mAudioChannel = findViewById(R.id.main_btn_audio_channel);
         TextView mHourseID = findViewById(R.id.main_btn_title);
         mReversalCamera = findViewById(R.id.main_btn_camera);
-        mRecordScreenBT = findViewById(R.id.main_btn_video_recorder);
-        mRecordScreenShare = findViewById(R.id.main_btn_video_share);
-        mRecordScreen = findViewById(R.id.main_btn_video_recorder_time);
         mScrollView = findViewById(R.id.main_btn_listly);
         mReversalCamera.setOnClickListener(v -> mTTTEngine.switchCamera());
+
+        // -----以下为SDK测试代码，无需关注-----
+        TestRelativeLayout mTestRelativeLayout = findViewById(R.id.main_test_ly);
+        RecyclerView mRecyclerView = mTestRelativeLayout.getTestListView();
+        TestInterfaceListAdapter mRecycleAdapter = new TestInterfaceListAdapter(this);
+        mRecycleAdapter.mDatas = TestUtils.mTestDatas;
+        LinearLayoutManager layoutManager = new LinearLayoutManager(mContext);
+        //设置布局管理器
+        mRecyclerView.setLayoutManager(layoutManager);
+        //设置为垂直布局，这也是默认的
+        layoutManager.setOrientation(OrientationHelper.VERTICAL);
+        //设置Adapter
+        mRecyclerView.setAdapter(mRecycleAdapter);
+        //设置增加或删除条目的动画
+        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        TestUtils.mTestInterfaceListAdapter = mRecycleAdapter;
+        // -----以上为SDK测试代码，无需关注-----
+
+        if (LocalConfig.mRoomMode == SplashActivity.AUDIO_MODE) {
+            mReversalCamera.setVisibility(View.GONE);
+            mVideoSpeedShow.setVisibility(View.GONE);
+            findViewById(R.id.audio_bg).setVisibility(View.VISIBLE);
+        }
 
         setTextViewContent(mHourseID, R.string.main_title, String.valueOf(LocalConfig.mLoginRoomID));
 
@@ -225,7 +248,7 @@ public class MainActivity extends BaseActivity implements DataInfoShowCallback {
             mMusicListDialog.setPlaying(false);
             mCannelMusicBT.setVisibility(View.INVISIBLE);
         });
-        EnterConfApi.getInstance().applySpeakPermission(false);
+
         mAudioChannel.setOnClickListener(v -> {
             if (mIsMute) {
                 if (mIsHeadset) {
@@ -245,59 +268,17 @@ public class MainActivity extends BaseActivity implements DataInfoShowCallback {
                 mIsMute = true;
             }
         });
-
-        mRecordScreenBT.setOnClickListener(v -> {
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-                Toast.makeText(mContext, getResources().getString(R.string.sys_support_toast), Toast.LENGTH_SHORT).show();
-                return;
-            }
-            startScreenRecord();
-        });
-
-        mRecordScreenShare.setOnClickListener(v -> {
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-                Toast.makeText(mContext, getResources().getString(R.string.sys_support_toast), Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            if (mTTTRtcEngineHelper.mIsRecordering) {
-                return;
-            }
-
-            if (mTTTRtcEngineHelper.mIsShareRecordering) {
-                mTTTRtcEngineHelper.mIsShareRecordering = false;
-                mTTTEngine.shareScreenRecorder(false);
-                mTTTEngine.stopScreenRecorder();
-                mRecordScreenShare.setImageResource(R.drawable.mainly_btn_video_share);
-            } else {
-                mTTTEngine.shareScreenRecorder(true);
-                mTTTEngine.tryScreenRecorder(this);
-                mTTTRtcEngineHelper.mFlagRecord = TTTRtcEngineHelper.RECORD_TYPE_SHARE;
-            }
-        });
-    }
-
-    private void startScreenRecord() {
-        if (mTTTRtcEngineHelper.mIsShareRecordering) {
-            return;
-        }
-
-        if (mTTTRtcEngineHelper.mIsRecordering) {
-            mTTTRtcEngineHelper.mIsRecordering = false;
-            mTTTEngine.stopScreenRecorder();
-            mRecordScreen.setVisibility(View.GONE);
-            mRecordScreen.setText("00:00:00");
-            mRecordScreenBT.setBackgroundResource(R.drawable.mainly_btn_video_recorder);
-        } else {
-            mTTTRtcEngineHelper.mFlagRecord = TTTRtcEngineHelper.RECORD_TYPE_FILE;
-            mTTTEngine.tryScreenRecorder(this);
-        }
     }
 
     public void setTextViewContent(TextView textView, int resourceID, String value) {
         String string = getResources().getString(resourceID);
         String result = String.format(string, value);
         textView.setText(result);
+    }
+
+    public void switchRole(String value) {
+        TextView mRoleShow = findViewById(R.id.main_btn_role);
+        setTextViewContent(mRoleShow, R.string.main_local_role, value);
     }
 
     private void initEngine() {
@@ -311,14 +292,13 @@ public class MainActivity extends BaseActivity implements DataInfoShowCallback {
     }
 
     private void initDialog() {
-        mMoreInfoDialog =
-                new MoreInfoDialog(mContext, R.style.NoBackGroundDialog);
+        mMoreInfoDialog = new MoreInfoDialog(mContext, R.style.NoBackGroundDialog, mTTTEngine, mTTTRtcEngineHelper);
         mMoreInfoDialog.setDataInfoShowCallback(this);
 
         mExitRoomDialog = new ExitRoomDialog(mContext, R.style.NoBackGroundDialog);
         mExitRoomDialog.setCanceledOnTouchOutside(false);
         mExitRoomDialog.mConfirmBT.setOnClickListener(v -> {
-            mTTTEngine.stopScreenRecorder();
+            mTTTEngine.stopRecordScreen();
             exitRoom();
             mExitRoomDialog.dismiss();
         });
@@ -349,20 +329,32 @@ public class MainActivity extends BaseActivity implements DataInfoShowCallback {
         listData = new ArrayList<>();
         mShowingDevices = new ConcurrentHashMap<>();
         mMutedAudioUserID = new HashSet<>();
-        if (mHandler == null) {
-            mHandler = new LocalHandler();
-        }
+        mMutedSpeakUserID = new HashSet<>();
         mLocalSeiList = new ArrayList<>();
-        if (LocalConfig.mRole == Constants.CLIENT_ROLE_AUDIENCE) {
-            LocalConfig.mAudience++;
-        } else if (LocalConfig.mRole == Constants.CLIENT_ROLE_BROADCASTER) {
-            EnterUserInfo localInfo = new EnterUserInfo(LocalConfig.mLoginUserID, Constants.CLIENT_ROLE_BROADCASTER);
-            addListData(localInfo);
-        }
 
         mTTTRtcEngineHelper.initRemoteLayout(mLocalSeiList);
 
-        if (LocalConfig.mRole == CLIENT_ROLE_ANCHOR) {
+        if (LocalConfig.mRole == Constants.CLIENT_ROLE_AUDIENCE) {
+            LocalConfig.mAudience++;
+        } else if (LocalConfig.mRole == CLIENT_ROLE_BROADCASTER) {
+            LocalConfig.mAuthorSize++;
+            EnterUserInfo localInfo = new EnterUserInfo(LocalConfig.mLoginUserID, CLIENT_ROLE_BROADCASTER);
+            addListData(localInfo);
+
+            if (LocalConfig.mRoomMode == SplashActivity.AUDIO_MODE) {
+                mTTTRtcEngineHelper.adJustRemoteViewDisplay(true, localInfo);
+            }
+        }
+
+        if (LocalConfig.mRoomMode == SplashActivity.AUDIO_MODE) {
+            for (VideoViewObj obj : mLocalSeiList) {
+                obj.mRootHead.setImageResource(R.drawable.audiobg);
+                obj.mRemoteUserID.setTextColor(Color.rgb(137, 137, 137));
+                ((TextView) obj.mContentRoot.findViewById(R.id.videoly_audio_down)).setTextColor(Color.rgb(137, 137, 137));
+            }
+        }
+
+        if (LocalConfig.mRole == CLIENT_ROLE_ANCHOR && LocalConfig.mRoomMode == SplashActivity.VIDEO_MODE) {
             SurfaceView localSurfaceView;
             localSurfaceView = mTTTEngine.CreateRendererView(mContext);
             localSurfaceView.setZOrderMediaOverlay(false);
@@ -387,19 +379,15 @@ public class MainActivity extends BaseActivity implements DataInfoShowCallback {
                 setTextViewContent(mRoleShow, R.string.main_local_role, getResources().getString(R.string.welcome_anchor));
                 LocalConfig.mBroadcasterID = LocalConfig.mLoginUserID;
                 break;
-            case Constants.CLIENT_ROLE_BROADCASTER:
+            case CLIENT_ROLE_BROADCASTER:
                 setTextViewContent(mRoleShow, R.string.main_local_role, getResources().getString(R.string.welcome_auxiliary));
                 mLocalMusicListBT.setVisibility(View.GONE);
                 mReversalCamera.setVisibility(View.GONE);
-                mRecordScreenBT.setVisibility(View.GONE);
-                mRecordScreenShare.setVisibility(View.GONE);
                 break;
             case Constants.CLIENT_ROLE_AUDIENCE:
                 setTextViewContent(mRoleShow, R.string.main_local_role, getResources().getString(R.string.welcome_audience));
                 mLocalMusicListBT.setVisibility(View.GONE);
                 mReversalCamera.setVisibility(View.GONE);
-                mRecordScreenBT.setVisibility(View.GONE);
-                mRecordScreenShare.setVisibility(View.GONE);
                 break;
         }
 
@@ -417,10 +405,9 @@ public class MainActivity extends BaseActivity implements DataInfoShowCallback {
                 }
             }
         }
-
     }
 
-    private void addListData(EnterUserInfo info) {
+    public void addListData(EnterUserInfo info) {
         boolean bupdate = false;
         for (int i = 0; i < listData.size(); i++) {
             EnterUserInfo info1 = listData.get(i);
@@ -435,7 +422,7 @@ public class MainActivity extends BaseActivity implements DataInfoShowCallback {
         }
     }
 
-    private EnterUserInfo removeListData(long uid) {
+    public EnterUserInfo removeListData(long uid) {
         int index = -1;
         for (int i = 0; i < listData.size(); i++) {
             EnterUserInfo info1 = listData.get(i);
@@ -478,40 +465,6 @@ public class MainActivity extends BaseActivity implements DataInfoShowCallback {
         }
     }
 
-    private class LocalHandler extends Handler {
-
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            switch (msg.what) {
-                case MSG_TYPE_ERROR_ENTER_ROOM:
-                    String message = "";
-                    int errorType = (int) msg.obj;
-                    if (errorType == Constants.ERROR_KICK_BY_HOST) {
-                        message = getResources().getString(R.string.error_kicked);
-                    } else if (errorType == Constants.ERROR_KICK_BY_PUSHRTMPFAILED) {
-                        message = getResources().getString(R.string.error_rtmp);
-                    } else if (errorType == Constants.ERROR_KICK_BY_SERVEROVERLOAD) {
-                        message = getResources().getString(R.string.error_server_overload);
-                    } else if (errorType == Constants.ERROR_KICK_BY_MASTER_EXIT) {
-                        message = getResources().getString(R.string.error_anchorexited);
-                    } else if (errorType == Constants.ERROR_KICK_BY_RELOGIN) {
-                        message = getResources().getString(R.string.error_relogin);
-                    } else if (errorType == Constants.ERROR_KICK_BY_NEWCHAIRENTER) {
-                        message = getResources().getString(R.string.error_otherenter);
-                    } else if (errorType == Constants.ERROR_KICK_BY_NOAUDIODATA) {
-                        message = getResources().getString(R.string.error_noaudio);
-                    } else if (errorType == Constants.ERROR_KICK_BY_NOVIDEODATA) {
-                        message = getResources().getString(R.string.error_novideo);
-                    } else if (errorType == DISCONNECT) {
-                        message = getResources().getString(R.string.error_network_disconnected);
-                    }
-                    mTTTRtcEngineHelper.showErrorExitDialog(message);
-                    break;
-            }
-        }
-    }
-
     private class MyLocalBroadcastReceiver extends BroadcastReceiver {
 
         @Override
@@ -523,33 +476,73 @@ public class MainActivity extends BaseActivity implements DataInfoShowCallback {
                 switch (mJniObjs.mJniType) {
                     case LocalConstans.CALL_BACK_ON_ERROR:
                         MyLog.d("UI onReceive CALL_BACK_ON_ERROR... ");
-                        Message.obtain(mHandler, MSG_TYPE_ERROR_ENTER_ROOM, mJniObjs.mErrorType).sendToTarget();
+                        String message = "";
+                        int errorType = mJniObjs.mErrorType;
+                        if (errorType == Constants.ERROR_KICK_BY_HOST) {
+                            message = getResources().getString(R.string.error_kicked);
+                        } else if (errorType == Constants.ERROR_KICK_BY_PUSHRTMPFAILED) {
+                            message = getResources().getString(R.string.error_rtmp);
+                        } else if (errorType == Constants.ERROR_KICK_BY_SERVEROVERLOAD) {
+                            message = getResources().getString(R.string.error_server_overload);
+                        } else if (errorType == Constants.ERROR_KICK_BY_MASTER_EXIT) {
+                            message = getResources().getString(R.string.error_anchorexited);
+                        } else if (errorType == Constants.ERROR_KICK_BY_RELOGIN) {
+                            message = getResources().getString(R.string.error_relogin);
+                        } else if (errorType == Constants.ERROR_KICK_BY_NEWCHAIRENTER) {
+                            message = getResources().getString(R.string.error_otherenter);
+                        } else if (errorType == Constants.ERROR_KICK_BY_NOAUDIODATA) {
+                            message = getResources().getString(R.string.error_noaudio);
+                        } else if (errorType == Constants.ERROR_KICK_BY_NOVIDEODATA) {
+                            message = getResources().getString(R.string.error_novideo);
+                        } else if (errorType == DISCONNECT) {
+                            message = getResources().getString(R.string.error_network_disconnected);
+                        }
+                        mTTTRtcEngineHelper.showErrorExitDialog(message);
+                        break;
+                    case LocalConstans.CALL_BACK_ON_USER_ROLE_CHANGED:
+                        long changedUserId = mJniObjs.mUid;
+                        int changedRole = mJniObjs.mIdentity;
+                        LocalConfig.mRole = mJniObjs.mIdentity;
+                        mMoreInfoDialog.mIsSwitching = false;
+                        if (mMoreInfoDialog != null)
+                            mMoreInfoDialog.changeRoleSwitch();
+                        if (changedRole == CLIENT_ROLE_AUDIENCE) {
+                            mTTTRtcEngineHelper.removeUserByView(changedUserId);
+                        } else {
+                            if (LocalConfig.mRoomMode == SplashActivity.AUDIO_MODE) {
+                                mTTTRtcEngineHelper.adJustRemoteViewDisplay(true, new EnterUserInfo(LocalConfig.mLoginUserID, CLIENT_ROLE_BROADCASTER));
+                            }
+                        }
                         break;
                     case LocalConstans.CALL_BACK_ON_USER_JOIN:
                         long uid = mJniObjs.mUid;
                         int identity = mJniObjs.mIdentity;
-                        MyLog.d("UI onReceive CALL_BACK_ON_USER_JOIN... uid : " + uid);
+                        MyLog.d("UI onReceive CALL_BACK_ON_USER_JOIN... uid : " + uid + " identity : " + identity);
                         EnterUserInfo userInfo = new EnterUserInfo(uid, identity);
                         addListData(userInfo);
                         if (LocalConfig.mRole == CLIENT_ROLE_ANCHOR) {
-                            if (identity == Constants.CLIENT_ROLE_BROADCASTER) {
+                            if (identity == CLIENT_ROLE_BROADCASTER) {
                                 if (LocalConfig.mAuthorSize == TTTRtcEngineHelper.AUTHOR_MAX_NUM) {
+                                    LocalConfig.mAuthorSize++;
                                     mTTTEngine.kickChannelUser(uid);
                                     return;
                                 }
                             }
 
-                            if (identity == Constants.CLIENT_ROLE_BROADCASTER) {
+                            if (identity == CLIENT_ROLE_BROADCASTER) {
+                                LocalConfig.mAuthorSize++;
                                 // 打开视频
                                 DisplayDevice mRemoteDisplayDevice = mShowingDevices.get(uid);
                                 if (mRemoteDisplayDevice == null) {
                                     mTTTRtcEngineHelper.adJustRemoteViewDisplay(true, userInfo);
                                 }
                             } else {
-                                // 向观众发送sei
-                                VideoCompositingLayout layout = new VideoCompositingLayout();
-                                layout.regions = mTTTRtcEngineHelper.buildRemoteLayoutLocation();
-                                mTTTEngine.setVideoCompositingLayout(layout);
+                                if (LocalConfig.mRoomMode == SplashActivity.VIDEO_MODE) {
+                                    // 向观众发送sei
+                                    VideoCompositingLayout layout = new VideoCompositingLayout();
+                                    layout.regions = mTTTRtcEngineHelper.buildRemoteLayoutLocation();
+                                    mTTTEngine.setVideoCompositingLayout(layout);
+                                }
                                 LocalConfig.mAudience++;
                             }
                         } else {
@@ -562,26 +555,43 @@ public class MainActivity extends BaseActivity implements DataInfoShowCallback {
                                 }
                             } else if (identity == Constants.CLIENT_ROLE_AUDIENCE) {
                                 LocalConfig.mAudience++;
+                            } else if (identity == CLIENT_ROLE_BROADCASTER) {
+                                if (LocalConfig.mRoomMode == SplashActivity.AUDIO_MODE) {
+                                    DisplayDevice mRemoteDisplayDevice = mShowingDevices.get(uid);
+                                    if (mRemoteDisplayDevice == null) {
+                                        mTTTRtcEngineHelper.adJustRemoteViewDisplay(true, userInfo);
+                                    }
+                                }
+                                LocalConfig.mAuthorSize++;
                             }
                         }
+                        if (mMoreInfoDialog != null)
+                            mMoreInfoDialog.updatePersonNum();
                         break;
                     case LocalConstans.CALL_BACK_ON_USER_OFFLINE:
                         long offLineUserID = mJniObjs.mUid;
+                        mMutedSpeakUserID.remove(offLineUserID);
+                        mMutedAudioUserID.remove(offLineUserID);
                         MyLog.d("UI onReceive CALL_BACK_ON_USER_OFFLINE... offLineUserID : " + offLineUserID);
                         EnterUserInfo enterUserInfo = removeListData(offLineUserID);
                         if (enterUserInfo != null) {
                             if (enterUserInfo.getRole() == Constants.CLIENT_ROLE_AUDIENCE) {
                                 LocalConfig.mAudience--;
+                            } else if (enterUserInfo.getRole() == CLIENT_ROLE_BROADCASTER) {
+                                LocalConfig.mAuthorSize--;
                             }
                             mTTTRtcEngineHelper.mRemoteUserLastVideoData.remove(enterUserInfo.getId());
                             mTTTRtcEngineHelper.mRemoteUserLastAudioData.remove(enterUserInfo.getId());
                             mTTTRtcEngineHelper.adJustRemoteViewDisplay(false, enterUserInfo);
                         }
+                        if (mMoreInfoDialog != null)
+                            mMoreInfoDialog.updatePersonNum();
                         break;
                     case LocalConstans.CALL_BACK_ON_AUDIO_VOLUME_INDICATION:
                         mTTTRtcEngineHelper.audioVolumeIndication(mJniObjs.mUid, mJniObjs.mAudioLevel, mIsMute);
                         break;
                     case LocalConstans.CALL_BACK_ON_SEI:
+                        MyLog.d("CALL_BACK_ON_SEI", "start parse sei....");
                         String sei = mJniObjs.mSEI;
                         TreeSet<EnterUserInfo> mInfos = new TreeSet<>();
                         try {
@@ -602,11 +612,12 @@ public class MainActivity extends BaseActivity implements DataInfoShowCallback {
                                 } else {
                                     userId = Long.parseLong(devid);
                                 }
-
+                                MyLog.d("CALL_BACK_ON_SEI", "parse user id : " + userId);
                                 if (userId != LocalConfig.mBroadcasterID) {
                                     for (int j = 0; j < listData.size(); j++) {
                                         EnterUserInfo temp = listData.get(j);
                                         if (temp.getId() == userId) {
+                                            MyLog.d("CALL_BACK_ON_SEI", "parse user x : " + x + " | y : " + y);
                                             temp.setXYLocation(y, x);
                                             mInfos.add(temp);
                                             break;
@@ -620,10 +631,17 @@ public class MainActivity extends BaseActivity implements DataInfoShowCallback {
                         }
 
                         mTTTRtcEngineHelper.removeErrorIndexView(mInfos);
+                        MyLog.d("CALL_BACK_ON_SEI", "removeErrorIndexView over!");
                         Iterator<EnterUserInfo> iterator = mInfos.iterator();
                         while (iterator.hasNext()) {
                             EnterUserInfo next = iterator.next();
                             mTTTRtcEngineHelper.adJustRemoteViewDisplay(true, next);
+                        }
+
+                        MyLog.d("CALL_BACK_ON_SEI", "adJustRemoteViewDisplay over!");
+                        for (int i = 0; i < mLocalSeiList.size(); i++) {
+                            MyLog.d("CALL_BACK_ON_SEI", "VideoViewObj : " + mLocalSeiList.get(i).mIsUsing
+                                    + " | uid : " + mLocalSeiList.get(i).mBindUid);
                         }
                         break;
                     case LocalConstans.CALL_BACK_ON_REMOTE_VIDEO_STATE:
@@ -674,25 +692,13 @@ public class MainActivity extends BaseActivity implements DataInfoShowCallback {
                             VideoViewObj videoCusSei = mLocalSeiList.get(i);
                             if (videoCusSei.mBindUid == muteUid) {
                                 mIsFound = true;
-                                MyLog.i("OnRemoteAudioMuted find it .... " + mJniObjs.mUid);
-                                if (mIsMuteAuido) {
-                                    videoCusSei.mIsRemoteDisableAudio = true;
-                                    videoCusSei.mMuteVoiceIcon.setVisibility(View.VISIBLE);
-                                    videoCusSei.mSpeakImage.setVisibility(View.INVISIBLE);
-                                    videoCusSei.mIsMuted = true;
+                                videoCusSei.mIsMuteRemote = mIsMuteAuido;
+                                if (mIsMuteAuido || videoCusSei.mIsRemoteDisableAudio) {
                                     videoCusSei.mMuteVoiceBT.setText(getResources().getString(R.string.remote_window_cancel_ban));
+                                    videoCusSei.mSpeakImage.setImageResource(R.drawable.jinyan);
                                 } else {
-                                    videoCusSei.mIsRemoteDisableAudio = false;
-                                    videoCusSei.mMuteVoiceIcon.setVisibility(View.INVISIBLE);
-                                    videoCusSei.mSpeakImage.setVisibility(View.VISIBLE);
-                                    videoCusSei.mIsMuted = false;
                                     videoCusSei.mMuteVoiceBT.setText(getResources().getString(R.string.remote_window_ban));
-
-                                    if (muteUid == LocalConfig.mLoginUserID) {
-                                        if (videoCusSei.mIsMuteRemote) {
-                                            mTTTRtcEngineHelper.speakMuteClick(videoCusSei);
-                                        }
-                                    }
+                                    videoCusSei.mSpeakImage.setImageResource(R.drawable.mainly_btn_speaker_selector);
                                 }
                                 break;
                             }
@@ -704,8 +710,41 @@ public class MainActivity extends BaseActivity implements DataInfoShowCallback {
                             mMutedAudioUserID.add(mJniObjs.mUid);
                         }
                         break;
+
+                    case LocalConstans.CALL_BACK_ON_SPEAK_MUTE_AUDIO:
+                        long speakUid = mJniObjs.mUid;
+                        boolean mIsSpeakingMute = mJniObjs.mIsDisableAudio;
+                        mIsFound = false;
+                        MyLog.i("CALL_BACK_ON_SPEAK_MUTE_AUDIO " + mJniObjs.mUid + " | mIsMuteAuido : " + mIsSpeakingMute);
+                        for (int i = 0; i < mLocalSeiList.size(); i++) {
+                            VideoViewObj videoCusSei = mLocalSeiList.get(i);
+                            if (videoCusSei.mBindUid == speakUid) {
+                                mIsFound = true;
+                                videoCusSei.mIsRemoteDisableAudio = mIsSpeakingMute;
+                                if (mIsSpeakingMute) {
+                                    videoCusSei.mMuteVoiceBT.setText(getResources().getString(R.string.remote_window_cancel_ban));
+                                    videoCusSei.mSpeakImage.setImageResource(R.drawable.jinyan);
+                                } else {
+                                    videoCusSei.mMuteVoiceBT.setText(getResources().getString(R.string.remote_window_ban));
+                                    videoCusSei.mSpeakImage.setImageResource(R.drawable.mainly_btn_speaker_selector);
+                                    videoCusSei.mIsMuteRemote = false;
+                                    if (speakUid == LocalConfig.mLoginUserID)
+                                        mTTTEngine.muteLocalAudioStream(false);
+                                }
+                                break;
+                            }
+                        }
+                        if (!mIsFound && mJniObjs.mUid != LocalConfig.mBroadcasterID
+                                && mIsSpeakingMute) {
+                            MyLog.i("OnRemoteAudioMuted could't find it .... " + mJniObjs.mUid);
+                            mMutedSpeakUserID.add(mJniObjs.mUid);
+                        }
+
+                        break;
                     case LocalConstans.CALL_BACK_ON_AUDIO_ROUTE:
                         int mAudioRoute = mJniObjs.mAudioRoute;
+                        if (mMoreInfoDialog != null)
+                            mMoreInfoDialog.audioRouteChange(mAudioRoute);
                         if (LocalConfig.mRole == CLIENT_ROLE_ANCHOR) {
                             if (mAudioRoute == Constants.AUDIO_ROUTE_SPEAKER) {
                                 mIsHeadset = false;
@@ -722,7 +761,7 @@ public class MainActivity extends BaseActivity implements DataInfoShowCallback {
                                     mAudioChannel.setImageResource(R.drawable.mainly_btn_headset_selector);
                                 }
                             }
-                        } else if (LocalConfig.mRole == Constants.CLIENT_ROLE_BROADCASTER) {
+                        } else if (LocalConfig.mRole == CLIENT_ROLE_BROADCASTER) {
                             for (int i = 0; i < mLocalSeiList.size(); i++) {
                                 VideoViewObj videoCusSei = mLocalSeiList.get(i);
                                 if (videoCusSei.mBindUid == LocalConfig.mLoginUserID) {
@@ -748,6 +787,15 @@ public class MainActivity extends BaseActivity implements DataInfoShowCallback {
                         break;
                 }
             }
+            // -----以下为SDK测试代码，无需关注-----
+            else if ("ttt.test.interface.string".equals(action)) {
+                String testString = intent.getStringExtra("testString");
+                if (!TextUtils.isEmpty(testString)) {
+                    TestUtils.mTestInterfaceListAdapter.notifyDataSetChanged();
+                }
+            }
+            // -----以上为SDK测试代码，无需关注-----
         }
     }
+
 }

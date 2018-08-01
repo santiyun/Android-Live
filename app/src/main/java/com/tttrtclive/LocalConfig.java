@@ -1,5 +1,7 @@
 package com.tttrtclive;
 
+import com.tttrtclive.ui.SplashActivity;
+
 import java.util.ArrayList;
 
 /**
@@ -12,11 +14,13 @@ public class LocalConfig {
 
     public static int mRole;
 
-    public static String mIP;
+    public static String mIP = "";
 
     public static int mPort;
 
     public static String mPushUrl;
+
+    public static String mExtraPushUrl;
     //rtmp://cc-push.3ttech.cn/sdk/
     //rtmp://sjy-push.3ttech.cn/live/
     //rtmp://push.3ttech.cn/sdk/
@@ -39,4 +43,6 @@ public class LocalConfig {
     public static boolean mLocalMuteAuido;
 
     public static int mCurrentAudioRoute;
+
+    public static int mRoomMode = SplashActivity.VIDEO_MODE;
 }

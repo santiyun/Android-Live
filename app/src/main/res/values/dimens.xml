@@ -5,9 +5,8 @@
 
     <dimen name="main_btn_com_margin_20">18dp</dimen>
 	<dimen name="main_btn_com_margin_16">14dp</dimen>
-	<dimen name="main_btn_com_margin_24">15dp</dimen>
+	<dimen name="main_btn_com_margin_24">10dp</dimen>
 
 	<dimen name="videolayout_btn_com_margin_4">4dp</dimen>
-	<dimen name="videolayout_btn_com_margin_6">6dp</dimen>
 	<dimen name="videolayout_btn_com_margin_8">8dp</dimen>
 </resources>

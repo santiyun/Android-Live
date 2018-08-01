@@ -11,27 +11,30 @@ import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.text.Editable;
+import android.text.TextUtils;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.RadioButton;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.tttrtclive.Helper.TTTRtcEngineHelper;
 import com.tttrtclive.LocalConfig;
 import com.tttrtclive.LocalConstans;
+import com.tttrtclive.MainApplication;
 import com.tttrtclive.R;
 import com.tttrtclive.bean.JniObjs;
 import com.tttrtclive.bean.PermissionBean;
-import com.tttrtclive.bean.ResolutionManager;
 import com.tttrtclive.callback.MyTTTRtcEngineEventHandler;
+import com.tttrtclive.dialog.VideoInfoDialog;
+import com.tttrtclive.test.TestUtils;
 import com.tttrtclive.utils.MyLog;
 import com.tttrtclive.utils.PermissionUtils;
 import com.tttrtclive.utils.SharedPreferencesUtil;
+import com.wushuangtech.jni.NativeInitializer;
 import com.wushuangtech.library.Constants;
+import com.wushuangtech.library.GlobalConfig;
 import com.wushuangtech.utils.PviewLog;
 import com.wushuangtech.wstechapi.TTTRtcEngine;
 
@@ -46,20 +49,24 @@ import static com.wushuangtech.library.Constants.CLIENT_ROLE_ANCHOR;
 import static com.wushuangtech.library.Constants.CLIENT_ROLE_AUDIENCE;
 import static com.wushuangtech.library.Constants.CLIENT_ROLE_BROADCASTER;
 import static com.wushuangtech.library.Constants.ERROR_ENTER_ROOM_BAD_VERSION;
-import static com.wushuangtech.library.Constants.ERROR_ENTER_ROOM_FAILED;
+import static com.wushuangtech.library.Constants.ERROR_ENTER_ROOM_NOEXIST;
 import static com.wushuangtech.library.Constants.ERROR_ENTER_ROOM_TIMEOUT;
 import static com.wushuangtech.library.Constants.ERROR_ENTER_ROOM_UNKNOW;
 import static com.wushuangtech.library.Constants.ERROR_ENTER_ROOM_VERIFY_FAILED;
 
 public class SplashActivity extends BaseActivity {
 
+    public static final int VIDEO_MODE = 1;
+    public static final int AUDIO_MODE = 2;
+
     private int mRole = -1;
-    private Dialog mDialog;
-    private boolean mIsLoging;
+    private ProgressDialog mDialog;
+    public static boolean mIsLoging;
     private EditText mRoomIDET;
     private RadioButton mHostBT, mAuthorBT, mAudienceBT;
     private MyLocalBroadcastReceiver mLocalBroadcast;
     private TTTRtcEngineHelper mTTTRtcEngineHelper;
+    private VideoInfoDialog videoInfoDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,6 +109,7 @@ public class SplashActivity extends BaseActivity {
             init();
         }
 
+        initTestCode();
     }
 
     private void init() {
@@ -122,6 +130,11 @@ public class SplashActivity extends BaseActivity {
         filter.addAction(MyTTTRtcEngineEventHandler.TAG);
         registerReceiver(mLocalBroadcast, filter);
         MyLog.d("SplashActivity onCreate.... model : " + Build.MODEL);
+        mDialog = new ProgressDialog(this);
+        mDialog.setTitle("");
+        mDialog.setMessage("正在进入房间...");
+
+        videoInfoDialog = new VideoInfoDialog(mContext, R.style.NoBackGroundDialog);
     }
 
     private void initView() {
@@ -134,23 +147,8 @@ public class SplashActivity extends BaseActivity {
         String result = String.format(string, TTTRtcEngine.getInstance().getVersion());
         mVersion.setText(result);
 
-        ResolutionManager resolutionManager = new ResolutionManager();
-        ArrayList<String> resolutionList = resolutionManager.getList();
-        Spinner sp = findViewById(R.id.resolution);
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.resolution, resolutionList);
-        sp.setAdapter(adapter);
-        sp.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                int currentResolution = resolutionManager.getIndex(resolutionList.get(position));
-                mTTTEngine.setVideoProfile(currentResolution, true);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
+        TextView mSdkVersion = findViewById(R.id.sdk_version);
+        mSdkVersion.setText("sdk version : " + NativeInitializer.getIntance().getVersion());
 
     }
 
@@ -176,12 +174,15 @@ public class SplashActivity extends BaseActivity {
         switch (v.getId()) {
             case R.id.host:
                 mRole = CLIENT_ROLE_ANCHOR;
+                findViewById(R.id.set).setVisibility(View.VISIBLE);
                 break;
             case R.id.vice:
                 mRole = CLIENT_ROLE_BROADCASTER;
+                findViewById(R.id.set).setVisibility(View.INVISIBLE);
                 break;
             case R.id.audience:
                 mRole = CLIENT_ROLE_AUDIENCE;
+                findViewById(R.id.set).setVisibility(View.INVISIBLE);
                 break;
         }
     }
@@ -193,15 +194,35 @@ public class SplashActivity extends BaseActivity {
             return;
         }
 
+        if (mIsLoging) {
+            return;
+        }
+        mIsLoging = true;
+
         // 重置直播房间内的参数
         mAudience = 0;
         mAuthorSize = 0;
 
         // 设置频道属性
         mTTTEngine.setChannelProfile(Constants.CHANNEL_PROFILE_LIVE_BROADCASTING);
-        // 启用视频模式
-        mTTTEngine.enableVideo();
-        mTTTEngine.setHighQualityAudioParameters(true);
+
+        if (LocalConfig.mRoomMode == VIDEO_MODE) {
+            // 启用视频模式
+            mTTTEngine.enableVideo();
+            mTTTEngine.muteLocalVideoStream(false);
+        }
+        // app里的录屏功能需开启高音质，仅支持5.0以上版本
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            mTTTEngine.setHighQualityAudioParameters(true);
+        }
+        // -----以下为SDK测试代码，无需关注-----
+        if (TestUtils.mTestDialog.mIsHightVoice) {
+            mTTTEngine.setHighQualityAudioParameters(true);
+        } else {
+            mTTTEngine.setHighQualityAudioParameters(false);
+        }
+        // -----以上为SDK测试代码，无需关注-----
+        TestUtils.setAddressAndPushUrl();
         // 设置进入直播房间的角色
         if (mRole == -1) {
             if (mHostBT.isChecked()) {
@@ -218,26 +239,21 @@ public class SplashActivity extends BaseActivity {
         LocalConfig.mCDNAddress = mPullUrlPrefix + mLoginRoomID;
         // 保存配置
         SharedPreferencesUtil.setParam(this, "RoomID", LocalConfig.mLoginRoomID);
-        if (mIsLoging) {
-            return;
-        }
-        mIsLoging = true;
-        showWaittingDialog();
-        new Thread(() -> {
-            PviewLog.testPrint("joinChannel" , "begin");
-            int result = mTTTEngine.joinChannel("", String.valueOf(LocalConfig.mLoginRoomID), LocalConfig.mLoginUserID);
-            MyLog.d("joinChannel result : " + result +
-                    " | Room ID : " + LocalConfig.mLoginRoomID + " | User ID : " + LocalConfig.mLoginUserID);
-        }).start();
 
-    }
-
-    private void showWaittingDialog() {
-        if (mDialog == null) {
-            mDialog = ProgressDialog.show(this, "", "正在进入房间...");
+        // 设置推流格式H264/H265
+        if (videoInfoDialog.mCodingFormat == 0) {
+            GlobalConfig.mPushUrl = LocalConfig.mPushUrlPrefix + LocalConfig.mLoginRoomID + "?trans=1";
         } else {
-            mDialog.show();
+            GlobalConfig.mPushUrl = LocalConfig.mPushUrlPrefix + LocalConfig.mLoginRoomID;
         }
+
+        if (LocalConfig.mExtraPushUrl != null)
+            GlobalConfig.mPushUrl = LocalConfig.mExtraPushUrl;
+
+        mTTTEngine.joinChannel("", String.valueOf(LocalConfig.mLoginRoomID), LocalConfig.mLoginUserID);
+        mDialog.show();
+        return;
+
     }
 
     @Override
@@ -268,31 +284,27 @@ public class SplashActivity extends BaseActivity {
                         MyTTTRtcEngineEventHandler.MSG_TAG);
                 switch (mJniObjs.mJniType) {
                     case LocalConstans.CALL_BACK_ON_ENTER_ROOM:
-                        if (mDialog != null) {
-                            mDialog.dismiss();
-                        }
-                        mIsLoging = false;
+                        mDialog.dismiss();
                         //界面跳转
                         startActivity(new Intent(mContext, MainActivity.class));
-                        PviewLog.testPrint("joinChannel" , "end");
+                        PviewLog.testPrint("joinChannel", "end");
+                        mIsLoging = false;
                         break;
                     case LocalConstans.CALL_BACK_ON_ERROR:
                         mIsLoging = false;
-                        if (mDialog != null) {
-                            mDialog.dismiss();
-                        }
+                        mDialog.dismiss();
                         final int errorType = mJniObjs.mErrorType;
                         runOnUiThread(() -> {
                             MyLog.d("onReceive CALL_BACK_ON_ERROR errorType : " + errorType);
                             if (errorType == ERROR_ENTER_ROOM_TIMEOUT) {
                                 Toast.makeText(mContext, getResources().getString(R.string.error_timeout), Toast.LENGTH_SHORT).show();
-                            } else if (errorType == ERROR_ENTER_ROOM_FAILED) {
+                            } else if (errorType == ERROR_ENTER_ROOM_UNKNOW) {
                                 Toast.makeText(mContext, getResources().getString(R.string.error_unconnect), Toast.LENGTH_SHORT).show();
                             } else if (errorType == ERROR_ENTER_ROOM_VERIFY_FAILED) {
                                 Toast.makeText(mContext, getResources().getString(R.string.error_verification_code), Toast.LENGTH_SHORT).show();
                             } else if (errorType == ERROR_ENTER_ROOM_BAD_VERSION) {
                                 Toast.makeText(mContext, getResources().getString(R.string.error_version), Toast.LENGTH_SHORT).show();
-                            } else if (errorType == ERROR_ENTER_ROOM_UNKNOW) {
+                            } else if (errorType == ERROR_ENTER_ROOM_NOEXIST) {
                                 Toast.makeText(mContext, getResources().getString(R.string.error_noroom), Toast.LENGTH_SHORT).show();
                             }
                         });
@@ -302,4 +314,50 @@ public class SplashActivity extends BaseActivity {
         }
     }
 
+    public void onSetButtonClick(View v) {
+        videoInfoDialog.okButton.setOnClickListener(v1 -> {
+            mTTTEngine.setVideoMixerParams(videoInfoDialog.mBitRate, videoInfoDialog.mFrameRate, videoInfoDialog.mWidth, videoInfoDialog.mHeight);
+            mTTTEngine.setAudioMixerParams(videoInfoDialog.mAudioBitRate, videoInfoDialog.mSamplingRate, videoInfoDialog.mChannels);
+
+            videoInfoDialog.dismiss();
+        });
+        videoInfoDialog.show();
+
+    }
+
+    public void onClickModeButton(View v) {
+        ((RadioButton)findViewById(R.id.videolink)).setChecked(false);
+        ((RadioButton)findViewById(R.id.audiolink)).setChecked(false);
+        ((RadioButton) v).setChecked(true);
+        final MainApplication application = (MainApplication) getApplication();
+        switch (v.getId()) {
+            case R.id.audiolink:
+                LocalConfig.mRoomMode = AUDIO_MODE;
+                application.setAppID("496e737d22ecccb8cfa780406b9964d0");
+                break;
+            case R.id.videolink:
+                LocalConfig.mRoomMode = VIDEO_MODE;
+                application.setAppID("a967ac491e3acf92eed5e1b5ba641ab7");
+                break;
+        }
+    }
+
+    // -----以下为SDK测试代码，无需关注-----
+    public void initTestCode() {
+        TestUtils.initTestDialog(this);
+        TestUtils.initTestBroadcast(this);
+    }
+
+    public void onTestButtonClick(View v) {
+        Editable text = mRoomIDET.getText();
+        String roomID = "";
+        if (!TextUtils.isEmpty(text)) {
+            roomID = text.toString();
+        }
+
+        TestUtils.mTestDialog.setRoomID(roomID);
+        TestUtils.mTestDialog.setServerParams();
+        TestUtils.mTestDialog.show();
+    }
+    // -----以上为SDK测试代码，无需关注-----
 }

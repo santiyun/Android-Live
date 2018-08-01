@@ -1,5 +1,7 @@
 package com.tttrtclive.bean;
 
+import android.graphics.Point;
+
 import com.wushuangtech.library.Constants;
 
 import java.util.ArrayList;

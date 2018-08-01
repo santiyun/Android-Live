@@ -5,48 +5,18 @@
 				android:layout_height="match_parent"
 				android:visibility="invisible">
 
-	<LinearLayout
-		android:id="@+id/videolayout_speaking"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_marginLeft="@dimen/videolayout_btn_com_margin_8"
-		android:layout_marginTop="@dimen/videolayout_btn_com_margin_8"
-		android:orientation="horizontal">
-
-		<ImageView
-			android:id="@+id/speak_image"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_marginRight="@dimen/videolayout_btn_com_margin_4"/>
-
-		<TextView
-			android:id="@+id/speak_text"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_gravity="center_vertical"
-			android:layout_marginLeft="@dimen/videolayout_btn_com_margin_4"
-			android:text="@string/videoly_speaking"
-			android:textColor="#0be0d5"
-			android:textSize="10sp"
-			android:visibility="gone"/>
-	</LinearLayout>
-
 	<ImageView
-		android:id="@+id/videolayout_muted"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_marginLeft="@dimen/videolayout_btn_com_margin_8"
-		android:layout_marginTop="@dimen/videolayout_btn_com_margin_8"
-		android:src="@drawable/jinyan"
-		android:visibility="invisible"/>
+		android:id="@+id/speak_image"
+		android:layout_width="30dp"
+		android:layout_height="30dp"
+		android:src="@drawable/mainly_btn_speaker_selector"/>
 
 	<ImageView
 		android:id="@+id/videoly_btn_camera"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_below="@+id/videolayout_muted"
-		android:layout_marginLeft="@dimen/videolayout_btn_com_margin_8"
-		android:layout_marginTop="15dp"
+		android:layout_width="30dp"
+		android:layout_height="30dp"
+		android:layout_below="@+id/speak_image"
+		android:layout_marginTop="5dp"
 		android:visibility="invisible"/>
 
 	<TextView
@@ -63,11 +33,8 @@
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_alignParentRight="true"
-		android:layout_marginLeft="@dimen/videolayout_btn_com_margin_8"
 		android:layout_marginRight="@dimen/videolayout_btn_com_margin_4"
 		android:layout_marginTop="@dimen/videolayout_btn_com_margin_8"
-		android:paddingBottom="8dp"
-		android:paddingLeft="8dp"
 		android:src="@drawable/xiala"
 		android:visibility="invisible"/>
 

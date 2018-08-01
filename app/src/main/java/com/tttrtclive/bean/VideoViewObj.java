@@ -14,16 +14,17 @@ public class VideoViewObj {
     public long mBindUid;
     public boolean mIsUsing;
     public boolean mIsMuted;
+
     public boolean mIsMuteRemote;
     public boolean mIsRemoteDisableAudio;
     public ImageView mReserveCamera;
     public TextView mRemoteUserID;
     public TextView mMuteVoiceBT;
-    public View mMuteVoiceIcon;
     public ViewGroup mRoot;
     public View mRootBG;
     public View mContentRoot;
     public ImageView mSpeakImage;
+    public ImageView mRootHead;
 
     public void clear() {
         mRoot = null;
@@ -33,7 +34,6 @@ public class VideoViewObj {
         mReserveCamera = null;
         mRemoteUserID = null;
         mMuteVoiceBT = null;
-        mMuteVoiceIcon = null;
         clearData();
     }
 

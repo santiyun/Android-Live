@@ -87,6 +87,17 @@
 		app:layout_constraintTop_toTopOf="@+id/push_url"
 		app:layout_constraintVertical_bias="0.65"/>
 
+	<TextView
+		android:id="@+id/textView_pushurl2"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_marginBottom="8dp"
+		android:layout_marginTop="8dp"
+		android:text="备用:"
+		app:layout_constraintBottom_toBottomOf="@+id/push_url2"
+		app:layout_constraintEnd_toEndOf="@+id/textView_pushurl"
+		app:layout_constraintTop_toTopOf="@+id/push_url2" />
+
 	<EditText
 		android:id="@+id/push_url"
 		android:layout_width="0dp"
@@ -103,6 +114,23 @@
 		app:layout_constraintRight_toRightOf="parent"
 		app:layout_constraintTop_toBottomOf="@+id/ip"/>
 
+	<EditText
+		android:id="@+id/push_url2"
+		android:layout_width="0dp"
+		android:layout_height="40dp"
+		android:layout_marginLeft="8dp"
+		android:layout_marginRight="8dp"
+		android:layout_marginTop="8dp"
+		android:background="@drawable/dialog_edit"
+		android:ems="10"
+		android:gravity="center"
+		android:inputType="textPersonName"
+		android:textSize="16sp"
+		app:layout_constraintHorizontal_bias="0.111"
+		app:layout_constraintLeft_toRightOf="@+id/textView_pushurl"
+		app:layout_constraintRight_toRightOf="parent"
+		app:layout_constraintTop_toBottomOf="@+id/push_url" />
+
 	<Button
 		android:id="@+id/cancel"
 		android:layout_width="0dp"
@@ -114,7 +142,7 @@
 		android:text="OK"
 		app:layout_constraintLeft_toLeftOf="parent"
 		app:layout_constraintRight_toRightOf="parent"
-		app:layout_constraintTop_toBottomOf="@+id/push_url"/>
+		app:layout_constraintTop_toBottomOf="@+id/push_url2" />
 
 	<RadioGroup
 		android:id="@+id/audio_selector_ly"

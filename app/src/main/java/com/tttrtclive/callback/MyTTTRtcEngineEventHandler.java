@@ -33,9 +33,11 @@ import static com.tttrtclive.LocalConstans.CALL_BACK_ON_REMOTE_VIDEO_STATE;
 import static com.tttrtclive.LocalConstans.CALL_BACK_ON_REMOVE_FIRST_FRAME_COME;
 import static com.tttrtclive.LocalConstans.CALL_BACK_ON_SCREEN_RECORD_TIME;
 import static com.tttrtclive.LocalConstans.CALL_BACK_ON_SEI;
+import static com.tttrtclive.LocalConstans.CALL_BACK_ON_SPEAK_MUTE_AUDIO;
 import static com.tttrtclive.LocalConstans.CALL_BACK_ON_USER_JOIN;
 import static com.tttrtclive.LocalConstans.CALL_BACK_ON_USER_MUTE_VIDEO;
 import static com.tttrtclive.LocalConstans.CALL_BACK_ON_USER_OFFLINE;
+import static com.tttrtclive.LocalConstans.CALL_BACK_ON_USER_ROLE_CHANGED;
 
 
 /**
@@ -171,8 +173,8 @@ public class MyTTTRtcEngineEventHandler extends TTTRtcEngineEventHandler {
 
     @Override
     public void onRemoteVideoStats(RemoteVideoStats stats) {
-        MyLog.i("wzg", "onRemoteVideoStats.... uid : " + stats.getUid() + " | bitrate : " + stats.getReceivedBitrate()
-                + " | framerate : " + stats.getReceivedFrameRate());
+//        MyLog.i("wzg", "onRemoteVideoStats.... uid : " + stats.getUid() + " | bitrate : " + stats.getReceivedBitrate()
+//                + " | framerate : " + stats.getReceivedFrameRate());
         JniObjs mJniObjs = new JniObjs();
         mJniObjs.mJniType = CALL_BACK_ON_REMOTE_VIDEO_STATE;
         mJniObjs.mRemoteVideoStats = stats;
@@ -185,7 +187,7 @@ public class MyTTTRtcEngineEventHandler extends TTTRtcEngineEventHandler {
 
     @Override
     public void onRemoteAudioStats(RemoteAudioStats stats) {
-        MyLog.i("wzg", "RemoteAudioStats.... uid : " + stats.getUid() + " | bitrate : " + stats.getReceivedBitrate());
+//        MyLog.i("wzg", "RemoteAudioStats.... uid : " + stats.getUid() + " | bitrate : " + stats.getReceivedBitrate());
         JniObjs mJniObjs = new JniObjs();
         mJniObjs.mJniType = CALL_BACK_ON_REMOTE_AUDIO_STATE;
         mJniObjs.mRemoteAudioStats = stats;
@@ -238,6 +240,20 @@ public class MyTTTRtcEngineEventHandler extends TTTRtcEngineEventHandler {
         MyLog.i("wzg", "OnRemoteAudioMuted.... uid : " + uid + " | muted : " + muted + " | mIsSaveCallBack : " + mIsSaveCallBack);
         JniObjs mJniObjs = new JniObjs();
         mJniObjs.mJniType = CALL_BACK_ON_MUTE_AUDIO;
+        mJniObjs.mUid = uid;
+        mJniObjs.mIsDisableAudio = muted;
+        if (mIsSaveCallBack) {
+            saveCallBack(mJniObjs);
+        } else {
+            sendMessage(mJniObjs);
+        }
+    }
+
+    @Override
+    public void onSpeakingMuted(long uid, boolean muted) {
+        MyLog.i("wzg", "onSpeakingMuted.... uid : " + uid + " | muted : " + muted + " | mIsSaveCallBack : " + mIsSaveCallBack);
+        JniObjs mJniObjs = new JniObjs();
+        mJniObjs.mJniType = CALL_BACK_ON_SPEAK_MUTE_AUDIO;
         mJniObjs.mUid = uid;
         mJniObjs.mIsDisableAudio = muted;
         if (mIsSaveCallBack) {
@@ -303,6 +319,20 @@ public class MyTTTRtcEngineEventHandler extends TTTRtcEngineEventHandler {
     }
 
     @Override
+    public void onUserRoleChanged(long userID, int userRole) {
+        MyLog.i("wzg", "onUserRoleChanged... userID : " + userID + " userRole : " + userRole);
+        JniObjs mJniObjs = new JniObjs();
+        mJniObjs.mJniType = CALL_BACK_ON_USER_ROLE_CHANGED;
+        mJniObjs.mUid = userID;
+        mJniObjs.mIdentity = userRole;
+        if (mIsSaveCallBack) {
+            saveCallBack(mJniObjs);
+        } else {
+            sendMessage(mJniObjs);
+        }
+    }
+
+    @Override
     public void OnSignalRecived(long nSrcUserID, String sSeqID, String strData) {
         MyLog.i("wzg", "OnSignalRecived: ");
     }
@@ -314,7 +344,7 @@ public class MyTTTRtcEngineEventHandler extends TTTRtcEngineEventHandler {
 
     @Override
     public void onRtcStats(RtcStats stats) {
-        MyLog.i("wzg", "onRtcStats....  " + stats.toString());
+//        MyLog.i("wzg", "onRtcStats....  " + stats.toString());
     }
 
     @Override
