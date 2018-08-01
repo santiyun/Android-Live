@@ -6,3 +6,8 @@
 * Android Studio 2.0 +
 * 真实 Android 设备 (Nexus 5X 或者其它设备)
 * 部分模拟器会存在功能缺失或者性能问题，所以推荐使用真机
+
+## 接口变动
+### 2018.08.01
+* 添加回调 public void onSpeakingMuted(long uid, boolean muted)
+</br>说明：此接口为被禁言回调，原本无论被禁言还是自己主动禁言都回调onUserMuteAudio。
