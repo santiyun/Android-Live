@@ -1,1 +1,13 @@
 include ':app'
+
+/*include ':enterconfapi'
+project (':enterconfapi').projectDir = new File("../WS_ANDROID_MOMODemo/enterconfapi")
+
+include ':myvideo'
+project (':myvideo').projectDir = new File("../WS_ANDROID_MOMODemo/myvideo")
+
+include ':myaudio'
+project (':myaudio').projectDir = new File("../WS_ANDROID_MOMODemo/myaudio")
+
+include ':wstechapi'
+project (':wstechapi').projectDir = new File("../WS_ANDROID_MOMODemo/wstechapi")*/

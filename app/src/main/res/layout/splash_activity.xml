@@ -11,26 +11,26 @@
 
 	<Button
 		android:id="@+id/enter"
-		android:layout_width="278dp"
+		android:layout_width="0dp"
 		android:layout_height="40dp"
-		android:layout_marginEnd="8dp"
-		android:layout_marginStart="8dp"
-		android:layout_marginTop="80dp"
+		android:layout_marginBottom="8dp"
 		android:background="@drawable/login_enter"
 		android:onClick="onClickEnterButton"
 		android:text="@string/welcome_gointo"
 		android:textColor="#FFFFFF"
-		app:layout_constraintEnd_toEndOf="parent"
-		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintTop_toBottomOf="@+id/room_id" />
+		app:layout_constraintBottom_toTopOf="@+id/company"
+		app:layout_constraintEnd_toEndOf="@+id/room_id"
+		app:layout_constraintStart_toStartOf="@+id/room_id_text"
+		app:layout_constraintTop_toBottomOf="@+id/room_id"
+		app:layout_constraintVertical_bias="0.6" />
 
 	<TextView
 		android:id="@+id/set"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
+		android:layout_width="100dp"
+		android:layout_height="40dp"
 		android:layout_marginEnd="8dp"
 		android:layout_marginStart="8dp"
-		android:layout_marginTop="21dp"
+		android:gravity="center"
 		android:inputType="textEmailAddress"
 		android:onClick="onSetButtonClick"
 		android:text="高级设置"
@@ -46,39 +46,11 @@
 		android:layout_height="27dp"
 		android:layout_marginEnd="8dp"
 		android:layout_marginStart="8dp"
-		android:layout_marginTop="50dp"
+		android:layout_marginTop="90dp"
 		android:background="@drawable/logo"
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toTopOf="parent" />
-
-	<TextView
-		android:id="@+id/room_id_text"
-		android:layout_width="wrap_content"
-		android:layout_height="33dp"
-		android:layout_marginTop="43dp"
-		android:gravity="right|center_vertical"
-		android:singleLine="true"
-		android:text="@string/welcome_roomid"
-		android:textColor="#FFFFFF"
-		android:textSize="15sp"
-		app:layout_constraintStart_toStartOf="@+id/videolink"
-		app:layout_constraintTop_toBottomOf="@+id/videolink" />
-
-	<EditText
-		android:id="@+id/room_id"
-		android:layout_width="205dp"
-		android:layout_height="33dp"
-		android:layout_marginStart="12dp"
-		android:background="@drawable/login_edit"
-		android:ems="10"
-		android:hint="请输入直播间ID"
-		android:inputType="number"
-		android:paddingLeft="12dp"
-		android:textColor="#0FFFF1"
-		android:textSize="12sp"
-		app:layout_constraintBottom_toBottomOf="@+id/room_id_text"
-		app:layout_constraintStart_toEndOf="@+id/room_id_text" />
 
 	<TextView
 		android:id="@+id/textView"
@@ -88,25 +60,14 @@
 		android:text="@string/welcome_role"
 		android:textColor="#FFFFFF"
 		android:textSize="15sp"
-		app:layout_constraintStart_toStartOf="@+id/host"
+		app:layout_constraintStart_toStartOf="@+id/room_id_text"
 		app:layout_constraintTop_toBottomOf="@+id/imageView2" />
-
-	<TextView
-		android:id="@+id/textView4"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_marginTop="20dp"
-		android:text="模式"
-		android:textColor="#FFFFFF"
-		android:textSize="15sp"
-		app:layout_constraintStart_toStartOf="@+id/host"
-		app:layout_constraintTop_toBottomOf="@+id/host" />
 
 	<RadioButton
 		android:id="@+id/host"
 		android:layout_width="76dp"
 		android:layout_height="30dp"
-		android:layout_marginTop="18dp"
+		android:layout_marginTop="24dp"
 		android:background="@drawable/login_select_role"
 		android:button="@null"
 		android:checked="true"
@@ -115,48 +76,13 @@
 		android:text="@string/welcome_anchor"
 		android:textColor="@color/role_color"
 		android:textSize="12sp"
-		app:layout_constraintEnd_toStartOf="@+id/vice"
-		app:layout_constraintHorizontal_bias="0.5"
-		app:layout_constraintHorizontal_chainStyle="packed"
-		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintStart_toStartOf="@+id/room_id_text"
 		app:layout_constraintTop_toBottomOf="@+id/textView" />
-
-	<RadioButton
-		android:id="@+id/audiolink"
-		android:layout_width="114dp"
-		android:layout_height="30dp"
-		android:background="@drawable/login_select_role"
-		android:button="@null"
-		android:gravity="center"
-		android:onClick="onClickModeButton"
-		android:text="纯语音连麦"
-		android:textColor="@color/role_color"
-		android:textSize="12sp"
-		app:layout_constraintEnd_toEndOf="@+id/audience"
-		app:layout_constraintTop_toTopOf="@+id/videolink" />
-
-	<RadioButton
-		android:id="@+id/videolink"
-		android:layout_width="114dp"
-		android:layout_height="30dp"
-		android:layout_marginTop="18dp"
-		android:background="@drawable/login_select_role"
-		android:button="@null"
-		android:checked="true"
-		android:gravity="center"
-		android:onClick="onClickModeButton"
-		android:text="音视频连麦"
-		android:textColor="@color/role_color"
-		android:textSize="12sp"
-		app:layout_constraintStart_toStartOf="@+id/textView4"
-		app:layout_constraintTop_toBottomOf="@+id/textView4" />
 
 	<RadioButton
 		android:id="@+id/vice"
 		android:layout_width="76dp"
 		android:layout_height="30dp"
-		android:layout_marginEnd="26dp"
-		android:layout_marginStart="26dp"
 		android:background="@drawable/login_select_role"
 		android:button="@null"
 		android:gravity="center"
@@ -164,26 +90,42 @@
 		android:text="@string/welcome_auxiliary"
 		android:textColor="@color/role_color"
 		android:textSize="12sp"
-		app:layout_constraintEnd_toStartOf="@+id/audience"
-		app:layout_constraintHorizontal_bias="0.5"
-		app:layout_constraintStart_toEndOf="@+id/host"
+		app:layout_constraintEnd_toEndOf="@+id/room_id"
 		app:layout_constraintTop_toTopOf="@+id/host" />
 
-	<RadioButton
-		android:id="@+id/audience"
-		android:layout_width="76dp"
-		android:layout_height="30dp"
-		android:background="@drawable/login_select_role"
-		android:button="@null"
-		android:gravity="center"
-		android:onClick="onClickRoleButton"
-		android:text="@string/welcome_audience"
-		android:textColor="@color/role_color"
+	<TextView
+		android:id="@+id/room_id_text"
+		android:layout_width="wrap_content"
+		android:layout_height="33dp"
+		android:gravity="right|center_vertical"
+		android:singleLine="true"
+		android:text="@string/welcome_roomid"
+		android:textColor="#FFFFFF"
+		android:textSize="15sp"
+		app:layout_constraintBottom_toBottomOf="@+id/room_id"
+		app:layout_constraintEnd_toStartOf="@+id/room_id"
+		app:layout_constraintHorizontal_bias="0.5"
+		app:layout_constraintHorizontal_chainStyle="packed"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toTopOf="@+id/room_id" />
+
+	<EditText
+		android:id="@+id/room_id"
+		android:layout_width="205dp"
+		android:layout_height="33dp"
+		android:layout_marginStart="12dp"
+		android:layout_marginTop="43dp"
+		android:background="@drawable/login_edit"
+		android:ems="10"
+		android:hint="请输入19位以内的房间ID"
+		android:inputType="number"
+		android:paddingLeft="12dp"
+		android:textColor="#0FFFF1"
 		android:textSize="12sp"
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintHorizontal_bias="0.5"
-		app:layout_constraintStart_toEndOf="@+id/vice"
-		app:layout_constraintTop_toTopOf="@+id/vice" />
+		app:layout_constraintStart_toEndOf="@+id/room_id_text"
+		app:layout_constraintTop_toBottomOf="@+id/vice" />
 
 	<Button
 		android:id="@+id/button"
@@ -203,39 +145,39 @@
 		android:id="@+id/company"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
+		android:layout_marginBottom="8dp"
 		android:layout_marginEnd="8dp"
 		android:layout_marginStart="8dp"
-		android:layout_marginTop="20dp"
 		android:text="@string/app_name"
 		android:textColor="#FFFFFF"
 		android:textSize="15sp"
+		app:layout_constraintBottom_toTopOf="@+id/version"
 		app:layout_constraintEnd_toEndOf="parent"
-		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintTop_toBottomOf="@+id/set" />
+		app:layout_constraintStart_toStartOf="parent" />
 
 	<TextView
 		android:id="@+id/version"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
+		android:layout_marginBottom="8dp"
 		android:layout_marginEnd="8dp"
 		android:layout_marginStart="8dp"
-		android:layout_marginTop="8dp"
 		android:text="@string/version_info"
 		android:textColor="#FFFFFF"
 		android:textSize="12sp"
+		app:layout_constraintBottom_toTopOf="@+id/sdk_version"
 		app:layout_constraintEnd_toEndOf="parent"
-		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintTop_toBottomOf="@+id/company" />
+		app:layout_constraintStart_toStartOf="parent" />
 
 	<TextView
 		android:id="@+id/sdk_version"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:layout_marginTop="8dp"
+		android:layout_marginBottom="16dp"
 		android:text="sdk version:"
 		android:textColor="#FFFFFF"
 		android:textSize="12sp"
-		app:layout_constraintStart_toStartOf="@+id/version"
-		app:layout_constraintTop_toBottomOf="@+id/version" />
+		app:layout_constraintBottom_toBottomOf="parent"
+		app:layout_constraintStart_toStartOf="@+id/version" />
 
 </android.support.constraint.ConstraintLayout>

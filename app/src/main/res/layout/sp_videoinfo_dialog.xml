@@ -3,12 +3,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/relativeLayout"
-    android:layout_width="317dp"
-    android:layout_height="370dp"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:layout_gravity="center"
-    android:background="@drawable/mainly_dialog_btn_cdnedit"
-    tools:layout_editor_absoluteX="21dp"
-    tools:layout_editor_absoluteY="128dp">
+    android:background="@drawable/mainly_dialog_btn_cdnedit">
 
     <TextView
         android:id="@+id/resolution"

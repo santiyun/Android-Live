@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="SoVideoItems">
+        <item>超低质量(120P)</item>
+        <item>低质量(240P)</item>
+        <item>高质量(360P)</item>
+        <item>超高质量(480P)</item>
+        <item>特高质量(720P)</item>
+        <item>自定义</item>
+    </string-array>
+    <string-array name="SoEncodeItems">
+        <item>H.264</item>
+        <item>H.265</item>
+    </string-array>
+    <string-array name="SoAudioItems">
+        <item>48kHz-单声道</item>
+        <item>44.1kHz-双声道</item>
+    </string-array>
+</resources>

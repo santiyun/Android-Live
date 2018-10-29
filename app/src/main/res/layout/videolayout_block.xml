@@ -11,14 +11,6 @@
 		android:layout_height="30dp"
 		android:src="@drawable/mainly_btn_speaker_selector"/>
 
-	<ImageView
-		android:id="@+id/videoly_btn_camera"
-		android:layout_width="30dp"
-		android:layout_height="30dp"
-		android:layout_below="@+id/speak_image"
-		android:layout_marginTop="5dp"
-		android:visibility="invisible"/>
-
 	<TextView
 		android:id="@+id/videoly_remote_userid"
 		android:layout_width="wrap_content"
@@ -27,16 +19,6 @@
 		android:layout_marginTop="@dimen/videolayout_btn_com_margin_8"
 		android:textColor="#FFFFFF"
 		android:textSize="10sp"/>
-
-	<ImageView
-		android:id="@+id/videoly_more"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_alignParentRight="true"
-		android:layout_marginRight="@dimen/videolayout_btn_com_margin_4"
-		android:layout_marginTop="@dimen/videolayout_btn_com_margin_8"
-		android:src="@drawable/xiala"
-		android:visibility="invisible"/>
 
 	<LinearLayout
 		android:layout_width="wrap_content"
@@ -55,55 +37,6 @@
 			android:textColor="#FFFFFF"
 			android:textSize="10sp"/>
 
-		<TextView
-			android:id="@+id/videoly_video_down"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:text="@string/videoly_videodown"
-			android:textColor="#FFFFFF"
-			android:textSize="10sp"/>
 	</LinearLayout>
 
-	<RelativeLayout
-		android:id="@+id/videoly_dialog"
-		android:layout_width="match_parent"
-		android:layout_height="76dp"
-		android:layout_margin="4dp"
-		android:background="@drawable/videoly_dialog_bg"
-		android:visibility="gone">
-
-		<LinearLayout
-			android:layout_width="match_parent"
-			android:layout_height="match_parent"
-			android:orientation="vertical">
-
-			<TextView
-				android:id="@+id/videoly_dialog_mute"
-				android:layout_width="wrap_content"
-				android:layout_height="0dp"
-				android:layout_gravity="center_horizontal"
-				android:layout_weight="1"
-				android:gravity="center_vertical"
-				android:text="@string/remote_window_ban"
-				android:textColor="@drawable/videoly_dialog_font_selector"
-				android:textSize="12sp"/>
-
-			<TextView
-				android:id="@+id/videoly_dialog_close"
-				android:layout_width="wrap_content"
-				android:layout_height="0dp"
-				android:layout_gravity="center_horizontal"
-				android:layout_weight="1"
-				android:gravity="center_vertical"
-				android:text="@string/remote_window_out"
-				android:textColor="@drawable/videoly_dialog_font_selector"
-				android:textSize="12sp"/>
-		</LinearLayout>
-
-		<TextView
-			android:layout_width="91dp"
-			android:layout_height="2px"
-			android:layout_centerInParent="true"
-			android:background="#c0c0c0"/>
-	</RelativeLayout>
 </RelativeLayout>

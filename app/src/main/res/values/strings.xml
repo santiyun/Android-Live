@@ -20,7 +20,7 @@
     <string name="welcome_auxiliary">副播</string>
     <string name="welcome_audience">观众</string>
     <string name="welcome_roomid">直播间ID:</string>
-    <string name="welcome_gointo">进入</string>
+    <string name="welcome_gointo">进入房间</string>
     <string name="info_window_auxiliary">副播:</string>
     <string name="info_window_audience">观众:</string>
     <string name="info_window_closeshow">关闭网络显示</string>

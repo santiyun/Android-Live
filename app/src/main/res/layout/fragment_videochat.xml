@@ -1,444 +1,247 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
 	android:id="@+id/main_background"
-	xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent">
+
+	<android.support.constraint.ConstraintLayout
+		android:id="@+id/local_view_layout"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		app:layout_constraintBottom_toBottomOf="parent"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toTopOf="parent">
+
+	</android.support.constraint.ConstraintLayout>
+
+    <ImageView
+		android:id="@+id/imageView6"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:background="@drawable/dingbuyinying" />
+
+	<ImageView
+		android:id="@+id/main_btn_switch_camera"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_marginStart="8dp"
+		android:layout_marginTop="16dp"
+		android:src="@drawable/mainly_btn_camera_selector"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toBottomOf="@+id/main_btn_audio_channel" />
+
+	<ImageView
+		android:id="@+id/main_btn_audio_channel"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_marginStart="8dp"
+		android:layout_marginTop="8dp"
+		android:src="@drawable/mianti"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toTopOf="parent" />
+
+	<ImageView
+		android:id="@+id/main_button_share"
+		android:layout_width="37dp"
+		android:layout_height="37dp"
+		android:layout_marginStart="8dp"
+		android:layout_marginTop="16dp"
+		android:background="@drawable/icon_share_hover"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toBottomOf="@+id/main_btn_switch_camera" />
+
+	<TextView
+		android:id="@+id/main_btn_title"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_marginStart="24dp"
+		android:layout_marginTop="16dp"
+		android:singleLine="true"
+		android:text="房号："
+		android:textColor="@color/font_com_color_white"
+		android:textSize="@dimen/font_com_size_12"
+		app:layout_constraintStart_toEndOf="@+id/main_btn_audio_channel"
+		app:layout_constraintTop_toTopOf="parent" />
+
+	<TextView
+		android:id="@+id/main_btn_host"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_marginStart="16dp"
+		android:layout_marginTop="16dp"
+		android:layout_toRightOf="@id/main_btn_title"
+		android:singleLine="true"
+		android:text="ID："
+		android:textColor="@color/font_com_color_white"
+		android:textSize="@dimen/font_com_size_12"
+		app:layout_constraintStart_toEndOf="@+id/main_btn_title"
+		app:layout_constraintTop_toTopOf="parent" />
+
+	<TextView
+		android:id="@+id/main_btn_audioup"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_marginTop="8dp"
+		android:singleLine="true"
+		android:text="@string/main_audioup"
+		android:textColor="@color/font_com_color_white"
+		android:textSize="@dimen/font_com_size_12"
+		app:layout_constraintStart_toStartOf="@+id/main_btn_title"
+		app:layout_constraintTop_toBottomOf="@+id/main_btn_title" />
+
+	<TextView
+		android:id="@+id/main_btn_videoup"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_marginStart="16dp"
+		android:singleLine="true"
+		android:text="@string/main_videoups"
+		android:textColor="@color/font_com_color_white"
+		android:textSize="@dimen/font_com_size_12"
+		app:layout_constraintBottom_toBottomOf="@+id/main_btn_audioup"
+		app:layout_constraintStart_toEndOf="@+id/main_btn_audioup" />
+
+	<ImageView
+		android:id="@+id/main_btn_exit"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_alignParentRight="true"
+		android:layout_marginEnd="16dp"
+		android:layout_marginTop="16dp"
+		android:paddingTop="6dp"
+		android:src="@drawable/mainly_btn_exit_selector"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintTop_toTopOf="parent" />
 
 	<ImageView
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:background="@drawable/dingbuyinying"/>
+		android:layout_alignParentBottom="true"
+		android:background="@drawable/dibuyinying"
+		app:layout_constraintBottom_toBottomOf="parent"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintStart_toStartOf="parent" />
 
-	<RelativeLayout
-		android:id="@+id/main_view_bg"
-		android:layout_width="match_parent"
-		android:layout_height="match_parent"
-		android:clipToPadding="true"
-		android:fitsSystemWindows="true">
-
-		<ImageView
-			android:id="@+id/audio_bg"
-			android:layout_width="200dp"
-			android:layout_height="200dp"
-			android:layout_centerHorizontal="true"
-			android:layout_centerInParent="false"
-			android:layout_marginTop="60dp"
-			android:background="@drawable/audiobg"
-			android:visibility="gone" />
-
-		<ScrollView
-			android:id="@+id/main_btn_listly"
-			android:layout_width="wrap_content"
-			android:layout_height="match_parent"
-			android:layout_above="@+id/main_remotely_parent"
-			android:layout_marginBottom="9.6dp"
-			android:scrollbars="none">
-
-			<RelativeLayout
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content">
-
-				<ImageView
-					android:id="@+id/main_btn_camera"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:layout_marginBottom="@dimen/main_btn_com_margin_24"
-					android:layout_marginLeft="@dimen/main_btn_com_margin_20"
-					android:src="@drawable/mainly_btn_camera_selector"/>
-
-				<ImageView
-					android:id="@+id/main_btn_audio_channel"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:layout_below="@+id/main_btn_camera"
-					android:layout_marginBottom="@dimen/main_btn_com_margin_24"
-					android:layout_marginLeft="@dimen/main_btn_com_margin_20"
-					android:layout_marginRight="@dimen/main_btn_com_margin_20"
-					android:src="@drawable/mianti"/>
-
-				<ImageView
-					android:id="@+id/main_btn_music_channel"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:layout_below="@+id/main_btn_audio_channel"
-					android:layout_marginBottom="@dimen/main_btn_com_margin_24"
-					android:layout_marginLeft="@dimen/main_btn_com_margin_20"
-					android:layout_marginRight="@dimen/main_btn_com_margin_20"
-					android:src="@drawable/mainly_btn_music_selector"/>
-
-				<ImageView
-					android:id="@+id/main_btn_more"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:layout_below="@+id/main_btn_music_channel"
-					android:layout_marginBottom="@dimen/main_btn_com_margin_24"
-					android:layout_marginLeft="@dimen/main_btn_com_margin_20"
-					android:src="@drawable/mainly_btn_more_selector"/>
-
-				<TextView
-					android:id="@+id/main_btn_video_recorder_time"
-					android:layout_width="50dp"
-					android:layout_height="12dp"
-					android:layout_below="@+id/main_btn_more"
-					android:layout_centerHorizontal="true"
-					android:layout_marginTop="4.8dp"
-					android:background="@drawable/luping_read"
-					android:gravity="center"
-					android:text="00:00:00"
-					android:textSize="9.6sp"
-					android:visibility="gone"/>
-
-			</RelativeLayout>
-		</ScrollView>
-
-		<TextView
-			android:id="@+id/main_btn_title"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_alignTop="@+id/main_btn_listly"
-			android:layout_marginLeft="@dimen/main_btn_com_margin_16"
-			android:layout_toRightOf="@+id/main_btn_listly"
-			android:singleLine="true"
-			android:text="房号："
-			android:textColor="@color/font_com_color_white"
-			android:textSize="@dimen/font_com_size_12"/>
-
-		<TextView
-			android:id="@+id/main_btn_host"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_alignTop="@+id/main_btn_listly"
-			android:layout_marginLeft="@dimen/main_btn_com_margin_16"
-			android:layout_toRightOf="@id/main_btn_title"
-			android:singleLine="true"
-			android:text="主播："
-			android:textColor="@color/font_com_color_white"
-			android:textSize="@dimen/font_com_size_12"/>
-
-		<LinearLayout
-			android:id="@+id/linearlayout2"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_below="@+id/main_btn_title"
-			android:layout_marginLeft="@dimen/main_btn_com_margin_16"
-			android:layout_marginRight="@dimen/main_btn_com_margin_16"
-			android:layout_toLeftOf="@+id/main_btn_exit"
-			android:layout_toRightOf="@+id/main_btn_listly"
-			android:orientation="horizontal">
-
-			<TextView
-				android:id="@+id/main_btn_role"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_marginTop="8dp"
-				android:singleLine="true"
-				android:text="角色："
-				android:textColor="@color/font_com_color_white"
-				android:textSize="@dimen/font_com_size_12"/>
-
-			<TextView
-				android:id="@+id/main_btn_audioup"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_marginLeft="@dimen/main_btn_com_margin_16"
-				android:layout_marginTop="8dp"
-				android:singleLine="true"
-				android:text="@string/main_audioup"
-				android:textColor="@color/font_com_color_white"
-				android:textSize="@dimen/font_com_size_12"/>
-
-			<TextView
-				android:id="@+id/main_btn_videoup"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_marginLeft="@dimen/main_btn_com_margin_16"
-				android:layout_marginTop="8dp"
-				android:singleLine="true"
-				android:text="@string/main_videoups"
-				android:textColor="@color/font_com_color_white"
-				android:textSize="@dimen/font_com_size_12"/>
-		</LinearLayout>
-
-		<ImageView
-			android:id="@+id/main_btn_exit"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_alignParentRight="true"
-			android:layout_alignTop="@+id/main_btn_listly"
-			android:layout_marginBottom="@dimen/main_btn_com_margin_24"
-			android:layout_marginRight="@dimen/main_btn_com_margin_20"
-			android:paddingTop="6dp"
-			android:src="@drawable/mainly_btn_exit_selector"/>
-
-		<ImageView
-			android:id="@+id/main_btn_cannel_music"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_alignParentRight="true"
-			android:layout_below="@+id/main_btn_exit"
-			android:layout_marginBottom="@dimen/main_btn_com_margin_24"
-			android:layout_marginRight="@dimen/main_btn_com_margin_20"
-			android:paddingTop="6dp"
-			android:src="@drawable/mainly_btn_cannel_music_selector"
-			android:visibility="gone"/>
-
-		<LinearLayout
-			android:id="@+id/main_remotely_parent"
-			android:layout_width="match_parent"
-			android:layout_height="274dp"
-			android:layout_alignParentBottom="true"
-			android:layout_alignParentStart="true"
-			android:background="@color/transparent"
-			android:orientation="vertical">
-
-			<FrameLayout
-				android:layout_width="match_parent"
-				android:layout_height="0dp"
-				android:layout_marginBottom="1px"
-				android:layout_weight="1">
-
-				<LinearLayout
-					android:layout_width="match_parent"
-					android:layout_height="match_parent"
-					android:weightSum="3">
-
-					<FrameLayout
-						android:id="@+id/main_remotely1"
-						android:layout_width="0dp"
-						android:layout_height="wrap_content"
-						android:layout_marginLeft="2px"
-						android:layout_marginRight="0.66px"
-						android:layout_weight="1"
-						android:background="@color/half_transparent">
-
-						<FrameLayout
-							android:id="@+id/main_remotely_bg1"
-							android:layout_width="match_parent"
-							android:layout_height="match_parent"
-							android:background="@color/half_transparent">
-
-							<ImageView
-								android:id="@+id/main_remotely_touxiang1"
-								android:layout_width="wrap_content"
-								android:layout_height="wrap_content"
-								android:layout_gravity="center"
-								android:src="@drawable/moremtupian"/>
-						</FrameLayout>
-
-						<include
-							layout="@layout/videolayout_block"/>
-					</FrameLayout>
-
-					<FrameLayout
-						android:id="@+id/main_remotely2"
-						android:layout_width="0dp"
-						android:layout_height="wrap_content"
-						android:layout_marginLeft="1.33px"
-						android:layout_marginRight="1.33px"
-						android:layout_weight="1"
-						android:background="@color/half_transparent">
-
-						<FrameLayout
-							android:id="@+id/main_remotely_bg2"
-							android:layout_width="match_parent"
-							android:layout_height="match_parent"
-							android:background="@color/half_transparent">
-
-							<ImageView
-								android:id="@+id/main_remotely_touxiang2"
-								android:layout_width="wrap_content"
-								android:layout_height="wrap_content"
-								android:layout_gravity="center"
-								android:src="@drawable/moremtupian"/>
-						</FrameLayout>
-
-						<include layout="@layout/videolayout_block"/>
-					</FrameLayout>
-
-					<FrameLayout
-						android:id="@+id/main_remotely3"
-						android:layout_width="0dp"
-						android:layout_height="wrap_content"
-						android:layout_marginLeft="0.66px"
-						android:layout_marginRight="2px"
-						android:layout_weight="1"
-						android:background="@color/half_transparent">
-
-						<FrameLayout
-							android:id="@+id/main_remotely_bg3"
-							android:layout_width="match_parent"
-							android:layout_height="match_parent"
-							android:background="@color/half_transparent">
-
-							<ImageView
-								android:id="@+id/main_remotely_touxiang3"
-								android:layout_width="wrap_content"
-								android:layout_height="wrap_content"
-								android:layout_gravity="center"
-								android:src="@drawable/moremtupian"/>
-						</FrameLayout>
-
-						<include layout="@layout/videolayout_block"/>
-					</FrameLayout>
-				</LinearLayout>
-
-				<ImageView
-					android:layout_width="match_parent"
-					android:layout_height="wrap_content"
-					android:background="@drawable/dingbuyinying"
-					/>
-
-				<ImageView
-					android:layout_width="match_parent"
-					android:layout_height="wrap_content"
-					android:layout_gravity="bottom"
-					android:background="@drawable/dibuyinying"/>
-			</FrameLayout>
-
-			<FrameLayout
-				android:layout_width="match_parent"
-				android:layout_height="0dp"
-				android:layout_marginTop="1px"
-				android:layout_weight="1">
-
-				<LinearLayout
-					android:layout_width="match_parent"
-					android:layout_height="match_parent"
-					android:weightSum="3">
-
-					<FrameLayout
-						android:id="@+id/main_remotely4"
-						android:layout_width="0dp"
-						android:layout_height="wrap_content"
-						android:layout_marginLeft="2px"
-						android:layout_marginRight="0.66px"
-						android:layout_weight="1"
-						android:background="@color/half_transparent">
-
-						<FrameLayout
-							android:id="@+id/main_remotely_bg4"
-							android:layout_width="match_parent"
-							android:layout_height="match_parent"
-							android:background="@color/half_transparent">
-
-							<ImageView
-								android:id="@+id/main_remotely_touxiang4"
-								android:layout_width="wrap_content"
-								android:layout_height="wrap_content"
-								android:layout_gravity="center"
-								android:src="@drawable/moremtupian"/>
-						</FrameLayout>
-
-						<include layout="@layout/videolayout_block"/>
-					</FrameLayout>
-
-					<FrameLayout
-						android:id="@+id/main_remotely5"
-						android:layout_width="0dp"
-						android:layout_height="wrap_content"
-						android:layout_marginLeft="1.33px"
-						android:layout_marginRight="1.33px"
-						android:layout_weight="1"
-						android:background="@color/half_transparent">
-
-						<FrameLayout
-							android:id="@+id/main_remotely_bg5"
-							android:layout_width="match_parent"
-							android:layout_height="match_parent"
-							android:background="@color/half_transparent">
-
-							<ImageView
-								android:id="@+id/main_remotely_touxiang5"
-								android:layout_width="wrap_content"
-								android:layout_height="wrap_content"
-								android:layout_gravity="center"
-								android:src="@drawable/moremtupian"/>
-						</FrameLayout>
-
-						<include layout="@layout/videolayout_block"/>
-					</FrameLayout>
-
-					<FrameLayout
-						android:id="@+id/main_remotely6"
-						android:layout_width="0dp"
-						android:layout_height="wrap_content"
-						android:layout_marginLeft="0.66px"
-						android:layout_marginRight="2px"
-						android:layout_weight="1"
-						android:background="@color/half_transparent">
-
-						<FrameLayout
-							android:id="@+id/main_remotely_bg6"
-							android:layout_width="match_parent"
-							android:layout_height="match_parent"
-							android:background="@color/half_transparent">
-
-							<ImageView
-								android:id="@+id/main_remotely_touxiang6"
-								android:layout_width="wrap_content"
-								android:layout_height="wrap_content"
-								android:layout_gravity="center"
-								android:src="@drawable/moremtupian"/>
-						</FrameLayout>
-
-						<include layout="@layout/videolayout_block"/>
-					</FrameLayout>
-				</LinearLayout>
-
-				<ImageView
-					android:layout_width="match_parent"
-					android:layout_height="wrap_content"
-					android:background="@drawable/dingbuyinying"/>
-			</FrameLayout>
-		</LinearLayout>
-
-		<ImageView
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:layout_alignParentBottom="true"
-			android:background="@drawable/dibuyinying"/>
-
-	</RelativeLayout>
-
-	<com.tttrtclive.test.TestRelativeLayout
-		android:id="@+id/main_test_ly"
-		android:layout_width="185dp"
+	<ImageView
+		android:id="@+id/imageView3"
+		android:layout_width="0dp"
 		android:layout_height="wrap_content"
-		android:layout_gravity="right"
-		android:layout_marginTop="100dp"
-		android:focusable="true"
-		android:focusableInTouchMode="true"
-		android:visibility="gone">
+		android:background="@drawable/dingbuyinying"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toTopOf="@+id/remote2" />
 
-		<TextView
-			android:id="@+id/main_test_title"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:background="#7d000000"
-			android:gravity="center_horizontal"
-			android:paddingBottom="5dp"
-			android:paddingTop="5dp"
-			android:text="@string/title_name_close"
-			android:textColor="#C1C1C1" />
+	<com.tttrtclive.live.Helper.AudioRemoteWindow
+		android:id="@+id/remote1"
+		android:layout_width="0dp"
+		android:layout_height="0dp"
+		android:layout_marginBottom="1dp"
+		app:layout_constraintBottom_toTopOf="@+id/remote4"
+		app:layout_constraintDimensionRatio="3:4"
+		app:layout_constraintEnd_toStartOf="@+id/remote2"
+		app:layout_constraintHorizontal_bias="0.5"
+		app:layout_constraintStart_toStartOf="parent">
 
-		<TextView
-			android:id="@+id/main_test_divider"
-			android:layout_width="match_parent"
-			android:layout_height="1px"
-			android:layout_alignLeft="@+id/main_test_title"
-			android:layout_alignRight="@+id/main_test_title"
-			android:layout_below="@+id/main_test_title"
-			android:background="#000000" />
+	</com.tttrtclive.live.Helper.AudioRemoteWindow>
 
-		<android.support.v7.widget.RecyclerView
-			android:id="@+id/main_test_list"
-			android:layout_width="match_parent"
-			android:layout_height="300dp"
-			android:layout_alignLeft="@+id/main_test_divider"
-			android:layout_alignRight="@+id/main_test_divider"
-			android:layout_below="@+id/main_test_divider"
-			android:background="#7d000000"
-			android:visibility="invisible" />
-	</com.tttrtclive.test.TestRelativeLayout>
-</FrameLayout>
+	<com.tttrtclive.live.Helper.AudioRemoteWindow
+		android:id="@+id/remote2"
+		android:layout_width="0dp"
+		android:layout_height="0dp"
+		android:layout_marginBottom="1dp"
+		android:layout_marginEnd="1dp"
+		android:layout_marginStart="1dp"
+		app:layout_constraintBottom_toTopOf="@+id/remote5"
+		app:layout_constraintDimensionRatio="3:4"
+		app:layout_constraintEnd_toStartOf="@+id/remote3"
+		app:layout_constraintHorizontal_bias="0.5"
+		app:layout_constraintStart_toEndOf="@+id/remote1">
+
+	</com.tttrtclive.live.Helper.AudioRemoteWindow>
+
+	<com.tttrtclive.live.Helper.AudioRemoteWindow
+		android:id="@+id/remote3"
+		android:layout_width="0dp"
+		android:layout_height="0dp"
+		android:layout_marginBottom="1dp"
+		app:layout_constraintBottom_toTopOf="@+id/remote6"
+		app:layout_constraintDimensionRatio="3:4"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintHorizontal_bias="0.5"
+		app:layout_constraintStart_toEndOf="@+id/remote2">
+
+	</com.tttrtclive.live.Helper.AudioRemoteWindow>
+
+	<ImageView
+		android:id="@+id/imageView4"
+		android:layout_width="0dp"
+		android:layout_height="wrap_content"
+		android:background="@drawable/dibuyinying"
+		app:layout_constraintBottom_toBottomOf="@+id/remote2"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintStart_toStartOf="parent" />
+
+	<ImageView
+		android:id="@+id/imageView5"
+		android:layout_width="0dp"
+		android:layout_height="wrap_content"
+		android:background="@drawable/dingbuyinying"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toTopOf="@+id/remote5" />
+
+	<com.tttrtclive.live.Helper.AudioRemoteWindow
+		android:id="@+id/remote4"
+		android:layout_width="0dp"
+		android:layout_height="0dp"
+		android:layout_marginBottom="8dp"
+		app:layout_constraintBottom_toBottomOf="parent"
+		app:layout_constraintDimensionRatio="3:4"
+		app:layout_constraintEnd_toStartOf="@+id/remote5"
+		app:layout_constraintHorizontal_bias="0.5"
+		app:layout_constraintStart_toStartOf="parent">
+
+	</com.tttrtclive.live.Helper.AudioRemoteWindow>
+
+	<com.tttrtclive.live.Helper.AudioRemoteWindow
+		android:id="@+id/remote5"
+		android:layout_width="0dp"
+		android:layout_height="0dp"
+		android:layout_marginBottom="8dp"
+		android:layout_marginEnd="1dp"
+		android:layout_marginStart="1dp"
+		app:layout_constraintBottom_toBottomOf="parent"
+		app:layout_constraintDimensionRatio="3:4"
+		app:layout_constraintEnd_toStartOf="@+id/remote6"
+		app:layout_constraintHorizontal_bias="0.5"
+		app:layout_constraintStart_toEndOf="@+id/remote4">
+
+	</com.tttrtclive.live.Helper.AudioRemoteWindow>
+
+	<com.tttrtclive.live.Helper.AudioRemoteWindow
+		android:id="@+id/remote6"
+		android:layout_width="0dp"
+		android:layout_height="0dp"
+		android:layout_marginBottom="8dp"
+		app:layout_constraintBottom_toBottomOf="parent"
+		app:layout_constraintDimensionRatio="3:4"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintHorizontal_bias="0.5"
+		app:layout_constraintStart_toEndOf="@+id/remote5">
+
+	</com.tttrtclive.live.Helper.AudioRemoteWindow>
+
+	<include
+		android:id="@+id/main_share_layout"
+		layout="@layout/shared"
+		android:layout_width="0dp"
+		android:layout_height="164dp"
+		android:visibility="gone"
+		app:layout_constraintBottom_toBottomOf="parent"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintStart_toStartOf="parent" />
+
+</android.support.constraint.ConstraintLayout>
