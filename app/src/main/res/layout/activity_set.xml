@@ -1,79 +1,76 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tl="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#FFFFFF"
-    android:scrollbars="none">
+											 xmlns:tl="http://schemas.android.com/apk/res-auto"
+											 android:layout_width="match_parent"
+											 android:layout_height="match_parent"
+											 android:background="#FFFFFF"
+											 android:scrollbars="none">
 
+	<android.support.constraint.ConstraintLayout
+		android:id="@+id/set_head"
+		android:layout_width="match_parent"
+		tl:layout_constraintTop_toTopOf="parent"
+		android:layout_height="68dp">
 
-    <ImageView
-        android:id="@+id/imageView7"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
-        android:onClick="onExitButtonClick"
-        android:padding="10dp"
-        tl:layout_constraintStart_toStartOf="parent"
-        tl:layout_constraintTop_toTopOf="parent"
-        tl:srcCompat="@drawable/icon_arrow_left" />
+		<ImageView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginStart="14dp"
+			android:onClick="onExitButtonClick"
+			android:paddingRight="15dp"
+			tl:layout_constraintBottom_toBottomOf="@+id/textView"
+			tl:layout_constraintStart_toStartOf="parent"
+			tl:layout_constraintTop_toTopOf="parent"
+			tl:srcCompat="@drawable/icon_arrow_left"/>
 
-    <com.flyco.tablayout.SegmentTabLayout
-        android:id="@+id/tl_1"
-        android:layout_width="192dp"
-        android:layout_height="32dp"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="24dp"
-        tl:layout_constraintEnd_toEndOf="parent"
-        tl:layout_constraintStart_toStartOf="parent"
-        tl:layout_constraintTop_toTopOf="parent"
-        tl:tl_bar_color="#ffffff"
-        tl:tl_bar_stroke_color="#FFCCCCCC"
-        tl:tl_indicator_color="#2C97DE"
-        tl:tl_indicator_corner_radius="50dp"
-        tl:tl_tab_padding="20dp"
-        tl:tl_textUnselectColor="#FF666666">
+		<com.flyco.tablayout.SegmentTabLayout
+			android:id="@+id/tl_1"
+			android:layout_width="192dp"
+			android:layout_height="32dp"
+			tl:layout_constraintBottom_toBottomOf="@+id/textView"
+			tl:layout_constraintEnd_toEndOf="parent"
+			tl:layout_constraintStart_toStartOf="parent"
+			tl:layout_constraintTop_toTopOf="parent"
+			tl:tl_bar_color="#ffffff"
+			tl:tl_bar_stroke_color="#FFCCCCCC"
+			tl:tl_indicator_color="#FFBF2F61"
+			tl:tl_indicator_corner_radius="50dp"
+			tl:tl_tab_padding="20dp"
+			tl:tl_textUnselectColor="#FF666666"
+			tl:tl_textsize="12sp">
+		</com.flyco.tablayout.SegmentTabLayout>
 
-    </com.flyco.tablayout.SegmentTabLayout>
+		<TextView
+			android:id="@+id/textView"
+			android:layout_width="match_parent"
+			android:layout_height="1dp"
+			tl:layout_constraintBottom_toBottomOf="parent"
+			android:background="#80C4C4C4"/>
+	</android.support.constraint.ConstraintLayout>
 
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="0dp"
-        android:layout_height="1dp"
-        android:layout_marginTop="8dp"
-        android:background="#80C4C4C4"
-        tl:layout_constraintEnd_toEndOf="parent"
-        tl:layout_constraintStart_toStartOf="parent"
-        tl:layout_constraintTop_toBottomOf="@+id/tl_1" />
+	<android.support.v4.view.ViewPager
+		android:id="@+id/vp_2"
+		android:layout_width="match_parent"
+		android:layout_height="0dp"
+		android:layout_marginBottom="8dp"
+		tl:layout_constraintBottom_toTopOf="@+id/local_ok_button2"
+		tl:layout_constraintEnd_toEndOf="parent"
+		tl:layout_constraintStart_toStartOf="parent"
+		tl:layout_constraintTop_toBottomOf="@+id/set_head"/>
 
-    <android.support.v4.view.ViewPager
-        android:id="@+id/vp_2"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginBottom="8dp"
-        tl:layout_constraintBottom_toTopOf="@+id/local_ok_button2"
-        tl:layout_constraintEnd_toEndOf="parent"
-        tl:layout_constraintStart_toStartOf="parent"
-        tl:layout_constraintTop_toBottomOf="@+id/textView" />
-
-    <TextView
-        android:id="@+id/local_ok_button2"
-        android:layout_width="0dp"
-        android:layout_height="40dp"
-        android:layout_marginBottom="40dp"
-        android:layout_marginEnd="24dp"
-        android:layout_marginStart="24dp"
-        android:background="@drawable/set_ok_bg"
-        android:gravity="center"
-        android:onClick="onOkButtonClick"
-        android:text="确定"
-        android:textColor="#FFFFFF"
-        android:textSize="16sp"
-        tl:layout_constraintBottom_toBottomOf="parent"
-        tl:layout_constraintEnd_toEndOf="parent"
-        tl:layout_constraintStart_toStartOf="parent" />
-
+	<TextView
+		android:id="@+id/local_ok_button2"
+		android:layout_width="0dp"
+		android:layout_height="40dp"
+		android:layout_marginBottom="20dp"
+		android:layout_marginEnd="20dp"
+		android:layout_marginStart="20dp"
+		android:background="@drawable/setly_ok_bg"
+		android:gravity="center"
+		android:onClick="onOkButtonClick"
+		android:text="确定"
+		android:textColor="#FFFFFF"
+		android:textSize="16sp"
+		tl:layout_constraintBottom_toBottomOf="parent"
+		tl:layout_constraintEnd_toEndOf="parent"
+		tl:layout_constraintStart_toStartOf="parent"/>
 </android.support.constraint.ConstraintLayout>

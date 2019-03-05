@@ -3,64 +3,52 @@ package com.tttrtclive.live.ui;
 import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.res.Resources;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.tttrtclive.live.LocalConfig;
 import com.tttrtclive.live.LocalConstans;
 import com.tttrtclive.live.R;
 import com.tttrtclive.live.bean.JniObjs;
 import com.tttrtclive.live.callback.MyTTTRtcEngineEventHandler;
-import com.tttrtclive.live.dialog.VideoInfoDialog;
 import com.tttrtclive.live.utils.MyLog;
 import com.tttrtclive.live.utils.SharedPreferencesUtil;
-import com.wushuangtech.api.EnterConfApi;
-import com.wushuangtech.jni.NativeInitializer;
-import com.wushuangtech.jni.RoomJni;
 import com.wushuangtech.library.Constants;
-import com.wushuangtech.library.GlobalConfig;
 import com.wushuangtech.utils.PviewLog;
 import com.wushuangtech.wstechapi.TTTRtcEngine;
+import com.wushuangtech.wstechapi.model.PublisherConfiguration;
 import com.yanzhenjie.permission.AndPermission;
 
-import java.util.Random;
-
-import static com.wushuangtech.library.Constants.CHANNEL_PROFILE_LIVE_BROADCASTING;
 import static com.wushuangtech.library.Constants.CLIENT_ROLE_ANCHOR;
 import static com.wushuangtech.library.Constants.CLIENT_ROLE_BROADCASTER;
-import static com.wushuangtech.library.Constants.ERROR_ENTER_ROOM_BAD_VERSION;
-import static com.wushuangtech.library.Constants.ERROR_ENTER_ROOM_NOEXIST;
-import static com.wushuangtech.library.Constants.ERROR_ENTER_ROOM_TIMEOUT;
-import static com.wushuangtech.library.Constants.ERROR_ENTER_ROOM_UNKNOW;
-import static com.wushuangtech.library.Constants.ERROR_ENTER_ROOM_VERIFY_FAILED;
 
 public class SplashActivity extends BaseActivity {
 
     private ProgressDialog mDialog;
     public static boolean mIsLoging;
     private EditText mRoomIDET;
+    private View mAdvanceSetting;
     private MyLocalBroadcastReceiver mLocalBroadcast;
     private String mRoomName;
-    private long mUserId;
     private RadioButton mHostBT, mAuthorBT;
     private int mRole = CLIENT_ROLE_ANCHOR;
-    private VideoInfoDialog videoInfoDialog;
+    private final Object clickLock = new Object();
+    private boolean isSetting;
 
     /*-------------------------------配置参数---------------------------------*/
-    private int mLocalVideoProfile = Constants.VIDEO_PROFILE_DEFAULT;
-    private int mPushVideoProfile = Constants.VIDEO_PROFILE_DEFAULT;
-    public int mLocalWidth, mLocalHeight, mLocalFrameRate, mLocalBitRate;
+    private int mLocalVideoProfile = Constants.TTTRTC_VIDEOPROFILE_DEFAULT;
+    private int mPushVideoProfile = Constants.TTTRTC_VIDEOPROFILE_DEFAULT;
+    private String mLocalIP;
+    public int mLocalWidth, mLocalHeight, mLocalFrameRate, mLocalBitRate, mLocalPort;
     public int mPushWidth, mPushHeight, mPushFrameRate, mPushBitRate;
     private boolean mUseHQAudio = false;
     private int mEncodeType = 0;//0:H.264  1:H.265
@@ -71,8 +59,6 @@ public class SplashActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.splash_activity);
-
-        // 权限申请
         AndPermission.with(this)
                 .permission(Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_PHONE_STATE)
                 .start();
@@ -80,37 +66,38 @@ public class SplashActivity extends BaseActivity {
         init();
     }
 
+    private void initView() {
+        mAuthorBT = findViewById(R.id.vice);
+        mHostBT = findViewById(R.id.host);
+        mRoomIDET = findViewById(R.id.room_id);
+        mAdvanceSetting = findViewById(R.id.set);
+        ImageView mLogo = findViewById(R.id.imageView2);
+        TextView mVersion = findViewById(R.id.version);
+
+        String string = getResources().getString(R.string.version_info);
+        String result = String.format(string, TTTRtcEngine.getInstance().getSdkVersion());
+        mVersion.setText(result);
+
+        if (LocalConfig.VERSION_FLAG == LocalConstans.VERSION_WHITE) {
+            mVersion.setVisibility(View.INVISIBLE);
+            mLogo.setVisibility(View.INVISIBLE);
+        }
+    }
+
     private void init() {
         initView();
         // 读取保存的数据
         String roomID = (String) SharedPreferencesUtil.getParam(this, "RoomID", "");
         mRoomIDET.setText(roomID);
-
-        mTTTEngine.enableVideo();
-        mTTTEngine.setChannelProfile(CHANNEL_PROFILE_LIVE_BROADCASTING);
-        mTTTEngine.setVideoProfile(Constants.VIDEO_PROFILE_360P, true);
-
         // 注册回调函数接收的广播
         mLocalBroadcast = new MyLocalBroadcastReceiver();
-        MyLog.d("SplashActivity onCreate.... model : " + Build.MODEL);
         mDialog = new ProgressDialog(this);
         mDialog.setTitle("");
         mDialog.setMessage("正在进入房间...");
-
-        videoInfoDialog = new VideoInfoDialog(mContext, R.style.NoBackGroundDialog);
-    }
-
-    private void initView() {
-        mAuthorBT = (RadioButton) findViewById(R.id.vice);
-        mHostBT = (RadioButton) findViewById(R.id.host);
-        mRoomIDET = (EditText) findViewById(R.id.room_id);
-        TextView mVersion = (TextView) findViewById(R.id.version);
-        String string = getResources().getString(R.string.version_info);
-        String result = String.format(string, TTTRtcEngine.getInstance().getVersion());
-        mVersion.setText(result);
-
-        TextView mSdkVersion = (TextView) findViewById(R.id.sdk_version);
-        mSdkVersion.setText("sdk version : " + NativeInitializer.getIntance().getVersion());
+        // 1.设置频道模式，这里用直播模式
+        mTTTEngine.setChannelProfile(Constants.CHANNEL_PROFILE_LIVE_BROADCASTING);
+        // 2.启用视频功能
+        mTTTEngine.enableVideo();
     }
 
     @Override
@@ -131,13 +118,6 @@ public class SplashActivity extends BaseActivity {
         }
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        MyLog.d("SplashActivity onDestroy....");
-        TTTRtcEngine.destroy();
-    }
-
     public void onClickRoleButton(View v) {
         mHostBT.setChecked(false);
         mAuthorBT.setChecked(false);
@@ -145,12 +125,10 @@ public class SplashActivity extends BaseActivity {
         ((RadioButton) v).setChecked(true);
         switch (v.getId()) {
             case R.id.host:
-                mRole = CLIENT_ROLE_ANCHOR;
-                findViewById(R.id.set).setVisibility(View.VISIBLE);
+                mAdvanceSetting.setVisibility(View.VISIBLE);
                 break;
             case R.id.vice:
-                mRole = CLIENT_ROLE_BROADCASTER;
-                findViewById(R.id.set).setVisibility(View.GONE);
+                mAdvanceSetting.setVisibility(View.GONE);
                 break;
         }
     }
@@ -166,65 +144,108 @@ public class SplashActivity extends BaseActivity {
             return;
         }
 
-        if (mIsLoging) return;
-        mIsLoging = true;
+        synchronized (clickLock) {
+            if (isSetting) {
+                return;
+            }
 
-        Random mRandom = new Random();
-        mUserId = mRandom.nextInt(999999);
+            if (mIsLoging) return;
+            mIsLoging = true;
 
-        // 保存配置
-        SharedPreferencesUtil.setParam(this, "RoomID", mRoomName);
-
-        mTTTEngine.setClientRole(mRole, null);
-
-        // 设置推流格式H264/H265
-        if (mEncodeType == 0) {
-            GlobalConfig.mPushUrl = GlobalConfig.mCDNPushAddressPrefix + mRoomName;
-        } else {
-            GlobalConfig.mPushUrl = GlobalConfig.mCDNPushAddressPrefix + mRoomName + "?trans=1";
+            // 保存配置
+            SharedPreferencesUtil.setParam(this, "RoomID", mRoomName);
+            initSDK();
+            // 6.加入频道
+            mTTTEngine.joinChannel("", mRoomName, LocalConfig.mLocalUserID);
+            mDialog.show();
         }
-
-        mTTTEngine.joinChannel("", mRoomName, mUserId);
-        mDialog.show();
-        return;
-
     }
 
     public void onSetButtonClick(View v) {
-        Intent intent = new Intent(this, SetActivity.class);
-        intent.putExtra("LVP", mLocalVideoProfile);
-        intent.putExtra("PVP", mPushVideoProfile);
-        intent.putExtra("LWIDTH", mLocalWidth);
-        intent.putExtra("LHEIGHT", mLocalHeight);
-        intent.putExtra("LBRATE", mLocalBitRate);
-        intent.putExtra("LFRATE", mLocalFrameRate);
-        intent.putExtra("PWIDTH", mPushWidth);
-        intent.putExtra("PHEIGHT", mPushHeight);
-        intent.putExtra("PBRATE", mPushBitRate);
-        intent.putExtra("PFRATE", mPushFrameRate);
-        intent.putExtra("HQA", mUseHQAudio);
-        intent.putExtra("EDT", mEncodeType);
-        intent.putExtra("ASR", mAudioSRate);
-        startActivityForResult(intent, 1);
+        synchronized (clickLock) {
+            if (mIsLoging) {
+                return;
+            }
+
+            if (isSetting) return;
+            isSetting = true;
+
+            Intent intent = new Intent(this, SetActivity.class);
+            intent.putExtra("LVP", mLocalVideoProfile);
+            intent.putExtra("PVP", mPushVideoProfile);
+            intent.putExtra("LWIDTH", mLocalWidth);
+            intent.putExtra("LHEIGHT", mLocalHeight);
+            intent.putExtra("LBRATE", mLocalBitRate);
+            intent.putExtra("LFRATE", mLocalFrameRate);
+            intent.putExtra("LIP", mLocalIP);
+            intent.putExtra("LPORT", mLocalPort);
+            intent.putExtra("PWIDTH", mPushWidth);
+            intent.putExtra("PHEIGHT", mPushHeight);
+            intent.putExtra("PBRATE", mPushBitRate);
+            intent.putExtra("PFRATE", mPushFrameRate);
+            intent.putExtra("HQA", mUseHQAudio);
+            intent.putExtra("EDT", mEncodeType);
+            intent.putExtra("ASR", mAudioSRate);
+            startActivityForResult(intent, 1);
+        }
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
-        super.onActivityResult(requestCode, resultCode, intent);
-        mLocalVideoProfile = intent.getIntExtra("LVP", mLocalVideoProfile);
-        mPushVideoProfile = intent.getIntExtra("PVP", mPushVideoProfile);
-        mLocalWidth = intent.getIntExtra("LWIDTH", mLocalWidth);
-        mLocalHeight = intent.getIntExtra("LHEIGHT", mLocalHeight);
-        mLocalBitRate = intent.getIntExtra("LBRATE", mLocalBitRate);
-        mLocalFrameRate = intent.getIntExtra("LFRATE", mLocalFrameRate);
-        mPushWidth = intent.getIntExtra("PWIDTH", mPushWidth);
-        mPushHeight = intent.getIntExtra("PHEIGHT", mPushHeight);
-        mPushBitRate = intent.getIntExtra("PBRATE", mPushBitRate);
-        mPushFrameRate = intent.getIntExtra("PFRATE", mPushFrameRate);
-        mUseHQAudio = intent.getBooleanExtra("HQA", mUseHQAudio);
-        mUseHQAudio = intent.getBooleanExtra("HQA", mUseHQAudio);
-        mEncodeType = intent.getIntExtra("EDT", mEncodeType);
-        mAudioSRate = intent.getIntExtra("ASR", mAudioSRate);
+        synchronized (clickLock) {
+            super.onActivityResult(requestCode, resultCode, intent);
+            mLocalVideoProfile = intent.getIntExtra("LVP", mLocalVideoProfile);
+            mPushVideoProfile = intent.getIntExtra("PVP", mPushVideoProfile);
+            mLocalWidth = intent.getIntExtra("LWIDTH", mLocalWidth);
+            mLocalHeight = intent.getIntExtra("LHEIGHT", mLocalHeight);
+            mLocalBitRate = intent.getIntExtra("LBRATE", mLocalBitRate);
+            mLocalFrameRate = intent.getIntExtra("LFRATE", mLocalFrameRate);
+            mLocalIP = intent.getStringExtra("LIP");
+            mLocalPort = intent.getIntExtra("LPORT", mLocalPort);
+            mPushWidth = intent.getIntExtra("PWIDTH", mPushWidth);
+            mPushHeight = intent.getIntExtra("PHEIGHT", mPushHeight);
+            mPushBitRate = intent.getIntExtra("PBRATE", mPushBitRate);
+            mPushFrameRate = intent.getIntExtra("PFRATE", mPushFrameRate);
+            mUseHQAudio = intent.getBooleanExtra("HQA", mUseHQAudio);
+            mUseHQAudio = intent.getBooleanExtra("HQA", mUseHQAudio);
+            mEncodeType = intent.getIntExtra("EDT", mEncodeType);
+            mAudioSRate = intent.getIntExtra("ASR", mAudioSRate);
+            isSetting = false;
+        }
+    }
+
+    private void initSDK() {
+        // 3.设置角色
+        if (mHostBT.isChecked()) {
+            mRole = CLIENT_ROLE_ANCHOR;
+        } else if (mAuthorBT.isChecked()) {
+            mRole = CLIENT_ROLE_BROADCASTER;
+        }
+        mTTTEngine.setClientRole(mRole);
+        String pushUrl;
+        // 设置推流格式H264/H265
+        if (LocalConfig.VERSION_FLAG == LocalConstans.VERSION_WHITE) {
+            if (mEncodeType == 0) {
+                pushUrl = "rtmp://push.wushuangtech.com/sdk/" + mRoomName;
+            } else {
+                pushUrl = "rtmp://push.wushuangtech.com/sdk/" + mRoomName + "?trans=1";
+            }
+            // 4.设置服务器地址
+            if (!TextUtils.isEmpty(mLocalIP)) {
+                MyLog.d("set server address : " + mLocalIP);
+                mTTTEngine.setServerIp(String.valueOf(mLocalIP), mLocalPort);
+            }
+        } else {
+            if (mEncodeType == 0) {
+                pushUrl = "rtmp://push.3ttech.cn/sdk/" + mRoomName;
+            } else {
+                pushUrl = "rtmp://push.3ttech.cn/sdk/" + mRoomName + "?trans=1";
+            }
+        }
+        // 5.设置推流地址
+        PublisherConfiguration mPublisherConfiguration = new PublisherConfiguration();
+        mPublisherConfiguration.setPushUrl(pushUrl);
+        mTTTEngine.configPublisher(mPublisherConfiguration);
     }
 
     private class MyLocalBroadcastReceiver extends BroadcastReceiver {
@@ -236,35 +257,38 @@ public class SplashActivity extends BaseActivity {
                 JniObjs mJniObjs = intent.getParcelableExtra(MyTTTRtcEngineEventHandler.MSG_TAG);
                 switch (mJniObjs.mJniType) {
                     case LocalConstans.CALL_BACK_ON_ENTER_ROOM:
-                        mDialog.dismiss();
-                        //界面跳转
-                        Intent activityIntent = new Intent();
-                        activityIntent.putExtra("ROOM_ID", Long.parseLong(mRoomName));
-                        activityIntent.putExtra("USER_ID", mUserId);
-                        activityIntent.putExtra("ROLE", mRole);
-                        activityIntent.setClass(SplashActivity.this, MainActivity.class);
-                        startActivity(activityIntent);
-                        PviewLog.testPrint("joinChannel", "end");
-                        mIsLoging = false;
+                        synchronized (clickLock) {
+                            mDialog.dismiss();
+                            //界面跳转
+                            Intent activityIntent = new Intent();
+                            activityIntent.putExtra("ROOM_ID", Long.parseLong(mRoomName));
+                            activityIntent.putExtra("USER_ID", LocalConfig.mLocalUserID);
+                            activityIntent.putExtra("ROLE", mRole);
+                            activityIntent.setClass(SplashActivity.this, MainActivity.class);
+                            startActivity(activityIntent);
+                            PviewLog.testPrint("joinChannel", "end");
+                        }
                         break;
                     case LocalConstans.CALL_BACK_ON_ERROR:
-                        mIsLoging = false;
-                        mDialog.dismiss();
-                        final int errorType = mJniObjs.mErrorType;
-                        runOnUiThread(() -> {
-                            MyLog.d("onReceive CALL_BACK_ON_ERROR errorType : " + errorType);
-                            if (errorType == ERROR_ENTER_ROOM_TIMEOUT) {
-                                Toast.makeText(mContext, getResources().getString(R.string.error_timeout), Toast.LENGTH_SHORT).show();
-                            } else if (errorType == ERROR_ENTER_ROOM_UNKNOW) {
-                                Toast.makeText(mContext, getResources().getString(R.string.error_unconnect), Toast.LENGTH_SHORT).show();
-                            } else if (errorType == ERROR_ENTER_ROOM_VERIFY_FAILED) {
-                                Toast.makeText(mContext, getResources().getString(R.string.error_verification_code), Toast.LENGTH_SHORT).show();
-                            } else if (errorType == ERROR_ENTER_ROOM_BAD_VERSION) {
-                                Toast.makeText(mContext, getResources().getString(R.string.error_version), Toast.LENGTH_SHORT).show();
-                            } else if (errorType == ERROR_ENTER_ROOM_NOEXIST) {
-                                Toast.makeText(mContext, getResources().getString(R.string.error_noroom), Toast.LENGTH_SHORT).show();
-                            }
-                        });
+                        synchronized (clickLock) {
+                            mDialog.dismiss();
+                            mIsLoging = false;
+                            final int errorType = mJniObjs.mErrorType;
+                            runOnUiThread(() -> {
+                                MyLog.d("onReceive CALL_BACK_ON_ERROR errorType : " + errorType);
+                                if (errorType == Constants.ERROR_ENTER_ROOM_TIMEOUT) {
+                                    Toast.makeText(mContext, getResources().getString(R.string.error_timeout), Toast.LENGTH_SHORT).show();
+                                } else if (errorType == Constants.ERROR_ENTER_ROOM_UNKNOW) {
+                                    Toast.makeText(mContext, getResources().getString(R.string.error_unconnect), Toast.LENGTH_SHORT).show();
+                                } else if (errorType == Constants.ERROR_ENTER_ROOM_VERIFY_FAILED) {
+                                    Toast.makeText(mContext, getResources().getString(R.string.error_verification_code), Toast.LENGTH_SHORT).show();
+                                } else if (errorType == Constants.ERROR_ENTER_ROOM_BAD_VERSION) {
+                                    Toast.makeText(mContext, getResources().getString(R.string.error_version), Toast.LENGTH_SHORT).show();
+                                } else if (errorType == Constants.ERROR_ENTER_ROOM_NOEXIST) {
+                                    Toast.makeText(mContext, getResources().getString(R.string.error_noroom), Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        }
                         break;
                 }
             }

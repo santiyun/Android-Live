@@ -30,12 +30,13 @@ public class AudioRemoteWindow extends RelativeLayout {
     private TextView mAudioBitrate;
     private TextView mVideoBitrate;
     private ConstraintLayout mVideoLayout;
+    public int mIndex;
 
     public AudioRemoteWindow(Context context, AttributeSet attrs) {
         super(context, attrs);
         mContext = context;
 
-        View v = LayoutInflater.from(context).inflate(R.layout.audio_remote_window,this, true);
+        View v = LayoutInflater.from(context).inflate(R.layout.audio_remote_window, this, true);
         mSpeakImage = v.findViewById(R.id.speakimage);
         mCameraImage = v.findViewById(R.id.remote_btn_switch_camera);
         mIdView = v.findViewById(R.id.id);
@@ -78,6 +79,7 @@ public class AudioRemoteWindow extends RelativeLayout {
             mTTTEngine.setupRemoteVideo(new VideoCanvas(mId, Constants.RENDER_MODE_HIDDEN, mSurfaceView));
         }
         mVideoLayout.addView(mSurfaceView);
+        mSpeakImage.setImageResource(mIsMuted ? R.drawable.jinyan : R.drawable.mainly_btn_speaker_selector);
     }
 
     public void hide() {

@@ -1,32 +1,16 @@
 <resources>
     <string name="app_name">Multi-MIC Connected Live Broad</string>
     <string name="version_info">http://www.3ttech.cn version %1$s</string>
-    <string name="main_title">Room ID：%1$s</string>
-    <string name="main_broadcaster">Anchor ID：%1$s</string>
-    <string name="main_secondAnchor">Auxiliary anchor:%1$s</string>
-    <string name="main_viewer">Audience:%1$s</string>
-    <string name="main_local_role">Role：%1$s</string>
-    <string name="main_audioup">A-%1$skbps\u2191</string>
+	<string name="main_audioup">A-%1$skbps\u2191</string>
     <string name="main_videoups">V-%1$skbps\u2191</string>
-    <string name="videoly_speaking">发言中&#8230;</string>
-    <string name="videoly_videodown">V-%1$skbps\u2193</string>
+	<string name="videoly_videodown">V-%1$skbps\u2193</string>
     <string name="videoly_audiodown">A-%1$skbps\u2193</string>
-
-	<string name="title_name_open">测试窗口 \u2193</string>
-	<string name="title_name_close">测试窗口 \u2191</string>
-
-    <string name="welcome_role">Role</string>
-    <string name="welcome_anchor">Anchor</string>
-    <string name="welcome_auxiliary">Auxiliary anchor</string>
-    <string name="welcome_audience">Audience</string>
-    <string name="welcome_roomid">Live Room ID:</string>
-    <string name="welcome_gointo">go into</string>
-    <string name="info_window_auxiliary">Auxiliary anchor:</string>
-    <string name="info_window_audience">Audience:</string>
-    <string name="info_window_closeshow">Close network display</string>
-    <string name="info_window_cdnpullurl">CDN pull flow address</string>
-    <string name="info_window_copy">copy</string>
-    <string name="exit_window_title">Are you sure quit the room?</string>
+	<string name="splash_role_title">Role</string>
+    <string name="splash_role_anchor">Anchor</string>
+    <string name="splash_role_broadcaster">Auxiliary anchor</string>
+	<string name="splash_roomid_edit_title">Live Room ID:</string>
+    <string name="splash_enter_room">go into</string>
+	<string name="exit_window_title">Are you sure quit the room?</string>
     <string name="exit_window_yes">Determine</string>
     <string name="exit_window_cancel">Cancel</string>
     <string name="error_kicked">Kicked by the host</string>
@@ -39,19 +23,11 @@
 	<string name="error_timeout">Timeout, 10 seconds without receiving a server return</string>
     <string name="error_noroom">The live room does not exist</string>
     <string name="error_version">Version error</string>
-    <string name="sys_support_toast">Your system version does not support this function temporarily</string>
-    <string name="error_unconnect">Unable to connect to the server</string>
+	<string name="error_unconnect">Unable to connect to the server</string>
     <string name="error_verification_code">Verification code error</string>
     <string name="error_server_overload">Server overload</string>
-    <string name="error_network_disconnected">The network connection is disconnected, please check the network</string>
-    <string name="remote_window_ban">Ban</string>
-    <string name="remote_window_cancel_ban">Cancel the ban</string>
-    <string name="remote_window_out">Please come out</string>
-    <string name="permission_write_external_storage">The program needs to cache some data on the SD card, otherwise it cannot run.</string>
-    <string name="permission_camera">The program needs to use camera permissions for audio and video calls, otherwise it will not work.</string>
-    <string name="permission_record_audio">The program needs recording permission for audio and video calls, otherwise it cannot run.</string>
-    <string name="permission_read_phone_state">The program needs phone monitoring permission for audio and video calls, otherwise it cannot run.</string>
-    <string name="sp_videoinfo_resolution">Resolution</string>
-    <string name="sp_videoinfo_rate">Frame Rate</string>
-    <string name="sp_videoinfo_codingformat">Coding Format</string>
+	<string name="splash_logo_text">3T Lova 连麦直播</string>
+	<string name="splash_roomid_edit_hint">请输入房间ID</string>
+	<string name="splash_adv_setting">高级设置</string>
+	<string name="copyright_info">Copyright © 2019 北京三体云联科技有限公司 版权所有</string>
 </resources>

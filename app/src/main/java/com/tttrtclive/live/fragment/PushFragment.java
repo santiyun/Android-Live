@@ -1,6 +1,7 @@
 package com.tttrtclive.live.fragment;
 
 import android.annotation.SuppressLint;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -32,7 +33,7 @@ public class PushFragment extends Fragment implements SoSpinner.OnItemSelectedLi
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mSetActivity = (SetActivity) getActivity();
-        View v = inflater.inflate(R.layout.push_set, null);
+        View v = inflater.inflate(R.layout.child_set_push, null);
 
         mPixView = v.findViewById(R.id.push_pix_rate);
         mBiteView = v.findViewById(R.id.push_bite_rate);
@@ -77,12 +78,18 @@ public class PushFragment extends Fragment implements SoSpinner.OnItemSelectedLi
                     mPixView.setEnabled(false);
                     mBiteView.setEnabled(false);
                     mFrameView.setEnabled(false);
+                    mPixView.setTextColor(Color.parseColor("#FF999999"));
+                    mBiteView.setTextColor(Color.parseColor("#FF999999"));
+                    mFrameView.setTextColor(Color.parseColor("#FF999999"));
                 } else {
                     mSetActivity.mPushVideoProfile = 0;
 
                     mPixView.setEnabled(true);
                     mBiteView.setEnabled(true);
                     mFrameView.setEnabled(true);
+                    mPixView.setTextColor(Color.parseColor("#FF666666"));
+                    mBiteView.setTextColor(Color.parseColor("#FF666666"));
+                    mFrameView.setTextColor(Color.parseColor("#FF666666"));
                 }
                 break;
             case R.id.push_encode_spinner:

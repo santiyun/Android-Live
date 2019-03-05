@@ -3,6 +3,8 @@
 				android:layout_width="297dp"
 				android:layout_height="wrap_content"
 				android:layout_gravity="center"
+				android:paddingBottom="30dp"
+				android:paddingTop="40dp"
 				android:background="@drawable/ditu">
 
 	<TextView
@@ -10,7 +12,6 @@
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_centerHorizontal="true"
-		android:layout_marginTop="37dp"
 		android:text="@string/exit_window_title"
 		android:textColor="#6a6a6a"
 		android:textSize="18sp"/>
@@ -20,7 +21,7 @@
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_below="@+id/resolution"
-		android:layout_marginLeft="27dp"
+		android:layout_marginLeft="17dp"
 		android:layout_marginTop="37dp"
 		android:text="@string/exit_window_yes"
 		android:textColor="#6a6a6a"
@@ -32,7 +33,7 @@
 		android:layout_height="wrap_content"
 		android:layout_alignParentRight="true"
 		android:layout_below="@+id/resolution"
-		android:layout_marginRight="27dp"
+		android:layout_marginRight="17dp"
 		android:layout_marginTop="37dp"
 		android:text="@string/exit_window_cancel"
 		android:textColor="#6a6a6a"

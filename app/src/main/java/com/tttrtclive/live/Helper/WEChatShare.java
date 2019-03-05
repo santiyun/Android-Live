@@ -10,11 +10,12 @@ import com.tencent.mm.opensdk.modelbase.BaseReq;
 import com.tencent.mm.opensdk.modelbase.BaseResp;
 import com.tencent.mm.opensdk.modelmsg.SendMessageToWX;
 import com.tencent.mm.opensdk.modelmsg.WXMediaMessage;
-import com.tencent.mm.opensdk.modelmsg.WXTextObject;
 import com.tencent.mm.opensdk.modelmsg.WXVideoObject;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.IWXAPIEventHandler;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
+import com.tttrtclive.live.LocalConfig;
+import com.tttrtclive.live.LocalConstans;
 import com.tttrtclive.live.R;
 
 import java.io.ByteArrayOutputStream;
@@ -22,13 +23,17 @@ import java.nio.ByteBuffer;
 
 public class WEChatShare implements IWXAPIEventHandler {
 
-    private static final String APP_ID = "wxf49788754a287d14";
-
     private Context mContext;
     private IWXAPI api;
 
     public WEChatShare(Context context) {
         mContext = context;
+        String APP_ID;
+        if (LocalConfig.VERSION_FLAG == LocalConstans.VERSION_WHITE) {
+            APP_ID = "wx39992374fe94311c";
+        } else {
+            APP_ID = "wxf49788754a287d14";
+        }
         api = WXAPIFactory.createWXAPI(context, APP_ID, true);
         api.registerApp(APP_ID);
     }
@@ -43,8 +48,14 @@ public class WEChatShare implements IWXAPIEventHandler {
 
         WXMediaMessage msg = new WXMediaMessage(video);
         msg.title = "连麦直播";
-        msg.description = "三体云联邀请你加入直播间:\n" + roomid;
-        Bitmap bmp = BitmapFactory.decodeResource(mContext.getResources(), R.mipmap.ic_launcher);
+        Bitmap bmp;
+        if (LocalConfig.VERSION_FLAG == LocalConstans.VERSION_WHITE) {
+            msg.description = "欢迎加入直播间:\n" + roomid;
+            bmp = BitmapFactory.decodeResource(mContext.getResources(), R.mipmap.ic_launcher_white);
+        } else {
+            msg.description = "三体云联邀请你加入直播间:\n" + roomid;
+            bmp = BitmapFactory.decodeResource(mContext.getResources(), R.mipmap.ic_launcher_white);
+        }
         Bitmap thumbBmp = Bitmap.createScaledBitmap(bmp, 200, 200, true);
         bmp.recycle();
         msg.thumbData = bmpToByteArray(thumbBmp, true);

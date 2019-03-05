@@ -3,6 +3,7 @@ package com.tttrtclive.live.ui;
 import android.app.AlertDialog;
 import android.app.Service;
 import android.content.BroadcastReceiver;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -16,26 +17,37 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.google.gson.Gson;
 import com.tencent.mm.opensdk.modelmsg.SendMessageToWX;
 import com.tttrtclive.live.Helper.WEChatShare;
 import com.tttrtclive.live.Helper.WindowManager;
+import com.tttrtclive.live.LocalConfig;
 import com.tttrtclive.live.LocalConstans;
 import com.tttrtclive.live.MainApplication;
 import com.tttrtclive.live.R;
 import com.tttrtclive.live.bean.EnterUserInfo;
 import com.tttrtclive.live.bean.JniObjs;
-import com.tttrtclive.live.bean.SeiInfo;
 import com.tttrtclive.live.callback.MyTTTRtcEngineEventHandler;
 import com.tttrtclive.live.callback.PhoneListener;
 import com.tttrtclive.live.dialog.ExitRoomDialog;
 import com.tttrtclive.live.utils.MyLog;
 import com.wushuangtech.library.Constants;
+import com.wushuangtech.utils.PviewLog;
+import com.wushuangtech.wstechapi.TTTRtcEngine;
 import com.wushuangtech.wstechapi.model.VideoCanvas;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
+
 import static com.wushuangtech.library.Constants.CLIENT_ROLE_ANCHOR;
-import static com.wushuangtech.library.Constants.CLIENT_ROLE_AUDIENCE;
 
 public class MainActivity extends BaseActivity {
 
@@ -52,7 +64,7 @@ public class MainActivity extends BaseActivity {
     private boolean mIsMute = false;
     private boolean mIsHeadset;
     private boolean mIsPhoneComing;
-    private boolean mIsSpeaker;
+    private boolean mIsSpeaker, mIsBackCamera;
 
     private WindowManager mWindowManager;
     private TelephonyManager mTelephonyManager;
@@ -60,13 +72,17 @@ public class MainActivity extends BaseActivity {
     private int mRole = CLIENT_ROLE_ANCHOR;
     private boolean mHasLocalView = false;
     private WEChatShare mWEChatShare;
+    private long mRoomID;
+    private final Object obj = new Object();
+    private boolean mIsReceiveSei;
+    private Map<Long, Boolean> mUserMutes = new HashMap<>();
 
     public static int mCurrentAudioRoute;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.fragment_videochat);
+        setContentView(R.layout.activity_main);
         initView();
         initData();
         initEngine();
@@ -76,8 +92,28 @@ public class MainActivity extends BaseActivity {
         if (mTelephonyManager != null) {
             mTelephonyManager.listen(mPhoneListener, PhoneStateListener.LISTEN_CALL_STATE);
         }
+        // 启用 sdk 上报所有说话者的音量大小
         mTTTEngine.enableAudioVolumeIndication(300, 3);
-        MyLog.d("MainActivity onCreate");
+        // 设置 SDK 的本地视频等级或参数
+        if (mRole == Constants.CLIENT_ROLE_BROADCASTER) {
+            // 若角色为副播，视频质量等级设置为120P
+            mTTTEngine.setVideoProfile(Constants.TTTRTC_VIDEOPROFILE_120P, false);
+        } else {
+            // 若角色为主播，视频质量根据登录界面的设置参数决定
+            if (LocalConfig.mLocalVideoProfile != 0) {
+                TTTRtcEngine.getInstance().setVideoProfile(LocalConfig.mLocalVideoProfile, false);
+            } else {
+                if (LocalConfig.mLocalHeight != 0 && LocalConfig.mLocalWidth != 0 &&
+                        LocalConfig.mLocalBitRate != 0 && LocalConfig.mLocalFrameRate != 0) {
+                    TTTRtcEngine.getInstance().setVideoProfile(LocalConfig.mLocalHeight, LocalConfig.mLocalWidth,
+                            LocalConfig.mLocalBitRate, LocalConfig.mLocalFrameRate);
+                } else {
+                    mTTTEngine.setVideoProfile(Constants.TTTRTC_VIDEOPROFILE_360P, false);
+                }
+            }
+        }
+        SplashActivity.mIsLoging = false;
+        MyLog.d("MainActivity onCreate ...");
     }
 
     @Override
@@ -93,22 +129,30 @@ public class MainActivity extends BaseActivity {
             mTelephonyManager = null;
         }
         unregisterReceiver(mLocalBroadcast);
+
+        mTTTEngine.muteLocalAudioStream(false);
+        if (mIsBackCamera) {
+            mTTTEngine.switchCamera();
+        }
+        LocalConfig.mIsMacAnchor = false;
+        LocalConfig.mIsPCAnchor = false;
         super.onDestroy();
-        MyLog.d("MainActivity onDestroy");
+        MyLog.d("MainActivity onDestroy... ");
     }
 
     private void initView() {
-        mAudioSpeedShow = (TextView) findViewById(R.id.main_btn_audioup);
-        mVideoSpeedShow = (TextView) findViewById(R.id.main_btn_videoup);
-        mAudioChannel = (ImageView) findViewById(R.id.main_btn_audio_channel);
+        mAudioSpeedShow = findViewById(R.id.main_btn_audioup);
+        mVideoSpeedShow = findViewById(R.id.main_btn_videoup);
+        mAudioChannel = findViewById(R.id.main_btn_audio_channel);
 
         Intent intent = getIntent();
-        long roomId = intent.getLongExtra("ROOM_ID", 0);
+        mRoomID = intent.getLongExtra("ROOM_ID", 0);
         mUserId = intent.getLongExtra("USER_ID", 0);
         mRole = intent.getIntExtra("ROLE", CLIENT_ROLE_ANCHOR);
-        ((TextView) findViewById(R.id.main_btn_title)).setText("房号：" + roomId);
+        ((TextView) findViewById(R.id.main_btn_title)).setText("房号：" + mRoomID);
 
         if (mRole == CLIENT_ROLE_ANCHOR) {
+            // 打开本地预览视频，并开始推流
             ((TextView) findViewById(R.id.main_btn_host)).setText("ID：" + mUserId);
             SurfaceView mSurfaceView = mTTTEngine.CreateRendererView(this);
             mTTTEngine.setupLocalVideo(new VideoCanvas(0, Constants.RENDER_MODE_HIDDEN, mSurfaceView), getRequestedOrientation());
@@ -119,7 +163,6 @@ public class MainActivity extends BaseActivity {
 
         mAudioChannel.setOnClickListener(v -> {
             if (mRole != CLIENT_ROLE_ANCHOR) return;
-
             mIsMute = !mIsMute;
             if (mIsHeadset)
                 mAudioChannel.setImageResource(mIsMute ? R.drawable.mainly_btn_muted_headset_selector : R.drawable.mainly_btn_headset_selector);
@@ -132,6 +175,7 @@ public class MainActivity extends BaseActivity {
 
         findViewById(R.id.main_btn_switch_camera).setOnClickListener(v -> {
             mTTTEngine.switchCamera();
+            mIsBackCamera = !mIsBackCamera;
         });
 
         findViewById(R.id.main_button_share).setOnClickListener(v -> {
@@ -140,20 +184,43 @@ public class MainActivity extends BaseActivity {
 
         mWEChatShare = new WEChatShare(this);
         findViewById(R.id.main_share_layout).findViewById(R.id.friend).setOnClickListener(v -> {
-            mWEChatShare.sendText(SendMessageToWX.Req.WXSceneSession, roomId,
-                    "http://3ttech.cn/3tplayer.html?flv=http://pull1.3ttech.cn/sdk/" + roomId + ".flv&hls=http://pull1.3ttech.cn/sdk/" + roomId + ".m3u8");
+            if (LocalConfig.VERSION_FLAG == LocalConstans.VERSION_WHITE) {
+                mWEChatShare.sendText(SendMessageToWX.Req.WXSceneSession, mRoomID,
+                        "http://wushuangtech.com/live.html?flv=http://pull.wushuangtech.com/sdk/" + mRoomID + ".flv&hls=http://pull.wushuangtech.com/sdk/" + mRoomID + ".m3u8");
+            } else {
+                mWEChatShare.sendText(SendMessageToWX.Req.WXSceneSession, mRoomID, getWXLink());
+            }
             findViewById(R.id.main_share_layout).setVisibility(View.GONE);
         });
 
         findViewById(R.id.friend_circle).setOnClickListener(v -> {
-            mWEChatShare.sendText(SendMessageToWX.Req.WXSceneTimeline, roomId,
-                    "http://3ttech.cn/3tplayer.html?flv=http://pull1.3ttech.cn/sdk/" + roomId + ".flv&hls=http://pull1.3ttech.cn/sdk/" + roomId + ".m3u8");
+            if (LocalConfig.VERSION_FLAG == LocalConstans.VERSION_WHITE) {
+                mWEChatShare.sendText(SendMessageToWX.Req.WXSceneTimeline, mRoomID,
+                        "http://wushuangtech.com/live.html?flv=http://pull.wushuangtech.com/sdk/" + mRoomID + ".flv&hls=http://pull.wushuangtech.com/sdk/" + mRoomID + ".m3u8");
+            } else {
+                mWEChatShare.sendText(SendMessageToWX.Req.WXSceneSession, mRoomID, getWXLink());
+            }
+
             findViewById(R.id.main_share_layout).setVisibility(View.GONE);
+        });
+
+        findViewById(R.id.shared_copy).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ClipboardManager cm = (ClipboardManager) mContext.getSystemService(Context.CLIPBOARD_SERVICE);
+                // 将文本内容放到系统剪贴板里。
+                cm.setText(getWXLink());
+                Toast.makeText(mContext, "复制成功!", Toast.LENGTH_SHORT).show();
+            }
         });
 
         findViewById(R.id.local_view_layout).setOnClickListener(v -> {
             if (findViewById(R.id.main_share_layout).getVisibility() == View.VISIBLE)
                 findViewById(R.id.main_share_layout).setVisibility(View.GONE);
+        });
+
+        findViewById(R.id.friend_circle_close).setOnClickListener(v -> {
+            findViewById(R.id.main_share_layout).setVisibility(View.GONE);
         });
 
     }
@@ -194,7 +261,6 @@ public class MainActivity extends BaseActivity {
 
     private void initData() {
         mWindowManager = new WindowManager(this);
-
         if (mCurrentAudioRoute != Constants.AUDIO_ROUTE_SPEAKER) {
             mIsHeadset = true;
             mAudioChannel.setImageResource(R.drawable.mainly_btn_headset_selector);
@@ -207,6 +273,10 @@ public class MainActivity extends BaseActivity {
         finish();
     }
 
+    public String getWXLink() {
+        return "http://3ttech.cn/3tplayer.html?flv=http://pull.3ttech.cn/sdk/" + mRoomID + ".flv&hls=http://pull.3ttech.cn/sdk/" + mRoomID + ".m3u8";
+    }
+
     private class MyLocalBroadcastReceiver extends BroadcastReceiver {
 
         @Override
@@ -214,9 +284,9 @@ public class MainActivity extends BaseActivity {
             String action = intent.getAction();
             if (MyTTTRtcEngineEventHandler.TAG.equals(action)) {
                 JniObjs mJniObjs = intent.getParcelableExtra(MyTTTRtcEngineEventHandler.MSG_TAG);
+                MyLog.d("UI onReceive callBack... mJniType : " + mJniObjs.mJniType);
                 switch (mJniObjs.mJniType) {
-                    case LocalConstans.CALL_BACK_ON_ERROR:
-                        MyLog.d("UI onReceive CALL_BACK_ON_ERROR... ");
+                    case LocalConstans.CALL_BACK_ON_USER_KICK:
                         String message = "";
                         int errorType = mJniObjs.mErrorType;
                         if (errorType == Constants.ERROR_KICK_BY_HOST) {
@@ -249,7 +319,6 @@ public class MainActivity extends BaseActivity {
                     case LocalConstans.CALL_BACK_ON_USER_JOIN:
                         long uid = mJniObjs.mUid;
                         int identity = mJniObjs.mIdentity;
-                        MyLog.d("UI onReceive CALL_BACK_ON_USER_JOIN... uid : " + uid);
                         if (identity == CLIENT_ROLE_ANCHOR) {
                             mAnchorId = uid;
                             ((TextView) findViewById(R.id.main_btn_host)).setText("主播ID：" + mAnchorId);
@@ -264,23 +333,92 @@ public class MainActivity extends BaseActivity {
                         mWindowManager.removeAndSendSei(mUserId, offLineUserID);
                         break;
                     case LocalConstans.CALL_BACK_ON_SEI:
-                        MyLog.d("CALL_BACK_ON_SEI", "start parse sei....");
-                        String sei = mJniObjs.mSEI;
-                        Gson gson = new Gson();
-                        SeiInfo seiInfo = gson.fromJson(sei, SeiInfo.class);
-
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (!mHasLocalView) {
-                                    mHasLocalView = true;
-                                    SurfaceView mSurfaceView = mTTTEngine.CreateRendererView(MainActivity.this);
-                                    mTTTEngine.setupRemoteVideo(new VideoCanvas(Long.parseLong(seiInfo.getMid()), Constants.RENDER_MODE_HIDDEN, mSurfaceView));
-                                    ((ConstraintLayout) findViewById(R.id.local_view_layout)).addView(mSurfaceView);
+                        TreeSet<EnterUserInfo> mInfos = new TreeSet<>();
+                        try {
+                            JSONObject jsonObject = new JSONObject(mJniObjs.mSEI);
+                            JSONArray jsonArray = jsonObject.getJSONArray("pos");
+                            String anchorDevid = (String) jsonObject.get("mid");
+                            try {
+                                long tryPase = Long.parseLong(anchorDevid);
+                                LocalConfig.mIsPCAnchor = false;
+                                LocalConfig.mIsMacAnchor = false;
+                                PviewLog.d("tryPase : " + tryPase);
+                            } catch (Exception e) {
+                                LocalConfig.mIsMacAnchor = true;
+                                for (int i = 0; i < jsonArray.length(); i++) {
+                                    JSONObject jsonobject2 = (JSONObject) jsonArray.get(i);
+                                    String devid = jsonobject2.getString("id");
+                                    float y = Float.valueOf(jsonobject2.getString("y"));
+                                    long userId;
+                                    int index = devid.indexOf(":");
+                                    if (index > 0) {
+                                        userId = Long.parseLong(devid.substring(0, index));
+                                    } else {
+                                        userId = Long.parseLong(devid);
+                                    }
+                                    if (userId != mAnchorId) {
+                                        if (y == 0) {
+                                            LocalConfig.mIsPCAnchor = true;
+                                            LocalConfig.mIsMacAnchor = false;
+                                            break;
+                                        }
+                                    }
                                 }
-                                mWindowManager.updateWindow(mUserId, seiInfo, getRequestedOrientation());
                             }
-                        });
+
+                            for (int i = 0; i < jsonArray.length(); i++) {
+                                JSONObject jsonobject2 = (JSONObject) jsonArray.get(i);
+                                String devid = jsonobject2.getString("id");
+                                float x = Float.valueOf(jsonobject2.getString("x"));
+                                float y = Float.valueOf(jsonobject2.getString("y"));
+                                float w = Float.valueOf(jsonobject2.getString("w"));
+                                float h = Float.valueOf(jsonobject2.getString("h"));
+
+                                long userId;
+                                int index = devid.indexOf(":");
+                                if (index > 0) {
+                                    userId = Long.parseLong(devid.substring(0, index));
+                                } else {
+                                    userId = Long.parseLong(devid);
+                                }
+                                MyLog.d("CALL_BACK_ON_SEI", "parse user id : " + userId);
+                                if (userId != mAnchorId) {
+                                    EnterUserInfo temp = new EnterUserInfo(userId, Constants.CLIENT_ROLE_BROADCASTER);
+                                    temp.setXYLocation(y, x, w, h);
+                                    mInfos.add(temp);
+                                } else {
+                                    if (!mHasLocalView) {
+                                        mHasLocalView = true;
+                                        SurfaceView mSurfaceView = mTTTEngine.CreateRendererView(MainActivity.this);
+                                        mTTTEngine.setupRemoteVideo(new VideoCanvas(userId, Constants.RENDER_MODE_HIDDEN, mSurfaceView));
+                                        ((ConstraintLayout) findViewById(R.id.local_view_layout)).addView(mSurfaceView);
+                                    }
+                                }
+
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                        Iterator<EnterUserInfo> iterator = mInfos.iterator();
+                        while (iterator.hasNext()) {
+                            EnterUserInfo next = iterator.next();
+                            MyLog.d("CALL_BACK_ON_SEI", "user list : " + next.getId() + " | index : " + next.mShowIndex);
+                            mWindowManager.add(mUserId, next.getId(), getRequestedOrientation(), next.mShowIndex);
+                        }
+
+                        synchronized (obj) {
+                            if (mUserMutes.size() > 0) {
+                                Set<Map.Entry<Long, Boolean>> entries = mUserMutes.entrySet();
+                                Iterator<Map.Entry<Long, Boolean>> iterator2 = entries.iterator();
+                                while (iterator2.hasNext()) {
+                                    Map.Entry<Long, Boolean> next = iterator2.next();
+                                    mWindowManager.muteAudio(next.getKey(), next.getValue());
+                                }
+                            }
+                            mUserMutes.clear();
+                            mIsReceiveSei = true;
+                        }
                         break;
                     case LocalConstans.CALL_BACK_ON_REMOTE_AUDIO_STATE:
                         if (mJniObjs.mRemoteAudioStats.getUid() != mAnchorId) {
@@ -321,12 +459,28 @@ public class MainActivity extends BaseActivity {
                         boolean mIsMuteAuido = mJniObjs.mIsDisableAudio;
                         MyLog.i("OnRemoteAudioMuted CALL_BACK_ON_MUTE_AUDIO start! .... " + mJniObjs.mUid
                                 + " | mIsMuteAuido : " + mIsMuteAuido);
-                        mWindowManager.muteAudio(muteUid, mIsMuteAuido);
+                        if (muteUid == mAnchorId) {
+//                            mIsMute = mIsMuteAuido;
+//                            if (mIsHeadset)
+//                                mAudioChannel.setImageResource(mIsMuteAuido ? R.drawable.mainly_btn_muted_headset_selector : R.drawable.mainly_btn_headset_selector);
+//                            else
+//                                mAudioChannel.setImageResource(mIsMuteAuido ? R.drawable.mainly_btn_mute_speaker_selector : R.drawable.mainly_btn_speaker_selector);
+                        } else {
+                            if (mRole != Constants.CLIENT_ROLE_ANCHOR) {
+                                if (mIsReceiveSei) {
+                                    mWindowManager.muteAudio(muteUid, mIsMuteAuido);
+                                } else {
+                                    mUserMutes.put(muteUid, mIsMuteAuido);
+                                }
+                            } else {
+                                mWindowManager.muteAudio(muteUid, mIsMuteAuido);
+                            }
+                        }
                         break;
 
                     case LocalConstans.CALL_BACK_ON_AUDIO_ROUTE:
                         int mAudioRoute = mJniObjs.mAudioRoute;
-                        if (mAudioRoute == Constants.AUDIO_ROUTE_SPEAKER || mAudioRoute ==  Constants.AUDIO_ROUTE_HEADPHONE) {
+                        if (mAudioRoute == Constants.AUDIO_ROUTE_SPEAKER || mAudioRoute == Constants.AUDIO_ROUTE_HEADPHONE) {
                             mIsHeadset = false;
                             mAudioChannel.setImageResource(mIsMute ? R.drawable.mainly_btn_mute_speaker_selector : R.drawable.mainly_btn_speaker_selector);
                         } else {
@@ -354,7 +508,7 @@ public class MainActivity extends BaseActivity {
                         if (mJniObjs.mUid == mUserId) {
                             if (mIsHeadset) {
                                 if (volumeLevel >= 0 && volumeLevel <= 3) {
-                                    mAudioChannel.setImageResource(R.drawable.mainly_btn_headset_selector);
+                                    mAudioChannel.setImageResource(R.drawable.mainly_btn_headset_small_selector);
                                 } else if (volumeLevel > 3 && volumeLevel <= 6) {
                                     mAudioChannel.setImageResource(R.drawable.mainly_btn_headset_middle_selector);
                                 } else if (volumeLevel > 6 && volumeLevel <= 9) {
@@ -362,7 +516,7 @@ public class MainActivity extends BaseActivity {
                                 }
                             } else {
                                 if (volumeLevel >= 0 && volumeLevel <= 3) {
-                                    mAudioChannel.setImageResource(R.drawable.mainly_btn_speaker_selector);
+                                    mAudioChannel.setImageResource(R.drawable.mainly_btn_speaker_small_selector);
                                 } else if (volumeLevel > 3 && volumeLevel <= 6) {
                                     mAudioChannel.setImageResource(R.drawable.mainly_btn_speaker_middle_selector);
                                 } else if (volumeLevel > 6 && volumeLevel <= 9) {

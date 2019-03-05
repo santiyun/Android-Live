@@ -1,32 +1,20 @@
 <resources>
     <string name="app_name">连麦直播</string>
-    <string name="version_info">http://www.3ttech.cn version %1$s</string>
-    <string name="main_title">房号：%1$s</string>
-    <string name="main_broadcaster">主播：%1$s</string>
-    <string name="main_secondAnchor">副播:%1$s</string>
-    <string name="main_viewer">观众:%1$s</string>
-    <string name="main_local_role">角色：%1$s</string>
-    <string name="main_audioup">A-%1$skbps\u2191</string>
+    <string name="version_info">SDK Version: %1$s</string>
+	<string name="copyright_info">Copyright © 2019 北京三体云联科技有限公司 版权所有</string>
+	<string name="main_audioup">A-%1$skbps\u2191</string>
     <string name="main_videoups">V-%1$skbps\u2191</string>
-    <string name="videoly_speaking">发言中&#8230;</string>
-    <string name="videoly_videodown">V-%1$skbps\u2193</string>
+	<string name="videoly_videodown">V-%1$skbps\u2193</string>
     <string name="videoly_audiodown">A-%1$skbps\u2193</string>
-
-    <string name="title_name_open">测试窗口(按住拖动) \u2191</string>
-    <string name="title_name_close">测试窗口(按住拖动) \u2193</string>
-
-    <string name="welcome_role">角色</string>
-    <string name="welcome_anchor">主播</string>
-    <string name="welcome_auxiliary">副播</string>
-    <string name="welcome_audience">观众</string>
-    <string name="welcome_roomid">直播间ID:</string>
-    <string name="welcome_gointo">进入房间</string>
-    <string name="info_window_auxiliary">副播:</string>
-    <string name="info_window_audience">观众:</string>
-    <string name="info_window_closeshow">关闭网络显示</string>
-    <string name="info_window_cdnpullurl">CDN拉流地址</string>
-    <string name="info_window_copy">复制</string>
-    <string name="exit_window_title">你确定要退出房间吗？</string>
+	<string name="splash_logo_text">3T Lova 连麦直播</string>
+    <string name="splash_role_title">角色</string>
+    <string name="splash_role_anchor">主播</string>
+    <string name="splash_role_broadcaster">副播</string>
+	<string name="splash_roomid_edit_hint">请输入房间ID</string>
+    <string name="splash_roomid_edit_title">直播间ID:</string>
+    <string name="splash_enter_room">进入房间</string>
+	<string name="splash_adv_setting">高级设置</string>
+	<string name="exit_window_title">你确定要退出房间吗？</string>
     <string name="exit_window_yes">是</string>
     <string name="exit_window_cancel">否</string>
     <string name="error_kicked">被主播踢出</string>
@@ -39,19 +27,7 @@
     <string name="error_timeout">超时，10秒未收到服务器返回结果</string>
     <string name="error_noroom">该直播间不存在</string>
     <string name="error_version">版本错误</string>
-    <string name="sys_support_toast">您的系统暂不支持该功能</string>
-    <string name="error_unconnect">无法连接服务器</string>
+	<string name="error_unconnect">无法连接服务器</string>
     <string name="error_verification_code">验证码错误</string>
     <string name="error_server_overload">服务器过载</string>
-    <string name="error_network_disconnected">网络连接断开，请检查网络</string>
-    <string name="remote_window_ban">禁言</string>
-    <string name="remote_window_cancel_ban">取消禁言</string>
-    <string name="remote_window_out">请出</string>
-    <string name="permission_write_external_storage">程序需要缓存一些数据在SD卡，否则无法运行。</string>
-    <string name="permission_camera">程序需要使用摄像头权限用来音视频通话，否则无法运行。</string>
-    <string name="permission_record_audio">程序需要录音权限用来音视频通话，否则无法运行。</string>
-    <string name="permission_read_phone_state">程序需要电话监听权限用来音视频通话，否则无法运行。</string>
-    <string name="sp_videoinfo_resolution">分辨率</string>
-    <string name="sp_videoinfo_rate">帧率</string>
-    <string name="sp_videoinfo_codingformat">编码格式</string>
 </resources>

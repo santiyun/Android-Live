@@ -1,14 +1,6 @@
 apply plugin: 'com.android.application'
 
 android {
-    signingConfigs {
-        config {
-            keyAlias 'key0'
-            keyPassword '111111'
-            storeFile file('../live.jks')
-            storePassword '111111'
-        }
-    }
     compileSdkVersion 27
     buildToolsVersion '28.0.2'
     defaultConfig {
@@ -16,7 +8,7 @@ android {
         minSdkVersion 17
         targetSdkVersion 27
         versionCode 1
-        versionName "2.1.0 (0730)"
+        versionName "2.0.1"
     }
     repositories {
         flatDir {
@@ -27,10 +19,6 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.config
-        }
-        debug {
-            signingConfig signingConfigs.config
         }
     }
     compileOptions {
@@ -41,19 +29,24 @@ android {
         checkReleaseBuilds false
         abortOnError false
     }
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['libs']
+            assets.srcDirs = ['assets']
+        }
+        release.setRoot('build-types/release')
+    }
 }
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'com.android.support.constraint:constraint-layout:1.1.2'
+    implementation 'com.android.support:appcompat-v7:27.1.0'
     implementation 'com.yanzhenjie:permission:2.0.0-rc1'
-    implementation 'com.jaeger.statusbarutil:library:1.4.0'
-    implementation files('libs/bugly_crash_release.jar')
-    implementation 'junit:junit:4.12'
+    implementation 'com.gyf.immersionbar:immersionbar:2.3.3-beta15'
     implementation 'com.tencent.mm.opensdk:wechat-sdk-android-with-mta:+'
     implementation 'com.google.code.gson:gson:2.8.5'
-    implementation(name: '3T_Native_SDK_for_Android_V2.1.1_Full', ext: 'aar')
     implementation 'com.flyco.tablayout:FlycoTabLayout_Lib:2.1.2@aar'
     implementation 'com.sospinner:sospinner:1.1.0'
-    //    implementation project(':wstechapi')
+    implementation(name: <SDK引用位置>, ext: 'aar') //shell //IJK_MODULE_API
 }

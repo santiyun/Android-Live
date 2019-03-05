@@ -4,7 +4,6 @@ import android.util.DisplayMetrics;
 
 import com.tttrtclive.live.R;
 import com.tttrtclive.live.bean.EnterUserInfo;
-import com.tttrtclive.live.bean.SeiInfo;
 import com.tttrtclive.live.ui.MainActivity;
 import com.wushuangtech.bean.VideoCompositingLayout;
 import com.wushuangtech.wstechapi.TTTRtcEngine;
@@ -28,61 +27,31 @@ public class WindowManager {
         mScreenWidth = dm.widthPixels;
         mScreenHeight = dm.heightPixels;
 
-        mRemoteWindowList.add((AudioRemoteWindow) mainActivity.findViewById(R.id.remote1));
-        mRemoteWindowList.add((AudioRemoteWindow) mainActivity.findViewById(R.id.remote2));
-        mRemoteWindowList.add((AudioRemoteWindow) mainActivity.findViewById(R.id.remote3));
-        mRemoteWindowList.add((AudioRemoteWindow) mainActivity.findViewById(R.id.remote4));
-        mRemoteWindowList.add((AudioRemoteWindow) mainActivity.findViewById(R.id.remote5));
-        mRemoteWindowList.add((AudioRemoteWindow) mainActivity.findViewById(R.id.remote6));
+        AudioRemoteWindow mAudioRemoteWindow0 = mainActivity.findViewById(R.id.remote1);
+        mAudioRemoteWindow0.mIndex = 0;
+        mRemoteWindowList.add(mAudioRemoteWindow0);
+        AudioRemoteWindow mAudioRemoteWindow1 = mainActivity.findViewById(R.id.remote2);
+        mAudioRemoteWindow1.mIndex = 1;
+        mRemoteWindowList.add(mAudioRemoteWindow1);
+        AudioRemoteWindow mAudioRemoteWindow2 = mainActivity.findViewById(R.id.remote3);
+        mAudioRemoteWindow2.mIndex = 2;
+        mRemoteWindowList.add(mAudioRemoteWindow2);
+        AudioRemoteWindow mAudioRemoteWindow3 = mainActivity.findViewById(R.id.remote4);
+        mAudioRemoteWindow3.mIndex = 3;
+        mRemoteWindowList.add(mAudioRemoteWindow3);
+        AudioRemoteWindow mAudioRemoteWindow4 = mainActivity.findViewById(R.id.remote5);
+        mAudioRemoteWindow4.mIndex = 4;
+        mRemoteWindowList.add(mAudioRemoteWindow4);
+        AudioRemoteWindow mAudioRemoteWindow5 = mainActivity.findViewById(R.id.remote6);
+        mAudioRemoteWindow5.mIndex = 5;
+        mRemoteWindowList.add(mAudioRemoteWindow5);
     }
 
-    public void updateWindow(long userId, SeiInfo seiInfo, int oratation) {
-        ArrayList<Long> removeList = new ArrayList();
-        for (AudioRemoteWindow remoteWindow : mRemoteWindowList) {
-            boolean has = false;
-            for (int i = 0; i < seiInfo.getPos().size(); i ++) {
-                // 过滤主播
-                if (seiInfo.getPos().get(i).getId().equals(seiInfo.getMid()))
-                    continue;
-                if (remoteWindow.mId == Long.parseLong(seiInfo.getPos().get(i).getId())) {
-                    has = true;
-                    break;
-                }
-            }
-            if (!has)
-                removeList.add(remoteWindow.mId);
-        }
-
-        ArrayList<Long> addList = new ArrayList();
-        for (int i = 0; i < seiInfo.getPos().size(); i ++) {
-            // 过滤主播
-            if (seiInfo.getPos().get(i).getId().equals(seiInfo.getMid()))
-                continue;
-            long id = Long.parseLong(seiInfo.getPos().get(i).getId());
-            boolean has = false;
-            for (AudioRemoteWindow remoteWindow : mRemoteWindowList) {
-                if (remoteWindow.mId == id) {
-                    has = true;
-                    break;
-                }
-            }
-            if (!has)
-                addList.add(id);
-        }
-
-        for (int i = 0; i < removeList.size(); i ++) {
-            remove(removeList.get(i));
-        }
-
-        for (int i = 0; i < addList.size(); i ++) {
-            add(userId, addList.get(i), oratation);
-        }
-    }
-
-    public void add(long localId, long id, int oratation) {
-        for (int i = 0; i < mRemoteWindowList.size(); i ++) {
+    public void add(long localId, long id, int oratation, int index) {
+        for (int i = 0; i < mRemoteWindowList.size(); i++) {
             AudioRemoteWindow audioRemoteWindow = mRemoteWindowList.get(i);
-            if (audioRemoteWindow.mId == -1) {
+            if (audioRemoteWindow.mIndex == index && audioRemoteWindow.mId != id) {
+                audioRemoteWindow.hide();
                 audioRemoteWindow.show(localId, id, oratation);
                 return;
             }
@@ -90,7 +59,7 @@ public class WindowManager {
     }
 
     public void addAndSendSei(long loginId, EnterUserInfo userInfo) {
-        for (int i = 0; i < mRemoteWindowList.size(); i ++) {
+        for (int i = 0; i < mRemoteWindowList.size(); i++) {
             AudioRemoteWindow audioRemoteWindow = mRemoteWindowList.get(i);
             if (audioRemoteWindow.mId == -1) {
                 if (userInfo.getRole() == CLIENT_ROLE_BROADCASTER)
@@ -105,8 +74,8 @@ public class WindowManager {
         TTTRtcEngine.getInstance().setVideoCompositingLayout(layout);
     }
 
-    public void remove(long id) {
-        for (int i = 0; i < mRemoteWindowList.size(); i ++) {
+    public void remove(long id, int index) {
+        for (int i = 0; i < mRemoteWindowList.size(); i++) {
             AudioRemoteWindow audioRemoteWindow = mRemoteWindowList.get(i);
             if (audioRemoteWindow.mId == id) {
                 audioRemoteWindow.hide();
@@ -116,9 +85,10 @@ public class WindowManager {
     }
 
     public void removeAndSendSei(long loginId, long id) {
-        for (int i = 0; i < mRemoteWindowList.size(); i ++) {
+        for (int i = 0; i < mRemoteWindowList.size(); i++) {
             AudioRemoteWindow audioRemoteWindow = mRemoteWindowList.get(i);
             if (audioRemoteWindow.mId == id) {
+                audioRemoteWindow.mute(false);
                 audioRemoteWindow.hide();
                 return;
             }
@@ -131,7 +101,7 @@ public class WindowManager {
     }
 
     public void muteAudio(long id, boolean mute) {
-        for (int i = 0; i < mRemoteWindowList.size(); i ++) {
+        for (int i = 0; i < mRemoteWindowList.size(); i++) {
             AudioRemoteWindow audioRemoteWindow = mRemoteWindowList.get(i);
             if (audioRemoteWindow.mId == id) {
                 audioRemoteWindow.mute(mute);
@@ -141,7 +111,7 @@ public class WindowManager {
     }
 
     public void updateAudioBitrate(long id, String bitrate) {
-        for (int i = 0; i < mRemoteWindowList.size(); i ++) {
+        for (int i = 0; i < mRemoteWindowList.size(); i++) {
             AudioRemoteWindow audioRemoteWindow = mRemoteWindowList.get(i);
             if (audioRemoteWindow.mId == id) {
                 audioRemoteWindow.updateAudioBitrate(bitrate);
@@ -151,7 +121,7 @@ public class WindowManager {
     }
 
     public void updateVideoBitrate(long id, String bitrate) {
-        for (int i = 0; i < mRemoteWindowList.size(); i ++) {
+        for (int i = 0; i < mRemoteWindowList.size(); i++) {
             AudioRemoteWindow audioRemoteWindow = mRemoteWindowList.get(i);
             if (audioRemoteWindow.mId == id) {
                 audioRemoteWindow.updateVideoBitrate(bitrate);
@@ -161,7 +131,7 @@ public class WindowManager {
     }
 
     public void updateSpeakState(long id, int volumeLevel) {
-        for (int i = 0; i < mRemoteWindowList.size(); i ++) {
+        for (int i = 0; i < mRemoteWindowList.size(); i++) {
             AudioRemoteWindow audioRemoteWindow = mRemoteWindowList.get(i);
             if (audioRemoteWindow.mId == id) {
                 audioRemoteWindow.updateSpeakState(volumeLevel);
@@ -181,7 +151,7 @@ public class WindowManager {
                 mRegion.mUserID = remoteWindow.mId;
                 mRegion.x = (double) location[0] / mScreenWidth;
                 mRegion.y = (double) location[1] / mScreenHeight;
-                mRegion.width = (double) 1/3; // view宽度占屏幕宽度的比例
+                mRegion.width = (double) 1 / 3; // view宽度占屏幕宽度的比例
                 mRegion.height = (double) mScreenWidth / 3 * 4 / 3 / mScreenHeight; // view高度占屏幕的比例
                 mRegion.zOrder = 1;
                 tempList.add(mRegion);

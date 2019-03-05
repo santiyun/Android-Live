@@ -2,6 +2,7 @@ package com.tttrtclive.live.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -10,9 +11,11 @@ import android.view.View;
 
 import com.flyco.tablayout.SegmentTabLayout;
 import com.flyco.tablayout.listener.OnTabSelectListener;
+import com.tttrtclive.live.LocalConfig;
 import com.tttrtclive.live.R;
 import com.tttrtclive.live.fragment.LocalFragment;
 import com.tttrtclive.live.fragment.PushFragment;
+import com.tttrtclive.live.utils.DensityUtils;
 import com.wushuangtech.library.Constants;
 import com.wushuangtech.wstechapi.TTTRtcEngine;
 
@@ -26,10 +29,11 @@ public class SetActivity extends BaseActivity {
     private SegmentTabLayout mTabLayout_1;
 
     /*-------------------------------配置参数---------------------------------*/
-    public int mLocalVideoProfile = Constants.VIDEO_PROFILE_DEFAULT;
-    public int mPushVideoProfile = Constants.VIDEO_PROFILE_DEFAULT;
+    public int mLocalVideoProfile = Constants.TTTRTC_VIDEOPROFILE_DEFAULT;
+    public int mPushVideoProfile = Constants.TTTRTC_VIDEOPROFILE_DEFAULT;
     public boolean mUseHQAudio = false;
-    public int mLocalWidth, mLocalHeight, mLocalFrameRate, mLocalBitRate;
+    public String mLocalIP;
+    public int mLocalWidth, mLocalHeight, mLocalFrameRate, mLocalBitRate, mLocalPort;
     public int mPushWidth, mPushHeight, mPushFrameRate, mPushBitRate;
     public int mEncodeType = 0;//0:H.264  1:H.265
     public int mAudioSRate = 0;// 0:48000 1:44100
@@ -41,6 +45,12 @@ public class SetActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_set);
 
+        View mHeadLy = findViewById(R.id.set_head);
+        int statusBarHeight = DensityUtils.getStatusBarHeight(this);
+        ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) mHeadLy.getLayoutParams();
+        layoutParams.topMargin = statusBarHeight;
+        mHeadLy.setLayoutParams(layoutParams);
+
         Intent intent = getIntent();
         mLocalVideoProfile = intent.getIntExtra("LVP", mLocalVideoProfile);
         mPushVideoProfile = intent.getIntExtra("PVP", mPushVideoProfile);
@@ -48,6 +58,8 @@ public class SetActivity extends BaseActivity {
         mLocalHeight = intent.getIntExtra("LHEIGHT", mLocalHeight);
         mLocalBitRate = intent.getIntExtra("LBRATE", mLocalBitRate);
         mLocalFrameRate = intent.getIntExtra("LFRATE", mLocalFrameRate);
+        mLocalIP = intent.getStringExtra("LIP");
+        mLocalPort = intent.getIntExtra("LPORT", mLocalPort);
         mPushWidth = intent.getIntExtra("PWIDTH", mPushWidth);
         mPushHeight = intent.getIntExtra("PHEIGHT", mPushHeight);
         mPushBitRate = intent.getIntExtra("PBRATE", mPushBitRate);
@@ -60,7 +72,6 @@ public class SetActivity extends BaseActivity {
         mFragments.add(PushFragment.getInstance());
 
         mTabLayout_1 = findViewById(R.id.tl_1);
-
         mTabLayout_1.setTabData(mTitles);
         tl_1();
     }
@@ -102,7 +113,7 @@ public class SetActivity extends BaseActivity {
     }
 
     private class MyPagerAdapter extends FragmentPagerAdapter {
-        public MyPagerAdapter(FragmentManager fm) {
+        MyPagerAdapter(FragmentManager fm) {
             super(fm);
         }
 
@@ -133,14 +144,17 @@ public class SetActivity extends BaseActivity {
     }
 
     public void onOkButtonClick(View v) {
-        TTTRtcEngine.getInstance().setVideoMixerParams(mPushBitRate, mPushFrameRate, mPushWidth, mPushHeight);
+        LocalFragment.getInstance().getParams();
+        PushFragment.getInstance().getParams();
+        TTTRtcEngine.getInstance().setVideoMixerParams(mPushBitRate, mPushFrameRate, mPushHeight, mPushWidth);
         TTTRtcEngine.getInstance().setAudioMixerParams(mAudioSRate, mAudioSRate == 0 ? 48000 : 44100, mChannels);
         if (mLocalVideoProfile != 0) {
-            TTTRtcEngine.getInstance().setVideoProfile(mLocalVideoProfile, true);
+            LocalConfig.mLocalVideoProfile = mLocalVideoProfile;
         } else {
-            LocalFragment.getInstance().getParams();
-            PushFragment.getInstance().getParams();
-            TTTRtcEngine.getInstance().setVideoProfile(mLocalWidth, mLocalHeight, mLocalBitRate, mLocalFrameRate);
+            LocalConfig.mLocalHeight = mLocalHeight;
+            LocalConfig.mLocalWidth = mLocalWidth;
+            LocalConfig.mLocalBitRate = mLocalBitRate;
+            LocalConfig.mLocalFrameRate = mLocalFrameRate;
         }
         TTTRtcEngine.getInstance().setHighQualityAudioParameters(mUseHQAudio);
         exit();
@@ -154,6 +168,8 @@ public class SetActivity extends BaseActivity {
         intent.putExtra("LHEIGHT", mLocalHeight);
         intent.putExtra("LBRATE", mLocalBitRate);
         intent.putExtra("LFRATE", mLocalFrameRate);
+        intent.putExtra("LIP", mLocalIP);
+        intent.putExtra("LPORT", mLocalPort);
         intent.putExtra("PWIDTH", mPushWidth);
         intent.putExtra("PHEIGHT", mPushHeight);
         intent.putExtra("PBRATE", mPushBitRate);
