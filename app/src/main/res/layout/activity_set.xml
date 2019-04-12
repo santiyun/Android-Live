@@ -24,7 +24,7 @@
 
 		<com.flyco.tablayout.SegmentTabLayout
 			android:id="@+id/tl_1"
-			android:layout_width="192dp"
+			android:layout_width="220dp"
 			android:layout_height="32dp"
 			tl:layout_constraintBottom_toBottomOf="@+id/textView"
 			tl:layout_constraintEnd_toEndOf="parent"
@@ -67,7 +67,7 @@
 		android:background="@drawable/setly_ok_bg"
 		android:gravity="center"
 		android:onClick="onOkButtonClick"
-		android:text="确定"
+		android:text="@string/ttt_confirm"
 		android:textColor="#FFFFFF"
 		android:textSize="16sp"
 		tl:layout_constraintBottom_toBottomOf="parent"

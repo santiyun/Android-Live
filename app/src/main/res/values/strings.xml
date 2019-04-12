@@ -1,33 +1,94 @@
 <resources>
-    <string name="app_name">连麦直播</string>
-    <string name="version_info">SDK Version: %1$s</string>
+	<string name="app_name">连麦直播</string>
+	<string name="version_info">http://www.3ttech.cn version %1$s</string>
 	<string name="copyright_info">Copyright © 2019 北京三体云联科技有限公司 版权所有</string>
-	<string name="main_audioup">A-%1$skbps\u2191</string>
-    <string name="main_videoups">V-%1$skbps\u2191</string>
-	<string name="videoly_videodown">V-%1$skbps\u2193</string>
-    <string name="videoly_audiodown">A-%1$skbps\u2193</string>
-	<string name="splash_logo_text">3T Lova 连麦直播</string>
-    <string name="splash_role_title">角色</string>
-    <string name="splash_role_anchor">主播</string>
-    <string name="splash_role_broadcaster">副播</string>
-	<string name="splash_roomid_edit_hint">请输入房间ID</string>
-    <string name="splash_roomid_edit_title">直播间ID:</string>
-    <string name="splash_enter_room">进入房间</string>
-	<string name="splash_adv_setting">高级设置</string>
+	<string name="ttt_test">测试</string>
+	<string name="ttt_copy">复制</string>
+	<string name="ttt_adv_setting">高级设置</string>
+	<string name="ttt_copy_success">复制成功</string>
+	<string name="ttt_cdnpullurl">CDN拉流地址</string>
+	<string name="ttt_close_network">关闭网络显示</string>
 	<string name="exit_window_title">你确定要退出房间吗？</string>
-    <string name="exit_window_yes">是</string>
-    <string name="exit_window_cancel">否</string>
-    <string name="error_kicked">被主播踢出</string>
-    <string name="error_rtmp">rtmp推流失败</string>
-    <string name="error_anchorexited">主播已退出</string>
-    <string name="error_relogin">重复登录</string>
-    <string name="error_noaudio">长时间没有上行音频数据</string>
-    <string name="error_novideo">长时间没有上行视频数据</string>
-    <string name="error_otherenter">其他人以主播身份进入</string>
-    <string name="error_timeout">超时，10秒未收到服务器返回结果</string>
-    <string name="error_noroom">该直播间不存在</string>
-    <string name="error_version">版本错误</string>
-	<string name="error_unconnect">无法连接服务器</string>
-    <string name="error_verification_code">验证码错误</string>
-    <string name="error_server_overload">服务器过载</string>
+	<string name="exit_window_yes">是</string>
+	<string name="exit_window_cancel">否</string>
+	<string name="ttt_role">角色</string>
+	<string name="ttt_role_anchor">主播</string>
+	<string name="ttt_role_broadcaster">副播</string>
+	<string name="ttt_role_audience">观众</string>
+	<string name="ttt_prefix_channel_name">房间ID</string>
+	<string name="ttt_prefix_live_channel_name">直播间ID</string>
+	<string name="ttt_prefix_user_name">用户ID</string>
+	<string name="ttt_confirm">确定</string>
+	<string name="ttt_cannel">取消</string>
+	<string name="ttt_enter_channel">进入房间</string>
+	<string name="ttt_hint_loading_channel">正在进入房间&#8230;</string>
+	<string name="ttt_hint_linking_channel">正在连麦中&#8230;</string>
+	<string name="ttt_error_network_disconnected">网络连接断开，请检查网络</string>
+	<string name="ttt_error_enterchannel_check_channel_empty">房间号不能为空</string>
+	<string name="ttt_error_enterchannel_check_userid_empty">用户ID不能为空</string>
+	<string name="ttt_error_enterchannel_check_owner">房间号不能为本房间</string>
+	<string name="ttt_error_enterchannel_check_format">房间号只能为数字</string>
+	<string name="ttt_error_enterchannel_check_member_max">房间人数已达上限</string>
+	<string name="hint_channel_name_limit">请输入19位以内的房间ID</string>
+	<string name="hint_user_name_limit">请输入19位以内的用户ID</string>
+	<string name="main_item_volume">音量:%1$s</string>
+	<string name="ttt_audio_upspeed">A-%1$skbps\u2191</string>
+	<string name="ttt_audio_downspeed">A-%1$skbps\u2193</string>
+	<string name="ttt_video_upspeed">V-%1$skbps\u2191</string>
+	<string name="ttt_video_downspeed">V-%1$skbps\u2193</string>
+	<string name="ttt_videoly_speaking">发言中&#8230;</string>
+	<string name="ttt_link_start">开始连麦</string>
+	<string name="ttt_link_finish">结束连麦</string>
+	<string name="ttt_link_other_author">其他主播</string>
+	<string name="ttt_live_logo_text">3T Lova 连麦直播</string>
+	<!-- 异常退房间错误码 -->
+	<string name="ttt_error_exit_dialog_title">退出房间提示</string>
+	<string name="ttt_error_exit_dialog_prefix_msg">退出原因</string>
+	<string name="ttt_error_exit_kicked">被主播踢出</string>
+	<string name="ttt_error_exit_push_rtmp_failed">rtmp推流失败</string>
+	<string name="ttt_error_exit_server_overload">服务器过载</string>
+	<string name="ttt_error_exit_anchor_exited">主播已退出</string>
+	<string name="ttt_error_exit_relogin">重复登录</string>
+	<string name="ttt_error_exit_noaudio_upload">长时间没有上行音频数据</string>
+	<string name="ttt_error_exit_novideo_upload">长时间没有上行视频数据</string>
+	<string name="ttt_error_exit_other_anchor_enter">其他人以主播身份进入</string>
+	<string name="ttt_error_exit_token_expired">token 值已过期</string>
+	<!-- 异常退房间错误码 -->
+	<!-- 老跨房间连麦错误码 -->
+	<string name="ttt_error_link_timeout">连麦超时</string>
+	<string name="ttt_error_link_relink">重复连麦</string>
+	<string name="ttt_error_link_device_noexist">获取用户视频设备失败</string>
+	<string name="ttt_error_link_unknow">发生异常错误</string>
+	<!-- 老跨房间连麦错误码 -->
+	<!-- 进房间错误码 -->
+	<string name="ttt_error_enterchannel_format">房间名不符合数字格式</string>
+	<string name="ttt_error_enterchannel_timeout">超时，10秒未收到服务器返回结果</string>
+	<string name="ttt_error_enterchannel_token_invaild">token 值无效</string>
+	<string name="ttt_error_enterchannel_version">版本错误</string>
+	<string name="ttt_error_enterchannel_unconnect">无法连接服务器</string>
+	<string name="ttt_error_enterchannel_room_no_exist">该房间不存在</string>
+	<string name="ttt_error_enterchannel_verification_failed">服务器验证错误</string>
+	<string name="ttt_error_enterchannel_unknow">进房间发生未知错误</string>
+	<!-- 进房间错误码 -->
+	<!-- 权限提示信息 -->
+	<string name="permission_write_external_storage">程序需要缓存一些数据在SD卡，否则无法运行。</string>
+	<string name="permission_camera">程序需要使用摄像头权限用来音视频通话，否则无法运行。</string>
+	<string name="permission_record_audio">程序需要录音权限用来音视频通话，否则无法运行。</string>
+	<string name="permission_read_phone_state">程序需要电话监听权限用来音视频通话，否则无法运行。</string>
+	<!-- 高级设置 -->
+	<string name="ttt_set_video_params">视频参数</string>
+	<string name="ttt_set_resolution_params">分辨率</string>
+	<string name="ttt_set_bitrate_params">码率</string>
+	<string name="ttt_set_fps_params">帧率</string>
+	<string name="ttt_set_audio_params">音频参数</string>
+	<string name="ttt_set_audio_high_params">高音质</string>
+	<string name="ttt_set_sample_params">采样率</string>
+	<string name="ttt_set_audio_encode_params">编码</string>
+	<!-- 高级设置 -->
+	<string name="ttt_local_setting">本地设置</string>
+	<string name="ttt_push_setting">推流设置</string>
+	<string name="ttt_share">分享</string>
+	<string name="ttt_wechat">微信</string>
+	<string name="ttt_wechat_circle">微信朋友圈</string>
+	<string name="ttt_copy_link">复制链接</string>
 </resources>

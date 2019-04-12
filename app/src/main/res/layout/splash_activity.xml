@@ -18,11 +18,11 @@
 		app:layout_constraintTop_toTopOf="parent"/>
 
 	<TextView
-		android:id="@+id/textview2"
+		android:id="@+id/splash_app_name"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_marginTop="10dp"
-		android:text="@string/splash_logo_text"
+		android:text="@string/ttt_live_logo_text"
 		android:textColor="#ffffff"
 		android:textSize="18sp"
 		app:layout_constraintLeft_toLeftOf="parent"
@@ -36,11 +36,10 @@
 		android:layout_marginTop="30dp"
 		android:gravity="center"
 		android:singleLine="true"
-		android:text="@string/splash_roomid_edit_title"
 		android:textColor="#FFFFFF"
 		android:textSize="14sp"
 		app:layout_constraintLeft_toLeftOf="@+id/room_id"
-		app:layout_constraintTop_toBottomOf="@+id/textview2"/>
+		app:layout_constraintTop_toBottomOf="@+id/splash_app_name"/>
 
 	<EditText
 		android:id="@+id/room_id"
@@ -49,7 +48,7 @@
 		android:layout_marginTop="10dp"
 		android:background="@drawable/splash_btn_roomid_selector_bg"
 		android:ems="10"
-		android:hint="@string/splash_roomid_edit_hint"
+		android:hint="@string/hint_channel_name_limit"
 		android:inputType="number"
 		android:paddingLeft="20dp"
 		android:textColor="#FFFFF50B"
@@ -64,7 +63,7 @@
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_marginTop="20dp"
-		android:text="@string/splash_role_title"
+		android:text="@string/ttt_role"
 		android:textColor="#FFFFFF"
 		android:textSize="14sp"
 		app:layout_constraintStart_toStartOf="@+id/room_id_text"
@@ -72,7 +71,7 @@
 
 	<RadioButton
 		android:id="@+id/host"
-		android:layout_width="80dp"
+		android:layout_width="100dp"
 		android:layout_height="40dp"
 		android:layout_marginTop="10dp"
 		android:background="@drawable/splash_btn_role_selector_bg"
@@ -80,7 +79,7 @@
 		android:checked="true"
 		android:gravity="center"
 		android:onClick="onClickRoleButton"
-		android:text="@string/splash_role_anchor"
+		android:text="@string/ttt_role_anchor"
 		android:textColor="@color/splash_role_color"
 		android:textSize="16sp"
 		app:layout_constraintStart_toStartOf="@+id/room_id_text"
@@ -88,14 +87,14 @@
 
 	<RadioButton
 		android:id="@+id/vice"
-		android:layout_width="80dp"
+		android:layout_width="100dp"
 		android:layout_height="40dp"
 		android:layout_marginLeft="40dp"
 		android:background="@drawable/splash_btn_role_selector_bg"
 		android:button="@null"
 		android:gravity="center"
 		android:onClick="onClickRoleButton"
-		android:text="@string/splash_role_broadcaster"
+		android:text="@string/ttt_role_broadcaster"
 		android:textColor="@color/splash_role_color"
 		android:textSize="16sp"
 		app:layout_constraintLeft_toRightOf="@id/host"
@@ -110,7 +109,7 @@
 		android:button="@null"
 		android:gravity="center"
 		android:onClick="onClickEnterButton"
-		android:text="@string/splash_enter_room"
+		android:text="@string/ttt_enter_channel"
 		android:textColor="@color/enter_room_color"
 		android:textSize="16sp"
 		app:layout_constraintEnd_toEndOf="@+id/room_id"
@@ -126,7 +125,7 @@
 		android:button="@null"
 		android:gravity="center"
 		android:onClick="onSetButtonClick"
-		android:text="@string/splash_adv_setting"
+		android:text="@string/ttt_adv_setting"
 		android:textColor="@color/enter_room_color"
 		android:textSize="16sp"
 		app:layout_constraintEnd_toEndOf="@+id/room_id"
@@ -158,16 +157,4 @@
 		app:layout_constraintBottom_toBottomOf="parent"
 		app:layout_constraintLeft_toLeftOf="parent"
 		app:layout_constraintRight_toRightOf="parent"/>
-
-	<Button
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_marginEnd="8dp"
-		android:layout_marginTop="8dp"
-		android:onClick="onTestButtonClick"
-		android:text="测试"
-		android:textColor="#FFFFFF"
-		android:visibility="invisible"
-		app:layout_constraintEnd_toEndOf="parent"
-		app:layout_constraintTop_toTopOf="parent"/>
 </android.support.constraint.ConstraintLayout>

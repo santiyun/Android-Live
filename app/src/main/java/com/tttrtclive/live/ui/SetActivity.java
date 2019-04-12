@@ -25,7 +25,7 @@ public class SetActivity extends BaseActivity {
 
     private ArrayList<Fragment> mFragments = new ArrayList<>();
 
-    private String[] mTitles = {"本地设置", "推流设置"};
+    private String[] mTitles;
     private SegmentTabLayout mTabLayout_1;
 
     /*-------------------------------配置参数---------------------------------*/
@@ -45,6 +45,9 @@ public class SetActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_set);
 
+        mTitles = new String[2];
+        mTitles[0] = getString(R.string.ttt_local_setting);
+        mTitles[1] = getString(R.string.ttt_push_setting);
         View mHeadLy = findViewById(R.id.set_head);
         int statusBarHeight = DensityUtils.getStatusBarHeight(this);
         ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) mHeadLy.getLayoutParams();

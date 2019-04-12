@@ -112,7 +112,6 @@ public class MainActivity extends BaseActivity {
                 }
             }
         }
-        SplashActivity.mIsLoging = false;
         MyLog.d("MainActivity onCreate ...");
     }
 
@@ -149,11 +148,13 @@ public class MainActivity extends BaseActivity {
         mRoomID = intent.getLongExtra("ROOM_ID", 0);
         mUserId = intent.getLongExtra("USER_ID", 0);
         mRole = intent.getIntExtra("ROLE", CLIENT_ROLE_ANCHOR);
-        ((TextView) findViewById(R.id.main_btn_title)).setText("房号：" + mRoomID);
+        String localChannelName = getString(R.string.ttt_prefix_channel_name) + ":" + mRoomID;
+        ((TextView) findViewById(R.id.main_btn_title)).setText(localChannelName);
 
         if (mRole == CLIENT_ROLE_ANCHOR) {
             // 打开本地预览视频，并开始推流
-            ((TextView) findViewById(R.id.main_btn_host)).setText("ID：" + mUserId);
+            String localUserName = getString(R.string.ttt_prefix_user_name) + ":" + mUserId;
+            ((TextView) findViewById(R.id.main_btn_host)).setText(localUserName);
             SurfaceView mSurfaceView = mTTTEngine.CreateRendererView(this);
             mTTTEngine.setupLocalVideo(new VideoCanvas(0, Constants.RENDER_MODE_HIDDEN, mSurfaceView), getRequestedOrientation());
             ((ConstraintLayout) findViewById(R.id.local_view_layout)).addView(mSurfaceView);
@@ -210,7 +211,7 @@ public class MainActivity extends BaseActivity {
                 ClipboardManager cm = (ClipboardManager) mContext.getSystemService(Context.CLIPBOARD_SERVICE);
                 // 将文本内容放到系统剪贴板里。
                 cm.setText(getWXLink());
-                Toast.makeText(mContext, "复制成功!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(mContext, getString(R.string.ttt_copy_success), Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -251,10 +252,11 @@ public class MainActivity extends BaseActivity {
         mExitRoomDialog.mDenyBT.setOnClickListener(v -> mExitRoomDialog.dismiss());
 
 
+        //添加确定按钮
         mErrorExitDialog = new AlertDialog.Builder(this)
-                .setTitle("退出房间提示")//设置对话框标题
+                .setTitle(getString(R.string.ttt_error_exit_dialog_title))//设置对话框标题
                 .setCancelable(false)
-                .setPositiveButton("确定", (dialog, which) -> {//确定按钮的响应事件
+                .setPositiveButton(getString(R.string.ttt_confirm), (dialog, which) -> {//确定按钮的响应事件
                     exitRoom();
                 });
     }
@@ -270,11 +272,28 @@ public class MainActivity extends BaseActivity {
     public void exitRoom() {
         MyLog.d("exitRoom was called!... leave room");
         mTTTEngine.leaveChannel();
+        startActivity(new Intent(mContext, SplashActivity.class));
+        overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
         finish();
     }
 
     public String getWXLink() {
         return "http://3ttech.cn/3tplayer.html?flv=http://pull.3ttech.cn/sdk/" + mRoomID + ".flv&hls=http://pull.3ttech.cn/sdk/" + mRoomID + ".m3u8";
+    }
+
+    /**
+     * Author: wangzg <br/>
+     * Time: 2017-11-21 18:08:37<br/>
+     * Description: 显示因错误的回调而退出的对话框
+     *
+     * @param message the message 错误的原因
+     */
+    public void showErrorExitDialog(String message) {
+        if (!TextUtils.isEmpty(message)) {
+            String msg = getString(R.string.ttt_error_exit_dialog_prefix_msg) + ": " + message;
+            mErrorExitDialog.setMessage(msg);//设置显示的内容
+            mErrorExitDialog.show();
+        }
     }
 
     private class MyLocalBroadcastReceiver extends BroadcastReceiver {
@@ -290,38 +309,37 @@ public class MainActivity extends BaseActivity {
                         String message = "";
                         int errorType = mJniObjs.mErrorType;
                         if (errorType == Constants.ERROR_KICK_BY_HOST) {
-                            message = getResources().getString(R.string.error_kicked);
+                            message = getResources().getString(R.string.ttt_error_exit_kicked);
                         } else if (errorType == Constants.ERROR_KICK_BY_PUSHRTMPFAILED) {
-                            message = getResources().getString(R.string.error_rtmp);
+                            message = getResources().getString(R.string.ttt_error_exit_push_rtmp_failed);
                         } else if (errorType == Constants.ERROR_KICK_BY_SERVEROVERLOAD) {
-                            message = getResources().getString(R.string.error_server_overload);
+                            message = getResources().getString(R.string.ttt_error_exit_server_overload);
                         } else if (errorType == Constants.ERROR_KICK_BY_MASTER_EXIT) {
-                            message = getResources().getString(R.string.error_anchorexited);
+                            message = getResources().getString(R.string.ttt_error_exit_anchor_exited);
                         } else if (errorType == Constants.ERROR_KICK_BY_RELOGIN) {
-                            message = getResources().getString(R.string.error_relogin);
+                            message = getResources().getString(R.string.ttt_error_exit_relogin);
                         } else if (errorType == Constants.ERROR_KICK_BY_NEWCHAIRENTER) {
-                            message = getResources().getString(R.string.error_otherenter);
+                            message = getResources().getString(R.string.ttt_error_exit_other_anchor_enter);
                         } else if (errorType == Constants.ERROR_KICK_BY_NOAUDIODATA) {
-                            message = getResources().getString(R.string.error_noaudio);
+                            message = getResources().getString(R.string.ttt_error_exit_noaudio_upload);
                         } else if (errorType == Constants.ERROR_KICK_BY_NOVIDEODATA) {
-                            message = getResources().getString(R.string.error_novideo);
+                            message = getResources().getString(R.string.ttt_error_exit_novideo_upload);
+                        } else if (errorType == Constants.ERROR_TOKEN_EXPIRED) {
+                            message = getResources().getString(R.string.ttt_error_exit_token_expired);
                         }
 
-                        if (!TextUtils.isEmpty(message)) {
-                            mErrorExitDialog.setMessage("退出原因: " + message);//设置显示的内容
-                            mErrorExitDialog.show();
-                        }
+                        showErrorExitDialog(message);
                         break;
                     case LocalConstans.CALL_BACK_ON_CONNECTLOST:
-                        mErrorExitDialog.setMessage("退出原因: 房间网络断开");//设置显示的内容
-                        mErrorExitDialog.show();
+                        showErrorExitDialog(getString(R.string.ttt_error_network_disconnected));
                         break;
                     case LocalConstans.CALL_BACK_ON_USER_JOIN:
                         long uid = mJniObjs.mUid;
                         int identity = mJniObjs.mIdentity;
                         if (identity == CLIENT_ROLE_ANCHOR) {
                             mAnchorId = uid;
-                            ((TextView) findViewById(R.id.main_btn_host)).setText("主播ID：" + mAnchorId);
+                            String localAnchorName = getString(R.string.ttt_role_anchor) + "ID: " + mRoomID;
+                            ((TextView) findViewById(R.id.main_btn_host)).setText(localAnchorName);
                         }
                         if (mRole == CLIENT_ROLE_ANCHOR) {
                             EnterUserInfo userInfo = new EnterUserInfo(uid, identity);
@@ -422,34 +440,34 @@ public class MainActivity extends BaseActivity {
                         break;
                     case LocalConstans.CALL_BACK_ON_REMOTE_AUDIO_STATE:
                         if (mJniObjs.mRemoteAudioStats.getUid() != mAnchorId) {
-                            String audioString = getResources().getString(R.string.videoly_audiodown);
+                            String audioString = getResources().getString(R.string.ttt_audio_downspeed);
                             String audioResult = String.format(audioString, String.valueOf(mJniObjs.mRemoteAudioStats.getReceivedBitrate()));
                             mWindowManager.updateAudioBitrate(mJniObjs.mRemoteAudioStats.getUid(), audioResult);
                         } else
-                            setTextViewContent(mAudioSpeedShow, R.string.videoly_audiodown, String.valueOf(mJniObjs.mRemoteAudioStats.getReceivedBitrate()));
+                            setTextViewContent(mAudioSpeedShow, R.string.ttt_audio_downspeed, String.valueOf(mJniObjs.mRemoteAudioStats.getReceivedBitrate()));
                         break;
                     case LocalConstans.CALL_BACK_ON_REMOTE_VIDEO_STATE:
                         if (mJniObjs.mRemoteVideoStats.getUid() != mAnchorId) {
-                            String videoString = getResources().getString(R.string.videoly_videodown);
+                            String videoString = getResources().getString(R.string.ttt_video_downspeed);
                             String videoResult = String.format(videoString, String.valueOf(mJniObjs.mRemoteVideoStats.getReceivedBitrate()));
                             mWindowManager.updateVideoBitrate(mJniObjs.mRemoteVideoStats.getUid(), videoResult);
                         } else
-                            setTextViewContent(mVideoSpeedShow, R.string.videoly_videodown, String.valueOf(mJniObjs.mRemoteVideoStats.getReceivedBitrate()));
+                            setTextViewContent(mVideoSpeedShow, R.string.ttt_video_downspeed, String.valueOf(mJniObjs.mRemoteVideoStats.getReceivedBitrate()));
                         break;
                     case LocalConstans.CALL_BACK_ON_LOCAL_AUDIO_STATE:
                         if (mRole == CLIENT_ROLE_ANCHOR)
-                            setTextViewContent(mAudioSpeedShow, R.string.main_audioup, String.valueOf(mJniObjs.mLocalAudioStats.getSentBitrate()));
+                            setTextViewContent(mAudioSpeedShow, R.string.ttt_audio_upspeed, String.valueOf(mJniObjs.mLocalAudioStats.getSentBitrate()));
                         else {
-                            String localAudioString = getResources().getString(R.string.main_audioup);
+                            String localAudioString = getResources().getString(R.string.ttt_audio_upspeed);
                             String localAudioResult = String.format(localAudioString, String.valueOf(mJniObjs.mLocalAudioStats.getSentBitrate()));
                             mWindowManager.updateAudioBitrate(mUserId, localAudioResult);
                         }
                         break;
                     case LocalConstans.CALL_BACK_ON_LOCAL_VIDEO_STATE:
                         if (mRole == CLIENT_ROLE_ANCHOR)
-                            setTextViewContent(mVideoSpeedShow, R.string.main_videoups, String.valueOf(mJniObjs.mLocalVideoStats.getSentBitrate()));
+                            setTextViewContent(mVideoSpeedShow, R.string.ttt_video_upspeed, String.valueOf(mJniObjs.mLocalVideoStats.getSentBitrate()));
                         else {
-                            String localVideoString = getResources().getString(R.string.main_videoups);
+                            String localVideoString = getResources().getString(R.string.ttt_video_upspeed);
                             String localVideoResult = String.format(localVideoString, String.valueOf(mJniObjs.mLocalVideoStats.getSentBitrate()));
                             mWindowManager.updateVideoBitrate(mUserId, localVideoResult);
                         }

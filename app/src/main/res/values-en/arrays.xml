@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="SoVideoItems">
+        <item>120P</item>
+        <item>240P</item>
+        <item>360P</item>
+        <item>480P</item>
+        <item>720P</item>
+        <item>Custom</item>
+    </string-array>
+    <string-array name="SoEncodeItems">
+        <item>H.264</item>
+        <item>H.265</item>
+    </string-array>
+    <string-array name="SoAudioItems">
+		<item>48kHz-Mono</item>
+		<item>44.1kHz-Stereo</item>
+    </string-array>
+</resources>

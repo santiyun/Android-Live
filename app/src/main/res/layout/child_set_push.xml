@@ -7,7 +7,7 @@
 		android:id="@+id/divider"
 		android:layout_width="1dp"
 		android:layout_height="0dp"
-		android:layout_marginStart="95dp"
+		android:layout_marginStart="105dp"
 		app:layout_constraintBottom_toBottomOf="parent"
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toTopOf="parent"/>
@@ -18,7 +18,7 @@
 		android:layout_height="wrap_content"
 		android:layout_marginRight="10dp"
 		android:layout_marginTop="20dp"
-		android:text="视频参数"
+		android:text="@string/ttt_set_video_params"
 		android:textColor="#FF666666"
 		android:textSize="15sp"
 		app:layout_constraintEnd_toStartOf="@+id/divider"
@@ -51,7 +51,7 @@
 		android:layout_height="wrap_content"
 		android:layout_marginRight="10dp"
 		android:layout_marginTop="30dp"
-		android:text="分辨率"
+		android:text="@string/ttt_set_resolution_params"
 		android:textColor="#FF666666"
 		android:textSize="15sp"
 		app:layout_constraintEnd_toStartOf="@+id/divider"
@@ -79,7 +79,7 @@
 		android:layout_height="wrap_content"
 		android:layout_marginRight="10dp"
 		android:layout_marginTop="30dp"
-		android:text="码率"
+		android:text="@string/ttt_set_bitrate_params"
 		android:textColor="#FF666666"
 		android:textSize="15sp"
 		app:layout_constraintEnd_toStartOf="@+id/divider"
@@ -91,7 +91,7 @@
 		android:layout_height="wrap_content"
 		android:layout_marginRight="10dp"
 		android:layout_marginTop="30dp"
-		android:text="帧率"
+		android:text="@string/ttt_set_fps_params"
 		android:textColor="#FF666666"
 		android:textSize="15sp"
 		app:layout_constraintEnd_toStartOf="@+id/divider"
@@ -147,7 +147,8 @@
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_marginTop="10dp"
-		android:text="音频参数："
+		android:layout_marginEnd="8dp"
+		android:text="@string/ttt_set_audio_params"
 		app:layout_constraintEnd_toStartOf="@+id/divider"
 		app:layout_constraintTop_toBottomOf="@+id/textView9"/>
 
@@ -178,7 +179,7 @@
 		android:layout_height="wrap_content"
 		android:layout_marginEnd="10dp"
 		android:layout_marginTop="24dp"
-		android:text="采样率"
+		android:text="@string/ttt_set_sample_params"
 		app:layout_constraintEnd_toStartOf="@+id/divider"
 		app:layout_constraintTop_toBottomOf="@+id/textView10"/>
 
@@ -188,7 +189,7 @@
 		android:layout_height="wrap_content"
 		android:layout_marginRight="10dp"
 		android:layout_marginTop="30dp"
-		android:text="编码"
+		android:text="@string/ttt_set_audio_encode_params"
 		app:layout_constraintEnd_toStartOf="@+id/divider"
 		app:layout_constraintTop_toBottomOf="@+id/textView5"/>
 

@@ -23,7 +23,6 @@ public class LocalConstans {
     public static final int CALL_BACK_ON_LOCAL_VIDEO_STATE = 12;
     public static final int CALL_BACK_ON_REMOTE_AUDIO_STATE = 13;
     public static final int CALL_BACK_ON_LOCAL_AUDIO_STATE = 14;
-    public static final int CALL_BACK_ON_SCREEN_RECORD_TIME = 15;
     public static final int CALL_BACK_ON_MUTE_AUDIO = 16;
     public static final int CALL_BACK_ON_AUDIO_ROUTE = 17;
     public static final int CALL_BACK_ON_SPEAK_MUTE_AUDIO = 18;

@@ -98,7 +98,7 @@
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:singleLine="true"
-			android:text="@string/main_audioup"
+			android:text="@string/ttt_audio_upspeed"
 			android:textColor="@color/font_com_color_white"
 			android:textSize="@dimen/font_com_size_12"/>
 
@@ -108,7 +108,7 @@
 			android:layout_height="wrap_content"
 			android:layout_marginStart="20dp"
 			android:singleLine="true"
-			android:text="@string/main_videoups"
+			android:text="@string/ttt_video_upspeed"
 			android:textColor="@color/font_com_color_white"
 			android:textSize="@dimen/font_com_size_12"/>
 	</LinearLayout>

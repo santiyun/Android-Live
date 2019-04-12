@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -23,7 +22,6 @@ import com.tttrtclive.live.callback.MyTTTRtcEngineEventHandler;
 import com.tttrtclive.live.utils.MyLog;
 import com.tttrtclive.live.utils.SharedPreferencesUtil;
 import com.wushuangtech.library.Constants;
-import com.wushuangtech.utils.PviewLog;
 import com.wushuangtech.wstechapi.TTTRtcEngine;
 import com.wushuangtech.wstechapi.model.PublisherConfiguration;
 import com.yanzhenjie.permission.AndPermission;
@@ -34,7 +32,7 @@ import static com.wushuangtech.library.Constants.CLIENT_ROLE_BROADCASTER;
 public class SplashActivity extends BaseActivity {
 
     private ProgressDialog mDialog;
-    public static boolean mIsLoging;
+    private boolean mIsLoging;
     private EditText mRoomIDET;
     private View mAdvanceSetting;
     private MyLocalBroadcastReceiver mLocalBroadcast;
@@ -66,21 +64,41 @@ public class SplashActivity extends BaseActivity {
         init();
     }
 
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mDialog != null) {
+            mDialog.dismiss();
+            mDialog = null;
+        }
+
+        try {
+            unregisterReceiver(mLocalBroadcast);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
     private void initView() {
         mAuthorBT = findViewById(R.id.vice);
         mHostBT = findViewById(R.id.host);
         mRoomIDET = findViewById(R.id.room_id);
         mAdvanceSetting = findViewById(R.id.set);
-        ImageView mLogo = findViewById(R.id.imageView2);
+        View mSplashCompany = findViewById(R.id.company_info);
+        View mSplashAppName = findViewById(R.id.splash_app_name);
         TextView mVersion = findViewById(R.id.version);
-
         String string = getResources().getString(R.string.version_info);
         String result = String.format(string, TTTRtcEngine.getInstance().getSdkVersion());
         mVersion.setText(result);
+        TextView mLogoTextTV = findViewById(R.id.room_id_text);
+        mLogoTextTV.setText(getString(R.string.ttt_prefix_live_channel_name) + ": ");
 
         if (LocalConfig.VERSION_FLAG == LocalConstans.VERSION_WHITE) {
             mVersion.setVisibility(View.INVISIBLE);
-            mLogo.setVisibility(View.INVISIBLE);
+            mSplashAppName.setVisibility(View.INVISIBLE);
+            mSplashCompany.setVisibility(View.INVISIBLE);
         }
     }
 
@@ -89,33 +107,16 @@ public class SplashActivity extends BaseActivity {
         // 读取保存的数据
         String roomID = (String) SharedPreferencesUtil.getParam(this, "RoomID", "");
         mRoomIDET.setText(roomID);
+        mRoomIDET.setSelection(mRoomIDET.length());
         // 注册回调函数接收的广播
         mLocalBroadcast = new MyLocalBroadcastReceiver();
-        mDialog = new ProgressDialog(this);
-        mDialog.setTitle("");
-        mDialog.setMessage("正在进入房间...");
-        // 1.设置频道模式，这里用直播模式
-        mTTTEngine.setChannelProfile(Constants.CHANNEL_PROFILE_LIVE_BROADCASTING);
-        // 2.启用视频功能
-        mTTTEngine.enableVideo();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
         IntentFilter filter = new IntentFilter();
         filter.addAction(MyTTTRtcEngineEventHandler.TAG);
         registerReceiver(mLocalBroadcast, filter);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        try {
-            unregisterReceiver(mLocalBroadcast);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        mDialog = new ProgressDialog(this);
+        mDialog.setTitle("");
+        mDialog.setCancelable(false);
+        mDialog.setMessage(getString(R.string.ttt_hint_loading_channel));
     }
 
     public void onClickRoleButton(View v) {
@@ -136,11 +137,7 @@ public class SplashActivity extends BaseActivity {
     public void onClickEnterButton(View v) {
         mRoomName = mRoomIDET.getText().toString().trim();
         if (TextUtils.isEmpty(mRoomName)) {
-            Toast.makeText(this, "房间ID不能为空", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        if (TextUtils.getTrimmedLength(mRoomName) > 18) {
-            Toast.makeText(this, "房间ID不能超过19位", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.ttt_error_enterchannel_check_channel_empty), Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -215,6 +212,10 @@ public class SplashActivity extends BaseActivity {
     }
 
     private void initSDK() {
+        // 1.设置频道模式，这里用直播模式
+        mTTTEngine.setChannelProfile(Constants.CHANNEL_PROFILE_LIVE_BROADCASTING);
+        // 2.启用视频功能
+        mTTTEngine.enableVideo();
         // 3.设置角色
         if (mHostBT.isChecked()) {
             mRole = CLIENT_ROLE_ANCHOR;
@@ -258,36 +259,39 @@ public class SplashActivity extends BaseActivity {
                 switch (mJniObjs.mJniType) {
                     case LocalConstans.CALL_BACK_ON_ENTER_ROOM:
                         synchronized (clickLock) {
-                            mDialog.dismiss();
                             //界面跳转
                             Intent activityIntent = new Intent();
                             activityIntent.putExtra("ROOM_ID", Long.parseLong(mRoomName));
                             activityIntent.putExtra("USER_ID", LocalConfig.mLocalUserID);
                             activityIntent.putExtra("ROLE", mRole);
-                            activityIntent.setClass(SplashActivity.this, MainActivity.class);
+                            activityIntent.setClass(mContext, MainActivity.class);
                             startActivity(activityIntent);
-                            PviewLog.testPrint("joinChannel", "end");
+                            overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
+                            finish();
                         }
                         break;
                     case LocalConstans.CALL_BACK_ON_ERROR:
                         synchronized (clickLock) {
                             mDialog.dismiss();
                             mIsLoging = false;
-                            final int errorType = mJniObjs.mErrorType;
-                            runOnUiThread(() -> {
-                                MyLog.d("onReceive CALL_BACK_ON_ERROR errorType : " + errorType);
-                                if (errorType == Constants.ERROR_ENTER_ROOM_TIMEOUT) {
-                                    Toast.makeText(mContext, getResources().getString(R.string.error_timeout), Toast.LENGTH_SHORT).show();
-                                } else if (errorType == Constants.ERROR_ENTER_ROOM_UNKNOW) {
-                                    Toast.makeText(mContext, getResources().getString(R.string.error_unconnect), Toast.LENGTH_SHORT).show();
-                                } else if (errorType == Constants.ERROR_ENTER_ROOM_VERIFY_FAILED) {
-                                    Toast.makeText(mContext, getResources().getString(R.string.error_verification_code), Toast.LENGTH_SHORT).show();
-                                } else if (errorType == Constants.ERROR_ENTER_ROOM_BAD_VERSION) {
-                                    Toast.makeText(mContext, getResources().getString(R.string.error_version), Toast.LENGTH_SHORT).show();
-                                } else if (errorType == Constants.ERROR_ENTER_ROOM_NOEXIST) {
-                                    Toast.makeText(mContext, getResources().getString(R.string.error_noroom), Toast.LENGTH_SHORT).show();
-                                }
-                            });
+                            int errorType = mJniObjs.mErrorType;
+                            if (errorType == Constants.ERROR_ENTER_ROOM_INVALIDCHANNELNAME) {
+                                Toast.makeText(mContext, mContext.getResources().getString(R.string.ttt_error_enterchannel_format), Toast.LENGTH_SHORT).show();
+                            } else if (errorType == Constants.ERROR_ENTER_ROOM_TIMEOUT) {
+                                Toast.makeText(mContext, mContext.getResources().getString(R.string.ttt_error_enterchannel_timeout), Toast.LENGTH_SHORT).show();
+                            } else if (errorType == Constants.ERROR_ENTER_ROOM_VERIFY_FAILED) {
+                                Toast.makeText(mContext, mContext.getResources().getString(R.string.ttt_error_enterchannel_token_invaild), Toast.LENGTH_SHORT).show();
+                            } else if (errorType == Constants.ERROR_ENTER_ROOM_BAD_VERSION) {
+                                Toast.makeText(mContext, mContext.getResources().getString(R.string.ttt_error_enterchannel_version), Toast.LENGTH_SHORT).show();
+                            } else if (errorType == Constants.ERROR_ENTER_ROOM_CONNECT_FAILED) {
+                                Toast.makeText(mContext, mContext.getResources().getString(R.string.ttt_error_enterchannel_unconnect), Toast.LENGTH_SHORT).show();
+                            } else if (errorType == Constants.ERROR_ENTER_ROOM_NOEXIST) {
+                                Toast.makeText(mContext, mContext.getResources().getString(R.string.ttt_error_enterchannel_room_no_exist), Toast.LENGTH_SHORT).show();
+                            } else if (errorType == Constants.ERROR_ENTER_ROOM_SERVER_VERIFY_FAILED) {
+                                Toast.makeText(mContext, mContext.getResources().getString(R.string.ttt_error_enterchannel_verification_failed), Toast.LENGTH_SHORT).show();
+                            } else if (errorType == Constants.ERROR_ENTER_ROOM_UNKNOW) {
+                                Toast.makeText(mContext, mContext.getResources().getString(R.string.ttt_error_enterchannel_unknow), Toast.LENGTH_SHORT).show();
+                            }
                         }
                         break;
                 }
