@@ -4,8 +4,7 @@ public class LocalConfig {
 
     public static int VERSION_FLAG = LocalConstans.VERSION_NORMAL;
     public static long mLocalUserID;
-    public static boolean mIsPCAnchor;
-    public static boolean mIsMacAnchor;
+    public static long mLocalRole;
 
     public static int mLocalHeight;
     public static int mLocalWidth;

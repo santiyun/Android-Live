@@ -4,10 +4,12 @@ import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.tttrtclive.live.R;
 import com.tttrtclive.live.bean.VideoProfileManager;
@@ -102,12 +104,30 @@ public class PushFragment extends Fragment implements SoSpinner.OnItemSelectedLi
         }
     }
 
-    public void getParams() {
+    public boolean getParams() {
+        if (mPixView.getText() == null || TextUtils.isEmpty(mPixView.getText().toString())) {
+            Toast.makeText(getContext(), "自定义推流分辨率不能为空", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
         String[] wh = mPixView.getText().toString().trim().split("x");
+        if (wh.length != 2) {
+            Toast.makeText(getContext(), "自定义推流分辨率格式错误", Toast.LENGTH_SHORT).show();
+            return false;
+        }
         mSetActivity.mPushWidth = Integer.parseInt(wh[0]);
         mSetActivity.mPushHeight = Integer.parseInt(wh[1]);
+        if (mBiteView.getText() == null || TextUtils.isEmpty(mBiteView.getText().toString())) {
+            Toast.makeText(getContext(), "自定义推流码率不能为空", Toast.LENGTH_SHORT).show();
+            return false;
+        }
         mSetActivity.mPushBitRate = Integer.parseInt(mBiteView.getText().toString().trim());
+        if (mFrameView.getText() == null || TextUtils.isEmpty(mFrameView.getText().toString())) {
+            Toast.makeText(getContext(), "自定义推流帧率不能为空", Toast.LENGTH_SHORT).show();
+            return false;
+        }
         mSetActivity.mPushFrameRate = Integer.parseInt(mFrameView.getText().toString().trim());
+        return true;
     }
 
 }

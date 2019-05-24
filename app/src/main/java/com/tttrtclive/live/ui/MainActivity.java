@@ -33,7 +33,6 @@ import com.tttrtclive.live.callback.PhoneListener;
 import com.tttrtclive.live.dialog.ExitRoomDialog;
 import com.tttrtclive.live.utils.MyLog;
 import com.wushuangtech.library.Constants;
-import com.wushuangtech.utils.PviewLog;
 import com.wushuangtech.wstechapi.TTTRtcEngine;
 import com.wushuangtech.wstechapi.model.VideoCanvas;
 
@@ -42,7 +41,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -54,8 +52,7 @@ public class MainActivity extends BaseActivity {
     private long mUserId;
     private long mAnchorId = -1;
 
-    private TextView mAudioSpeedShow;
-    private TextView mVideoSpeedShow;
+    private TextView mAudioSpeedShow, mVideoSpeedShow, mFpsSpeedShow;
     private ImageView mAudioChannel;
 
     private ExitRoomDialog mExitRoomDialog;
@@ -87,6 +84,7 @@ public class MainActivity extends BaseActivity {
         initData();
         initEngine();
         initDialog();
+
         mTelephonyManager = (TelephonyManager) getSystemService(Service.TELEPHONY_SERVICE);
         mPhoneListener = new PhoneListener(this);
         if (mTelephonyManager != null) {
@@ -106,7 +104,7 @@ public class MainActivity extends BaseActivity {
                 if (LocalConfig.mLocalHeight != 0 && LocalConfig.mLocalWidth != 0 &&
                         LocalConfig.mLocalBitRate != 0 && LocalConfig.mLocalFrameRate != 0) {
                     TTTRtcEngine.getInstance().setVideoProfile(LocalConfig.mLocalHeight, LocalConfig.mLocalWidth,
-                            LocalConfig.mLocalBitRate, LocalConfig.mLocalFrameRate);
+                            LocalConfig.mLocalFrameRate, LocalConfig.mLocalBitRate);
                 } else {
                     mTTTEngine.setVideoProfile(Constants.TTTRTC_VIDEOPROFILE_360P, false);
                 }
@@ -133,8 +131,6 @@ public class MainActivity extends BaseActivity {
         if (mIsBackCamera) {
             mTTTEngine.switchCamera();
         }
-        LocalConfig.mIsMacAnchor = false;
-        LocalConfig.mIsPCAnchor = false;
         super.onDestroy();
         MyLog.d("MainActivity onDestroy... ");
     }
@@ -142,6 +138,7 @@ public class MainActivity extends BaseActivity {
     private void initView() {
         mAudioSpeedShow = findViewById(R.id.main_btn_audioup);
         mVideoSpeedShow = findViewById(R.id.main_btn_videoup);
+        mFpsSpeedShow = findViewById(R.id.main_btn_fpsup);
         mAudioChannel = findViewById(R.id.main_btn_audio_channel);
 
         Intent intent = getIntent();
@@ -272,8 +269,7 @@ public class MainActivity extends BaseActivity {
     public void exitRoom() {
         MyLog.d("exitRoom was called!... leave room");
         mTTTEngine.leaveChannel();
-        startActivity(new Intent(mContext, SplashActivity.class));
-        overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
+        setResult(1);
         finish();
     }
 
@@ -327,7 +323,6 @@ public class MainActivity extends BaseActivity {
                         } else if (errorType == Constants.ERROR_TOKEN_EXPIRED) {
                             message = getResources().getString(R.string.ttt_error_exit_token_expired);
                         }
-
                         showErrorExitDialog(message);
                         break;
                     case LocalConstans.CALL_BACK_ON_CONNECTLOST:
@@ -355,35 +350,6 @@ public class MainActivity extends BaseActivity {
                         try {
                             JSONObject jsonObject = new JSONObject(mJniObjs.mSEI);
                             JSONArray jsonArray = jsonObject.getJSONArray("pos");
-                            String anchorDevid = (String) jsonObject.get("mid");
-                            try {
-                                long tryPase = Long.parseLong(anchorDevid);
-                                LocalConfig.mIsPCAnchor = false;
-                                LocalConfig.mIsMacAnchor = false;
-                                PviewLog.d("tryPase : " + tryPase);
-                            } catch (Exception e) {
-                                LocalConfig.mIsMacAnchor = true;
-                                for (int i = 0; i < jsonArray.length(); i++) {
-                                    JSONObject jsonobject2 = (JSONObject) jsonArray.get(i);
-                                    String devid = jsonobject2.getString("id");
-                                    float y = Float.valueOf(jsonobject2.getString("y"));
-                                    long userId;
-                                    int index = devid.indexOf(":");
-                                    if (index > 0) {
-                                        userId = Long.parseLong(devid.substring(0, index));
-                                    } else {
-                                        userId = Long.parseLong(devid);
-                                    }
-                                    if (userId != mAnchorId) {
-                                        if (y == 0) {
-                                            LocalConfig.mIsPCAnchor = true;
-                                            LocalConfig.mIsMacAnchor = false;
-                                            break;
-                                        }
-                                    }
-                                }
-                            }
-
                             for (int i = 0; i < jsonArray.length(); i++) {
                                 JSONObject jsonobject2 = (JSONObject) jsonArray.get(i);
                                 String devid = jsonobject2.getString("id");
@@ -402,7 +368,7 @@ public class MainActivity extends BaseActivity {
                                 MyLog.d("CALL_BACK_ON_SEI", "parse user id : " + userId);
                                 if (userId != mAnchorId) {
                                     EnterUserInfo temp = new EnterUserInfo(userId, Constants.CLIENT_ROLE_BROADCASTER);
-                                    temp.setXYLocation(y, x, w, h);
+                                    temp.setXYLocation(x, y);
                                     mInfos.add(temp);
                                 } else {
                                     if (!mHasLocalView) {
@@ -415,12 +381,16 @@ public class MainActivity extends BaseActivity {
 
                             }
                         } catch (JSONException e) {
-                            e.printStackTrace();
+                            MyLog.d("CALL_BACK_ON_SEI", "parse xml error : " + e.getLocalizedMessage());
                         }
 
-                        Iterator<EnterUserInfo> iterator = mInfos.iterator();
-                        while (iterator.hasNext()) {
-                            EnterUserInfo next = iterator.next();
+                        int count = 0;
+                        for (EnterUserInfo temp : mInfos) {
+                            temp.mShowIndex = count;
+                            count++;
+                        }
+
+                        for (EnterUserInfo next : mInfos) {
                             MyLog.d("CALL_BACK_ON_SEI", "user list : " + next.getId() + " | index : " + next.mShowIndex);
                             mWindowManager.add(mUserId, next.getId(), getRequestedOrientation(), next.mShowIndex);
                         }
@@ -428,9 +398,7 @@ public class MainActivity extends BaseActivity {
                         synchronized (obj) {
                             if (mUserMutes.size() > 0) {
                                 Set<Map.Entry<Long, Boolean>> entries = mUserMutes.entrySet();
-                                Iterator<Map.Entry<Long, Boolean>> iterator2 = entries.iterator();
-                                while (iterator2.hasNext()) {
-                                    Map.Entry<Long, Boolean> next = iterator2.next();
+                                for (Map.Entry<Long, Boolean> next : entries) {
                                     mWindowManager.muteAudio(next.getKey(), next.getValue());
                                 }
                             }
@@ -464,9 +432,10 @@ public class MainActivity extends BaseActivity {
                         }
                         break;
                     case LocalConstans.CALL_BACK_ON_LOCAL_VIDEO_STATE:
-                        if (mRole == CLIENT_ROLE_ANCHOR)
+                        if (mRole == CLIENT_ROLE_ANCHOR) {
+                            mFpsSpeedShow.setText("FPS-" + mJniObjs.mLocalVideoStats.getSentFrameRate());
                             setTextViewContent(mVideoSpeedShow, R.string.ttt_video_upspeed, String.valueOf(mJniObjs.mLocalVideoStats.getSentBitrate()));
-                        else {
+                        } else {
                             String localVideoString = getResources().getString(R.string.ttt_video_upspeed);
                             String localVideoResult = String.format(localVideoString, String.valueOf(mJniObjs.mLocalVideoStats.getSentBitrate()));
                             mWindowManager.updateVideoBitrate(mUserId, localVideoResult);

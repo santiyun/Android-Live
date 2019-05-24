@@ -2,8 +2,6 @@ package com.tttrtclive.live.bean;
 
 import android.support.annotation.NonNull;
 
-import com.tttrtclive.live.LocalConfig;
-
 /**
  * Created by root on 17-2-21.
  */
@@ -33,62 +31,9 @@ public class EnterUserInfo implements Comparable<EnterUserInfo> {
         return role;
     }
 
-    public void setXYLocation(float mYLocation, float mXLocation, float width, float height) {
-        if (LocalConfig.mIsPCAnchor) {
-            if (mYLocation == 0) {
-                if (mXLocation == 0) {
-                    mShowIndex = 0;
-                } else if ((mXLocation + width) <= 0.65f) {
-                    mShowIndex = 1;
-                } else {
-                    mShowIndex = 2;
-                }
-            } else if (mYLocation == 0.5) {
-                if (mXLocation == 0) {
-                    mShowIndex = 3;
-                } else if (mXLocation + width <= 0.65f) {
-                    mShowIndex = 4;
-                } else {
-                    mShowIndex = 5;
-                }
-            }
-        } else if (LocalConfig.mIsMacAnchor) {
-            if (mYLocation < 0.6) {
-                if (mXLocation < 0.14f) {
-                    mShowIndex = 0;
-                } else if (mXLocation > 0.14f && mXLocation < 0.29f) {
-                    mShowIndex = 1;
-                } else {
-                    mShowIndex = 2;
-                }
-            } else {
-                if (mXLocation < 0.14f) {
-                    mShowIndex = 0;
-                } else if (mXLocation > 0.14f && mXLocation < 0.29f) {
-                    mShowIndex = 1;
-                } else {
-                    mShowIndex = 2;
-                }
-            }
-        } else {
-            if (mYLocation > 0.4 && mYLocation < 0.6) {
-                if (mXLocation < 0.3) {
-                    mShowIndex = 0;
-                } else if (mXLocation > 0.3 && mXLocation < 0.6) {
-                    mShowIndex = 1;
-                } else {
-                    mShowIndex = 2;
-                }
-            } else if (mYLocation > 0.6) {
-                if (mXLocation < 0.3) {
-                    mShowIndex = 3;
-                } else if (mXLocation > 0.3 && mXLocation < 0.6) {
-                    mShowIndex = 4;
-                } else {
-                    mShowIndex = 5;
-                }
-            }
-        }
+    public void setXYLocation(float mXLocation, float mYLocation) {
+        this.mXLocation = mXLocation;
+        this.mYLocation = mYLocation;
     }
 
     @Override

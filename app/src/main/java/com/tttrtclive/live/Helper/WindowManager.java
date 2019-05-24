@@ -5,7 +5,7 @@ import android.util.DisplayMetrics;
 import com.tttrtclive.live.R;
 import com.tttrtclive.live.bean.EnterUserInfo;
 import com.tttrtclive.live.ui.MainActivity;
-import com.wushuangtech.bean.VideoCompositingLayout;
+import com.wushuangtech.expansion.bean.VideoCompositingLayout;
 import com.wushuangtech.wstechapi.TTTRtcEngine;
 
 import java.util.ArrayList;

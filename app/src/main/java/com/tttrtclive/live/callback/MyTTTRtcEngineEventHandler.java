@@ -7,10 +7,10 @@ import com.tttrtclive.live.LocalConstans;
 import com.tttrtclive.live.bean.JniObjs;
 import com.tttrtclive.live.ui.MainActivity;
 import com.tttrtclive.live.utils.MyLog;
-import com.wushuangtech.bean.LocalAudioStats;
-import com.wushuangtech.bean.LocalVideoStats;
-import com.wushuangtech.bean.RemoteAudioStats;
-import com.wushuangtech.bean.RemoteVideoStats;
+import com.wushuangtech.expansion.bean.LocalAudioStats;
+import com.wushuangtech.expansion.bean.LocalVideoStats;
+import com.wushuangtech.expansion.bean.RemoteAudioStats;
+import com.wushuangtech.expansion.bean.RemoteVideoStats;
 import com.wushuangtech.wstechapi.TTTRtcEngineEventHandler;
 
 import java.util.ArrayList;
@@ -41,7 +41,7 @@ import static com.tttrtclive.live.LocalConstans.CALL_BACK_ON_USER_OFFLINE;
 public class MyTTTRtcEngineEventHandler extends TTTRtcEngineEventHandler {
 
     public static final String TAG = "MyTTTRtcEngineEventHandlerMMLIVE";
-    public static final String MSG_TAG = "MyTTTRtcEngineEventHandlerMSGMM";
+    public static final String MSG_TAG = "MyTTTRtcEngineEventHandlerMSGMMLIVE";
     private boolean mIsSaveCallBack;
     private List<JniObjs> mSaveCallBack;
     private Context mContext;

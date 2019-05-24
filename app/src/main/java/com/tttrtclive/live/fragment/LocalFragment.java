@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Switch;
+import android.widget.Toast;
 
 import com.tttrtclive.live.LocalConfig;
 import com.tttrtclive.live.LocalConstans;
@@ -120,11 +121,27 @@ public class LocalFragment extends Fragment implements SoSpinner.OnItemSelectedL
         ((SetActivity) getActivity()).mUseHQAudio = isChecked;
     }
 
-    public void getParams() {
+    public boolean getParams() {
+        if (mPixView.getText() == null || TextUtils.isEmpty(mPixView.getText().toString())) {
+            Toast.makeText(getContext(), "自定义视频分辨率不能为空", Toast.LENGTH_SHORT).show();
+            return false;
+        }
         String[] wh = mPixView.getText().toString().trim().split("x");
+        if (wh.length != 2) {
+            Toast.makeText(getContext(), "自定义视频分辨率格式错误", Toast.LENGTH_SHORT).show();
+            return false;
+        }
         mSetActivity.mLocalWidth = Integer.parseInt(wh[0]);
         mSetActivity.mLocalHeight = Integer.parseInt(wh[1]);
+        if (mBiteView.getText() == null || TextUtils.isEmpty(mBiteView.getText().toString())) {
+            Toast.makeText(getContext(), "自定义视频码率不能为空", Toast.LENGTH_SHORT).show();
+            return false;
+        }
         mSetActivity.mLocalBitRate = Integer.parseInt(mBiteView.getText().toString().trim());
+        if (mFrameView.getText() == null || TextUtils.isEmpty(mFrameView.getText().toString())) {
+            Toast.makeText(getContext(), "自定义视频帧率不能为空", Toast.LENGTH_SHORT).show();
+            return false;
+        }
         mSetActivity.mLocalFrameRate = Integer.parseInt(mFrameView.getText().toString().trim());
         mSetActivity.mLocalIP = mFrameIP.getText().toString().trim();
         if (!TextUtils.isEmpty(mFramePort.getText())) {
@@ -132,6 +149,6 @@ public class LocalFragment extends Fragment implements SoSpinner.OnItemSelectedL
         } else {
             mSetActivity.mLocalPort = 0;
         }
+        return true;
     }
-
 }

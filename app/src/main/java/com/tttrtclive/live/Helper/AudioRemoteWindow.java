@@ -84,6 +84,7 @@ public class AudioRemoteWindow extends RelativeLayout {
 
     public void hide() {
         mId = -1;
+        mSpeakImage.setImageResource(R.drawable.mainly_btn_speaker_selector);
         mSpeakImage.setVisibility(View.INVISIBLE);
         mCameraImage.setVisibility(View.INVISIBLE);
         mIdView.setVisibility(View.INVISIBLE);

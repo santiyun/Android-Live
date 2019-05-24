@@ -3,10 +3,10 @@ package com.tttrtclive.live.bean;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.wushuangtech.bean.LocalAudioStats;
-import com.wushuangtech.bean.LocalVideoStats;
-import com.wushuangtech.bean.RemoteAudioStats;
-import com.wushuangtech.bean.RemoteVideoStats;
+import com.wushuangtech.expansion.bean.LocalAudioStats;
+import com.wushuangtech.expansion.bean.LocalVideoStats;
+import com.wushuangtech.expansion.bean.RemoteAudioStats;
+import com.wushuangtech.expansion.bean.RemoteVideoStats;
 
 /**
  * Created by wangzhiguo on 17/10/13.

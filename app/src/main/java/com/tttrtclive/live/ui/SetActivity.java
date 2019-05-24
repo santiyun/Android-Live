@@ -147,8 +147,14 @@ public class SetActivity extends BaseActivity {
     }
 
     public void onOkButtonClick(View v) {
-        LocalFragment.getInstance().getParams();
-        PushFragment.getInstance().getParams();
+        boolean params = LocalFragment.getInstance().getParams();
+        if (!params) {
+            return ;
+        }
+        boolean params2 = PushFragment.getInstance().getParams();
+        if (!params2) {
+            return ;
+        }
         TTTRtcEngine.getInstance().setVideoMixerParams(mPushBitRate, mPushFrameRate, mPushHeight, mPushWidth);
         TTTRtcEngine.getInstance().setAudioMixerParams(mAudioSRate, mAudioSRate == 0 ? 48000 : 44100, mChannels);
         if (mLocalVideoProfile != 0) {
@@ -158,6 +164,7 @@ public class SetActivity extends BaseActivity {
             LocalConfig.mLocalWidth = mLocalWidth;
             LocalConfig.mLocalBitRate = mLocalBitRate;
             LocalConfig.mLocalFrameRate = mLocalFrameRate;
+            LocalConfig.mLocalVideoProfile = 0;
         }
         TTTRtcEngine.getInstance().setHighQualityAudioParameters(mUseHQAudio);
         exit();

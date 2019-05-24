@@ -6,6 +6,7 @@ import android.os.Environment;
 
 import com.tencent.bugly.crashreport.CrashReport;
 import com.tttrtclive.live.callback.MyTTTRtcEngineEventHandler;
+import com.tttrtclive.live.utils.CrashHandler;
 import com.wushuangtech.utils.PviewLog;
 import com.wushuangtech.wstechapi.TTTRtcEngine;
 
@@ -43,6 +44,9 @@ public class MainApplication extends Application {
                 PviewLog.i("Collection log failed! , No permission!");
             }
         }
+
+        CrashHandler mCrashHandler = new CrashHandler(getApplicationContext());
+        mCrashHandler.init();
     }
 
     public boolean isApkDebugable() {
