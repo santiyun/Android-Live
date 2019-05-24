@@ -18,7 +18,7 @@ import com.tttrtclive.live.ui.SetActivity;
 import so.library.SoSpinner;
 
 @SuppressLint("ValidFragment")
-public class PushFragment extends Fragment implements SoSpinner.OnItemSelectedListener{
+public class PushFragment extends Fragment implements SoSpinner.OnItemSelectedListener {
 
     private VideoProfileManager mVideoProfileManager = new VideoProfileManager();
     private EditText mPixView, mBiteView, mFrameView;
@@ -115,18 +115,47 @@ public class PushFragment extends Fragment implements SoSpinner.OnItemSelectedLi
             Toast.makeText(getContext(), "自定义推流分辨率格式错误", Toast.LENGTH_SHORT).show();
             return false;
         }
-        mSetActivity.mPushWidth = Integer.parseInt(wh[0]);
-        mSetActivity.mPushHeight = Integer.parseInt(wh[1]);
+
+        try {
+            mSetActivity.mPushWidth = Integer.parseInt(wh[0]);
+            if (mSetActivity.mPushWidth <= 0) {
+                Toast.makeText(getContext(), "自定义推流分辨率宽必须大于0", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+        } catch (Exception e) {
+            Toast.makeText(getContext(), "自定义推流分辨率格式错误", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        try {
+            mSetActivity.mPushHeight = Integer.parseInt(wh[1]);
+            if (mSetActivity.mPushHeight <= 0) {
+                Toast.makeText(getContext(), "自定义推流分辨率高必须大于0", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+        } catch (Exception e) {
+            Toast.makeText(getContext(), "自定义推流分辨率格式错误", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
         if (mBiteView.getText() == null || TextUtils.isEmpty(mBiteView.getText().toString())) {
             Toast.makeText(getContext(), "自定义推流码率不能为空", Toast.LENGTH_SHORT).show();
             return false;
         }
         mSetActivity.mPushBitRate = Integer.parseInt(mBiteView.getText().toString().trim());
+        if (mSetActivity.mPushBitRate <= 0) {
+            Toast.makeText(getContext(), "自定义推码率必须大于0", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
         if (mFrameView.getText() == null || TextUtils.isEmpty(mFrameView.getText().toString())) {
             Toast.makeText(getContext(), "自定义推流帧率不能为空", Toast.LENGTH_SHORT).show();
             return false;
         }
         mSetActivity.mPushFrameRate = Integer.parseInt(mFrameView.getText().toString().trim());
+        if (mSetActivity.mPushFrameRate <= 0) {
+            Toast.makeText(getContext(), "自定义推帧率必须大于0", Toast.LENGTH_SHORT).show();
+            return false;
+        }
         return true;
     }
 

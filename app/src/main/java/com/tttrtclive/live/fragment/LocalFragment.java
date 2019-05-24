@@ -131,18 +131,48 @@ public class LocalFragment extends Fragment implements SoSpinner.OnItemSelectedL
             Toast.makeText(getContext(), "自定义视频分辨率格式错误", Toast.LENGTH_SHORT).show();
             return false;
         }
-        mSetActivity.mLocalWidth = Integer.parseInt(wh[0]);
-        mSetActivity.mLocalHeight = Integer.parseInt(wh[1]);
+
+        try {
+            mSetActivity.mLocalWidth = Integer.parseInt(wh[0]);
+            if (mSetActivity.mLocalWidth <= 0) {
+                Toast.makeText(getContext(), "自定义视频分辨率宽必须大于0", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+        } catch (Exception e) {
+            Toast.makeText(getContext(), "自定义视频分辨率格式错误", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        try {
+            mSetActivity.mLocalHeight = Integer.parseInt(wh[1]);
+            if (mSetActivity.mLocalHeight <= 0) {
+                Toast.makeText(getContext(), "自定义视频分辨率高必须大于0", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+        } catch (Exception e) {
+            Toast.makeText(getContext(), "自定义视频分辨率格式错误", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
         if (mBiteView.getText() == null || TextUtils.isEmpty(mBiteView.getText().toString())) {
             Toast.makeText(getContext(), "自定义视频码率不能为空", Toast.LENGTH_SHORT).show();
             return false;
         }
         mSetActivity.mLocalBitRate = Integer.parseInt(mBiteView.getText().toString().trim());
+        if (mSetActivity.mLocalBitRate <= 0) {
+            Toast.makeText(getContext(), "自定义视频码率必须大于0", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
         if (mFrameView.getText() == null || TextUtils.isEmpty(mFrameView.getText().toString())) {
             Toast.makeText(getContext(), "自定义视频帧率不能为空", Toast.LENGTH_SHORT).show();
             return false;
         }
         mSetActivity.mLocalFrameRate = Integer.parseInt(mFrameView.getText().toString().trim());
+        if (mSetActivity.mLocalFrameRate <= 0) {
+            Toast.makeText(getContext(), "自定义视频帧率必须大于0", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
         mSetActivity.mLocalIP = mFrameIP.getText().toString().trim();
         if (!TextUtils.isEmpty(mFramePort.getText())) {
             mSetActivity.mLocalPort = Integer.parseInt(mFramePort.getText().toString().trim());
