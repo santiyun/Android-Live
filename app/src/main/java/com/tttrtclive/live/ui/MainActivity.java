@@ -196,7 +196,7 @@ public class MainActivity extends BaseActivity {
                 mWEChatShare.sendText(SendMessageToWX.Req.WXSceneTimeline, mRoomID,
                         "http://wushuangtech.com/live.html?flv=http://pull.wushuangtech.com/sdk/" + mRoomID + ".flv&hls=http://pull.wushuangtech.com/sdk/" + mRoomID + ".m3u8");
             } else {
-                mWEChatShare.sendText(SendMessageToWX.Req.WXSceneSession, mRoomID, getWXLink());
+                mWEChatShare.sendText(SendMessageToWX.Req.WXSceneTimeline, mRoomID, getWXLink());
             }
 
             findViewById(R.id.main_share_layout).setVisibility(View.GONE);

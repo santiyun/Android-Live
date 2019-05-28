@@ -21,6 +21,7 @@ public class AudioRemoteWindow extends RelativeLayout {
     private Context mContext;
 
     public long mId = -1;
+    public long mLocalUid;
     private boolean mIsMuted;
     private boolean mLocalIsMuted = false;
 
@@ -53,6 +54,7 @@ public class AudioRemoteWindow extends RelativeLayout {
 
     public void show(long localId, long id, int oritation) {
         mId = id;
+        mLocalUid = localId;
         mIdView.setText("" + mId);
         mSpeakImage.setVisibility(View.VISIBLE);
         mIdView.setVisibility(View.VISIBLE);
@@ -61,13 +63,17 @@ public class AudioRemoteWindow extends RelativeLayout {
 
         if (localId == id) {
             mSpeakImage.setOnClickListener(v -> {
-                mLocalIsMuted = !mLocalIsMuted;
-                mSpeakImage.setImageResource(mLocalIsMuted ? R.drawable.mainly_btn_mute_speaker_selector : R.drawable.mainly_btn_speaker_selector);
-                mTTTEngine.muteLocalAudioStream(mLocalIsMuted);
+                if (localId == id) {
+                    mLocalIsMuted = !mLocalIsMuted;
+                    mSpeakImage.setImageResource(mLocalIsMuted ? R.drawable.mainly_btn_mute_speaker_selector : R.drawable.mainly_btn_speaker_selector);
+                    mTTTEngine.muteLocalAudioStream(mLocalIsMuted);
+                }
             });
             mCameraImage.setVisibility(View.VISIBLE);
             mCameraImage.setOnClickListener(v -> {
-                mTTTEngine.switchCamera();
+                if (localId == id) {
+                    mTTTEngine.switchCamera();
+                }
             });
         }
 
