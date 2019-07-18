@@ -1,6 +1,7 @@
 package com.tttrtclive.live.ui;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -58,10 +59,10 @@ public class SplashActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.splash_activity);
+        // 申请 SDK 所需的权限
         AndPermission.with(this)
                 .permission(Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_PHONE_STATE)
                 .start();
-
         init();
     }
 
@@ -81,7 +82,33 @@ public class SplashActivity extends BaseActivity {
         }
     }
 
+    private void init() {
+        initView();
+        // 读取保存的数据
+        String roomID = (String) SharedPreferencesUtil.getParam(this, "RoomID", "");
+        mRoomIDET.setText(roomID);
+        mRoomIDET.setSelection(mRoomIDET.length());
+        //TODO ***注册广播，接收 SDK 的回调信令*** 重要操作!加TODO高亮
+        mLocalBroadcast = new MyLocalBroadcastReceiver();
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(MyTTTRtcEngineEventHandler.TAG);
+        registerReceiver(mLocalBroadcast, filter);
 
+        mDialog = new ProgressDialog(this);
+        mDialog.setTitle("");
+        mDialog.setCancelable(false);
+        mDialog.setMessage(getString(R.string.ttt_hint_loading_channel));
+
+        if (LocalConfig.mLocalRole == CLIENT_ROLE_ANCHOR) {
+            mHostBT.setChecked(true);
+            mAuthorBT.setChecked(false);
+        } else if (LocalConfig.mLocalRole == CLIENT_ROLE_BROADCASTER) {
+            mHostBT.setChecked(false);
+            mAuthorBT.setChecked(true);
+        }
+    }
+
+    @SuppressLint("SetTextI18n")
     private void initView() {
         mAuthorBT = findViewById(R.id.vice);
         mHostBT = findViewById(R.id.host);
@@ -100,31 +127,6 @@ public class SplashActivity extends BaseActivity {
             mVersion.setVisibility(View.INVISIBLE);
             mSplashAppName.setVisibility(View.INVISIBLE);
             mSplashCompany.setVisibility(View.INVISIBLE);
-        }
-    }
-
-    private void init() {
-        initView();
-        // 读取保存的数据
-        String roomID = (String) SharedPreferencesUtil.getParam(this, "RoomID", "");
-        mRoomIDET.setText(roomID);
-        mRoomIDET.setSelection(mRoomIDET.length());
-        // 注册回调函数接收的广播
-        mLocalBroadcast = new MyLocalBroadcastReceiver();
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(MyTTTRtcEngineEventHandler.TAG);
-        registerReceiver(mLocalBroadcast, filter);
-        mDialog = new ProgressDialog(this);
-        mDialog.setTitle("");
-        mDialog.setCancelable(false);
-        mDialog.setMessage(getString(R.string.ttt_hint_loading_channel));
-
-        if (LocalConfig.mLocalRole == CLIENT_ROLE_ANCHOR) {
-            mHostBT.setChecked(true);
-            mAuthorBT.setChecked(false);
-        } else if (LocalConfig.mLocalRole == CLIENT_ROLE_BROADCASTER) {
-            mHostBT.setChecked(false);
-            mAuthorBT.setChecked(true);
         }
     }
 
@@ -215,6 +217,9 @@ public class SplashActivity extends BaseActivity {
         }
     }
 
+    /**
+     * TODO ***SDK 进房间前的配置。*** 重要操作!加TODO高亮
+     */
     private void initSDK() {
         // 1.设置频道模式，这里用直播模式
         mTTTEngine.setChannelProfile(Constants.CHANNEL_PROFILE_LIVE_BROADCASTING);

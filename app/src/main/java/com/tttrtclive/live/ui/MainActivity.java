@@ -232,8 +232,6 @@ public class MainActivity extends BaseActivity {
     private void initEngine() {
         mLocalBroadcast = new MyLocalBroadcastReceiver();
         IntentFilter filter = new IntentFilter();
-        filter.addCategory("ttt.test.interface");
-        filter.addAction("ttt.test.interface.string");
         filter.addAction(MyTTTRtcEngineEventHandler.TAG);
         registerReceiver(mLocalBroadcast, filter);
         ((MainApplication) getApplicationContext()).mMyTTTRtcEngineEventHandler.setIsSaveCallBack(false);
