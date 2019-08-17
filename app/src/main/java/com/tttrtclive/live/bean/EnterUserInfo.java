@@ -39,15 +39,15 @@ public class EnterUserInfo implements Comparable<EnterUserInfo> {
     @Override
     public int compareTo(@NonNull EnterUserInfo o) {
         if (mYLocation > o.mYLocation) {
-            return -1;
+            return 1;
         } else if (mYLocation == o.mYLocation) {
             if (mXLocation > o.mXLocation) {
-                return -1;
-            } else {
                 return 1;
+            } else {
+                return -1;
             }
         } else {
-            return 1;
+            return -1;
         }
     }
 

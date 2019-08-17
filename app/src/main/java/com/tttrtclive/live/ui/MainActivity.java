@@ -125,7 +125,12 @@ public class MainActivity extends BaseActivity {
             mPhoneListener = null;
             mTelephonyManager = null;
         }
-        unregisterReceiver(mLocalBroadcast);
+
+        try {
+            unregisterReceiver(mLocalBroadcast);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         mTTTEngine.muteLocalAudioStream(false);
         if (mIsBackCamera) {
@@ -272,7 +277,7 @@ public class MainActivity extends BaseActivity {
     }
 
     public String getWXLink() {
-        return "http://3ttech.cn/3tplayer.html?flv=http://pull.3ttech.cn/sdk/" + mRoomID + ".flv&hls=http://pull.3ttech.cn/sdk/" + mRoomID + ".m3u8";
+        return "http://3ttech.cn/3tplayer.html?flv=http://pull.3ttest.cn/sdk2/" + mRoomID + ".flv&hls=http://pull.3ttest.cn/sdk2/" + mRoomID + ".m3u8";
     }
 
     /**
@@ -353,8 +358,6 @@ public class MainActivity extends BaseActivity {
                                 String devid = jsonobject2.getString("id");
                                 float x = Float.valueOf(jsonobject2.getString("x"));
                                 float y = Float.valueOf(jsonobject2.getString("y"));
-                                float w = Float.valueOf(jsonobject2.getString("w"));
-                                float h = Float.valueOf(jsonobject2.getString("h"));
 
                                 long userId;
                                 int index = devid.indexOf(":");
@@ -479,14 +482,25 @@ public class MainActivity extends BaseActivity {
                         if (mIsSpeaker) {
                             mTTTEngine.setEnableSpeakerphone(false);
                         }
+
+                        if (!mIsMute) {
+                            mTTTEngine.muteLocalAudioStream(true);
+                        }
+                        mTTTEngine.muteAllRemoteAudioStreams(true);
                         break;
                     case LocalConstans.CALL_BACK_ON_PHONE_LISTENER_IDLE:
                         if (mIsPhoneComing) {
                             if (mIsSpeaker) {
                                 mTTTEngine.setEnableSpeakerphone(true);
                             }
+
+                            if (!mIsMute) {
+                                mTTTEngine.muteLocalAudioStream(false);
+                            }
+                            mTTTEngine.muteAllRemoteAudioStreams(false);
                             mIsPhoneComing = false;
                         }
+                        break;
                     case LocalConstans.CALL_BACK_ON_AUDIO_VOLUME_INDICATION:
                         if (mIsMute) return;
                         int volumeLevel = mJniObjs.mAudioLevel;

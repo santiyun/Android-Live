@@ -59,13 +59,21 @@ public class SplashActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.splash_activity);
+        if (!this.isTaskRoot()) {
+            Intent mainIntent = getIntent();
+            String action = mainIntent.getAction();
+            if (action != null && mainIntent.hasCategory(Intent.CATEGORY_LAUNCHER) && action.equals(Intent.ACTION_MAIN)) {
+                finish();
+                return;
+            }
+        }
+
         // 申请 SDK 所需的权限
         AndPermission.with(this)
                 .permission(Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_PHONE_STATE)
                 .start();
         init();
     }
-
 
     @Override
     protected void onDestroy() {
@@ -150,6 +158,17 @@ public class SplashActivity extends BaseActivity {
         if (TextUtils.isEmpty(mRoomName)) {
             Toast.makeText(this, getString(R.string.ttt_error_enterchannel_check_channel_empty), Toast.LENGTH_SHORT).show();
             return;
+        }
+
+        if (TextUtils.getTrimmedLength(mRoomName) > 19) {
+            Toast.makeText(this, R.string.hint_channel_name_limit, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        Long aLong = Long.valueOf(mRoomName);
+        if (aLong <= 0) {
+            Toast.makeText(this, "房间号必须大于0", Toast.LENGTH_SHORT).show();
+            return ;
         }
 
         if (mIsLoging) return;
@@ -248,9 +267,9 @@ public class SplashActivity extends BaseActivity {
             }
         } else {
             if (mEncodeType == 0) {
-                pushUrl = "rtmp://push.3ttech.cn/sdk/" + mRoomName;
+                pushUrl = "rtmp://push.3ttest.cn/sdk2/" + mRoomName;
             } else {
-                pushUrl = "rtmp://push.3ttech.cn/sdk/" + mRoomName + "?trans=1";
+                pushUrl = "rtmp://push.3ttest.cn/sdk2/" + mRoomName + "?trans=1";
             }
         }
         // 5.设置推流地址
