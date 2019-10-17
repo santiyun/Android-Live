@@ -8,8 +8,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.constraint.ConstraintLayout;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
@@ -20,8 +18,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.tencent.mm.opensdk.modelmsg.SendMessageToWX;
-import com.tttrtclive.live.Helper.WEChatShare;
-import com.tttrtclive.live.Helper.WindowManager;
+import com.tttrtclive.live.helper.WEChatShare;
+import com.tttrtclive.live.helper.WindowManager;
 import com.tttrtclive.live.LocalConfig;
 import com.tttrtclive.live.LocalConstans;
 import com.tttrtclive.live.MainApplication;
@@ -45,6 +43,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
+
+import static com.tttrtclive.live.ui.SplashActivity.ACTIVITY_MAIN;
 import static com.wushuangtech.library.Constants.CLIENT_ROLE_ANCHOR;
 
 public class MainActivity extends BaseActivity {
@@ -272,7 +274,7 @@ public class MainActivity extends BaseActivity {
     public void exitRoom() {
         MyLog.d("exitRoom was called!... leave room");
         mTTTEngine.leaveChannel();
-        setResult(1);
+        setResult(ACTIVITY_MAIN);
         finish();
     }
 

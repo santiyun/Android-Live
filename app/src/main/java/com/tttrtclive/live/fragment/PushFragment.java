@@ -3,7 +3,6 @@ package com.tttrtclive.live.fragment;
 import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +14,7 @@ import com.tttrtclive.live.R;
 import com.tttrtclive.live.bean.VideoProfileManager;
 import com.tttrtclive.live.ui.SetActivity;
 
+import androidx.fragment.app.Fragment;
 import so.library.SoSpinner;
 
 @SuppressLint("ValidFragment")

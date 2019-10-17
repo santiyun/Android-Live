@@ -1,6 +1,6 @@
 package com.tttrtclive.live.bean;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 /**
  * Created by root on 17-2-21.

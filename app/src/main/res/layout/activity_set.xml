@@ -1,15 +1,15 @@
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-											 xmlns:tl="http://schemas.android.com/apk/res-auto"
-											 android:layout_width="match_parent"
-											 android:layout_height="match_parent"
-											 android:background="#FFFFFF"
-											 android:scrollbars="none">
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tl="http://schemas.android.com/apk/res-auto"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:background="#FFFFFF"
+	android:scrollbars="none">
 
-	<android.support.constraint.ConstraintLayout
+	<androidx.constraintlayout.widget.ConstraintLayout
 		android:id="@+id/set_head"
 		android:layout_width="match_parent"
-		tl:layout_constraintTop_toTopOf="parent"
-		android:layout_height="68dp">
+		android:layout_height="68dp"
+		tl:layout_constraintTop_toTopOf="parent">
 
 		<ImageView
 			android:layout_width="wrap_content"
@@ -20,7 +20,7 @@
 			tl:layout_constraintBottom_toBottomOf="@+id/textView"
 			tl:layout_constraintStart_toStartOf="parent"
 			tl:layout_constraintTop_toTopOf="parent"
-			tl:srcCompat="@drawable/icon_arrow_left"/>
+			tl:srcCompat="@drawable/icon_arrow_left" />
 
 		<com.flyco.tablayout.SegmentTabLayout
 			android:id="@+id/tl_1"
@@ -36,18 +36,17 @@
 			tl:tl_indicator_corner_radius="50dp"
 			tl:tl_tab_padding="20dp"
 			tl:tl_textUnselectColor="#FF666666"
-			tl:tl_textsize="12sp">
-		</com.flyco.tablayout.SegmentTabLayout>
+			tl:tl_textsize="12sp"></com.flyco.tablayout.SegmentTabLayout>
 
 		<TextView
 			android:id="@+id/textView"
 			android:layout_width="match_parent"
 			android:layout_height="1dp"
-			tl:layout_constraintBottom_toBottomOf="parent"
-			android:background="#80C4C4C4"/>
-	</android.support.constraint.ConstraintLayout>
+			android:background="#80C4C4C4"
+			tl:layout_constraintBottom_toBottomOf="parent" />
+	</androidx.constraintlayout.widget.ConstraintLayout>
 
-	<android.support.v4.view.ViewPager
+	<androidx.viewpager.widget.ViewPager
 		android:id="@+id/vp_2"
 		android:layout_width="match_parent"
 		android:layout_height="0dp"
@@ -55,15 +54,15 @@
 		tl:layout_constraintBottom_toTopOf="@+id/local_ok_button2"
 		tl:layout_constraintEnd_toEndOf="parent"
 		tl:layout_constraintStart_toStartOf="parent"
-		tl:layout_constraintTop_toBottomOf="@+id/set_head"/>
+		tl:layout_constraintTop_toBottomOf="@+id/set_head" />
 
 	<TextView
 		android:id="@+id/local_ok_button2"
 		android:layout_width="0dp"
 		android:layout_height="40dp"
-		android:layout_marginBottom="20dp"
-		android:layout_marginEnd="20dp"
 		android:layout_marginStart="20dp"
+		android:layout_marginEnd="20dp"
+		android:layout_marginBottom="20dp"
 		android:background="@drawable/setly_ok_bg"
 		android:gravity="center"
 		android:onClick="onOkButtonClick"
@@ -72,5 +71,5 @@
 		android:textSize="16sp"
 		tl:layout_constraintBottom_toBottomOf="parent"
 		tl:layout_constraintEnd_toEndOf="parent"
-		tl:layout_constraintStart_toStartOf="parent"/>
-</android.support.constraint.ConstraintLayout>
+		tl:layout_constraintStart_toStartOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>

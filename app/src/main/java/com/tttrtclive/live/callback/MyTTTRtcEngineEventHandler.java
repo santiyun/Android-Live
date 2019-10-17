@@ -40,8 +40,8 @@ import static com.tttrtclive.live.LocalConstans.CALL_BACK_ON_USER_OFFLINE;
 
 public class MyTTTRtcEngineEventHandler extends TTTRtcEngineEventHandler {
 
-    public static final String TAG = "MyTTTRtcEngineEventHandlerMMLIVE";
-    public static final String MSG_TAG = "MyTTTRtcEngineEventHandlerMSGMMLIVE";
+    public static final String TAG = "MyTTTRtcEngineEventHandler_Live";
+    public static final String MSG_TAG = "MyTTTRtcEngineEventHandlerMSG_Live";
     private boolean mIsSaveCallBack;
     private List<JniObjs> mSaveCallBack;
     private Context mContext;
@@ -52,7 +52,7 @@ public class MyTTTRtcEngineEventHandler extends TTTRtcEngineEventHandler {
     }
 
     @Override
-    public void onJoinChannelSuccess(String channel, long uid) {
+    public void onJoinChannelSuccess(String channel, long uid, int elapsed) {
         MyLog.i("wzg", "onJoinChannelSuccess.... channel ： " + channel + " | uid : " + uid);
         JniObjs mJniObjs = new JniObjs();
         mJniObjs.mJniType = CALL_BACK_ON_ENTER_ROOM;
@@ -91,7 +91,7 @@ public class MyTTTRtcEngineEventHandler extends TTTRtcEngineEventHandler {
 
 
     @Override
-    public void onUserJoined(long nUserId, int identity) {
+    public void onUserJoined(long nUserId, int identity, int elapsed) {
         MyLog.i("wzg", "onUserJoined.... nUserId ： " + nUserId + " | identity : " + identity
                 + " | mIsSaveCallBack : " + mIsSaveCallBack);
         JniObjs mJniObjs = new JniObjs();
@@ -160,7 +160,7 @@ public class MyTTTRtcEngineEventHandler extends TTTRtcEngineEventHandler {
     }
 
     @Override
-    public void onFirstRemoteVideoFrame(long uid, int width, int height) {
+    public void onFirstRemoteVideoFrame(long uid, int width, int height, int elapsed) {
         MyLog.i("wzg", "onFirstRemoteVideoFrame.... uid ： " + uid + " | width : " + width + " | height : " + height);
         JniObjs mJniObjs = new JniObjs();
         mJniObjs.mJniType = CALL_BACK_ON_REMOVE_FIRST_FRAME_COME;

@@ -1,7 +1,7 @@
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-											 xmlns:app="http://schemas.android.com/apk/res-auto"
-											 android:layout_width="match_parent"
-											 android:layout_height="match_parent">
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent">
 
 	<View
 		android:id="@+id/divider"
@@ -10,19 +10,19 @@
 		android:layout_marginStart="105dp"
 		app:layout_constraintBottom_toBottomOf="parent"
 		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintTop_toTopOf="parent"/>
+		app:layout_constraintTop_toTopOf="parent" />
 
 	<TextView
 		android:id="@+id/textView2"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:layout_marginRight="10dp"
 		android:layout_marginTop="20dp"
+		android:layout_marginRight="10dp"
 		android:text="@string/ttt_set_video_params"
 		android:textColor="#FF666666"
 		android:textSize="15sp"
 		app:layout_constraintEnd_toStartOf="@+id/divider"
-		app:layout_constraintTop_toTopOf="parent"/>
+		app:layout_constraintTop_toTopOf="parent" />
 
 	<so.library.SoSpinner
 		android:id="@+id/push_pix_spinner"
@@ -43,19 +43,19 @@
 		app:so_itemHeight="40dp"
 		app:so_itemPaddingLeft="20dp"
 		app:so_itemTextColor="#FF666666"
-		app:so_itemTextSize="15sp"/>
+		app:so_itemTextSize="15sp" />
 
 	<TextView
 		android:id="@+id/textView3"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:layout_marginRight="10dp"
 		android:layout_marginTop="30dp"
+		android:layout_marginRight="10dp"
 		android:text="@string/ttt_set_resolution_params"
 		android:textColor="#FF666666"
 		android:textSize="15sp"
 		app:layout_constraintEnd_toStartOf="@+id/divider"
-		app:layout_constraintTop_toBottomOf="@+id/textView2"/>
+		app:layout_constraintTop_toBottomOf="@+id/textView2" />
 
 	<EditText
 		android:id="@+id/push_pix_rate"
@@ -71,31 +71,31 @@
 		app:layout_constraintBottom_toBottomOf="@+id/textView3"
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintStart_toEndOf="@+id/divider"
-		app:layout_constraintTop_toTopOf="@+id/textView3"/>
+		app:layout_constraintTop_toTopOf="@+id/textView3" />
 
 	<TextView
 		android:id="@+id/textView4"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:layout_marginRight="10dp"
 		android:layout_marginTop="30dp"
+		android:layout_marginRight="10dp"
 		android:text="@string/ttt_set_bitrate_params"
 		android:textColor="#FF666666"
 		android:textSize="15sp"
 		app:layout_constraintEnd_toStartOf="@+id/divider"
-		app:layout_constraintTop_toBottomOf="@+id/textView3"/>
+		app:layout_constraintTop_toBottomOf="@+id/textView3" />
 
 	<TextView
 		android:id="@+id/textView5"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:layout_marginRight="10dp"
 		android:layout_marginTop="30dp"
+		android:layout_marginRight="10dp"
 		android:text="@string/ttt_set_fps_params"
 		android:textColor="#FF666666"
 		android:textSize="15sp"
 		app:layout_constraintEnd_toStartOf="@+id/divider"
-		app:layout_constraintTop_toBottomOf="@+id/textView4"/>
+		app:layout_constraintTop_toBottomOf="@+id/textView4" />
 
 	<EditText
 		android:id="@+id/push_bite_rate"
@@ -112,7 +112,7 @@
 		app:layout_constraintBottom_toBottomOf="@+id/textView4"
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintStart_toEndOf="@+id/divider"
-		app:layout_constraintTop_toTopOf="@+id/textView4"/>
+		app:layout_constraintTop_toTopOf="@+id/textView4" />
 
 	<EditText
 		android:id="@+id/push_frame_rate"
@@ -129,30 +129,30 @@
 		app:layout_constraintBottom_toBottomOf="@+id/textView5"
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintStart_toEndOf="@+id/divider"
-		app:layout_constraintTop_toTopOf="@+id/textView5"/>
+		app:layout_constraintTop_toTopOf="@+id/textView5" />
 
 	<TextView
 		android:id="@+id/textView9"
 		android:layout_width="0dp"
 		android:layout_height="1dp"
-		android:layout_marginEnd="20dp"
 		android:layout_marginStart="20dp"
 		android:layout_marginTop="20dp"
+		android:layout_marginEnd="20dp"
 		android:background="#FFD8D8D8"
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintHorizontal_bias="0.0"
 		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintTop_toBottomOf="@+id/push_encode_spinner"/>
+		app:layout_constraintTop_toBottomOf="@+id/push_encode_spinner" />
 
 	<TextView
 		android:id="@+id/textView10"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:layout_marginEnd="8dp"
 		android:layout_marginTop="10dp"
+		android:layout_marginEnd="8dp"
 		android:text="@string/ttt_set_audio_params"
 		app:layout_constraintEnd_toStartOf="@+id/divider"
-		app:layout_constraintTop_toBottomOf="@+id/textView9"/>
+		app:layout_constraintTop_toBottomOf="@+id/textView9" />
 
 	<so.library.SoSpinner
 		android:id="@+id/push_audio_spinner"
@@ -173,27 +173,27 @@
 		app:so_itemHeight="40dp"
 		app:so_itemPaddingLeft="20dp"
 		app:so_itemTextColor="#FF666666"
-		app:so_itemTextSize="15sp"/>
+		app:so_itemTextSize="15sp" />
 
 	<TextView
 		android:id="@+id/textView11"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:layout_marginEnd="10dp"
 		android:layout_marginTop="24dp"
+		android:layout_marginEnd="10dp"
 		android:text="@string/ttt_set_sample_params"
 		app:layout_constraintEnd_toStartOf="@+id/divider"
-		app:layout_constraintTop_toBottomOf="@+id/textView10"/>
+		app:layout_constraintTop_toBottomOf="@+id/textView10" />
 
 	<TextView
 		android:id="@+id/textView12"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:layout_marginRight="10dp"
 		android:layout_marginTop="30dp"
+		android:layout_marginRight="10dp"
 		android:text="@string/ttt_set_audio_encode_params"
 		app:layout_constraintEnd_toStartOf="@+id/divider"
-		app:layout_constraintTop_toBottomOf="@+id/textView5"/>
+		app:layout_constraintTop_toBottomOf="@+id/textView5" />
 
 	<so.library.SoSpinner
 		android:id="@+id/push_encode_spinner"
@@ -214,7 +214,7 @@
 		app:so_itemHeight="40dp"
 		app:so_itemPaddingLeft="20dp"
 		app:so_itemTextColor="#FF666666"
-		app:so_itemTextSize="15sp"/>
+		app:so_itemTextSize="15sp" />
 
 	<ImageView
 		android:layout_width="wrap_content"
@@ -223,7 +223,7 @@
 		app:layout_constraintBottom_toBottomOf="@+id/push_pix_spinner"
 		app:layout_constraintEnd_toEndOf="@+id/push_pix_spinner"
 		app:layout_constraintTop_toTopOf="@+id/push_pix_spinner"
-		app:srcCompat="@drawable/icon_arrow_down_h"/>
+		app:srcCompat="@drawable/icon_arrow_down_h" />
 
 	<ImageView
 		android:layout_width="wrap_content"
@@ -232,7 +232,7 @@
 		app:layout_constraintBottom_toBottomOf="@+id/push_encode_spinner"
 		app:layout_constraintEnd_toEndOf="@+id/push_encode_spinner"
 		app:layout_constraintTop_toTopOf="@+id/push_encode_spinner"
-		app:srcCompat="@drawable/icon_arrow_down_h"/>
+		app:srcCompat="@drawable/icon_arrow_down_h" />
 
 	<ImageView
 		android:layout_width="wrap_content"
@@ -241,5 +241,5 @@
 		app:layout_constraintBottom_toBottomOf="@+id/push_audio_spinner"
 		app:layout_constraintEnd_toEndOf="@+id/push_audio_spinner"
 		app:layout_constraintTop_toTopOf="@+id/push_audio_spinner"
-		app:srcCompat="@drawable/icon_arrow_down_h"/>
-</android.support.constraint.ConstraintLayout>
+		app:srcCompat="@drawable/icon_arrow_down_h" />
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -2,6 +2,7 @@ package com.tttrtclive.live.ui;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -19,30 +20,40 @@ import com.tttrtclive.live.LocalConfig;
 import com.tttrtclive.live.LocalConstans;
 import com.tttrtclive.live.R;
 import com.tttrtclive.live.bean.JniObjs;
+import com.tttrtclive.live.bean.MyPermissionBean;
 import com.tttrtclive.live.callback.MyTTTRtcEngineEventHandler;
+import com.tttrtclive.live.helper.MyPermissionManager;
 import com.tttrtclive.live.utils.MyLog;
 import com.tttrtclive.live.utils.SharedPreferencesUtil;
 import com.wushuangtech.library.Constants;
 import com.wushuangtech.wstechapi.TTTRtcEngine;
 import com.wushuangtech.wstechapi.model.PublisherConfiguration;
-import com.yanzhenjie.permission.AndPermission;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 
 import static com.wushuangtech.library.Constants.CLIENT_ROLE_ANCHOR;
 import static com.wushuangtech.library.Constants.CLIENT_ROLE_BROADCASTER;
 
 public class SplashActivity extends BaseActivity {
 
-    private static final int ACTIVITY_MAIN = 100;
+    public static final int ACTIVITY_MAIN = 100;
     private static final int ACTIVITY_SETTING = 101;
     private ProgressDialog mDialog;
+    private MyPermissionManager mMyPermissionManager;
+    private MyLocalBroadcastReceiver mLocalBroadcast;
+
     private boolean mIsLoging;
+    private boolean isSetting;
+    private String mRoomName;
+    private int mRole = CLIENT_ROLE_ANCHOR;
+
     private EditText mRoomIDET;
     private View mAdvanceSetting;
-    private MyLocalBroadcastReceiver mLocalBroadcast;
-    private String mRoomName;
     private RadioButton mHostBT, mAuthorBT;
-    private int mRole = CLIENT_ROLE_ANCHOR;
-    private boolean isSetting;
 
     /*-------------------------------配置参数---------------------------------*/
     private int mLocalVideoProfile = Constants.TTTRTC_VIDEOPROFILE_DEFAULT;
@@ -68,16 +79,47 @@ public class SplashActivity extends BaseActivity {
             }
         }
 
-        // 申请 SDK 所需的权限
-        AndPermission.with(this)
-                .permission(Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_PHONE_STATE)
-                .start();
-        init();
+        ArrayList<MyPermissionBean> mPermissionList = new ArrayList<>();
+        mPermissionList.add(new MyPermissionBean(Manifest.permission.WRITE_EXTERNAL_STORAGE, getResources().getString(R.string.permission_write_external_storage)));
+        mPermissionList.add(new MyPermissionBean(Manifest.permission.RECORD_AUDIO, getResources().getString(R.string.permission_record_audio)));
+        mPermissionList.add(new MyPermissionBean(Manifest.permission.CAMERA, getResources().getString(R.string.permission_camera)));
+        mPermissionList.add(new MyPermissionBean(Manifest.permission.READ_PHONE_STATE, getResources().getString(R.string.permission_read_phone_state)));
+        mMyPermissionManager = new MyPermissionManager(this, new MyPermissionManager.PermissionUtilsInter() {
+            @Override
+            public List<MyPermissionBean> getApplyPermissions() {
+                return mPermissionList;
+            }
+
+            @Override
+            public AlertDialog.Builder getTipAlertDialog() {
+                return null;
+            }
+
+            @Override
+            public Dialog getTipDialog() {
+                return null;
+            }
+
+            @Override
+            public AlertDialog.Builder getTipAppSettingAlertDialog() {
+                return null;
+            }
+
+            @Override
+            public Dialog getTipAppSettingDialog() {
+                return null;
+            }
+        });
+        boolean isOk = mMyPermissionManager.checkPermission();
+        if (isOk) {
+            init();
+        }
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        mMyPermissionManager.clearResource();
         if (mDialog != null) {
             mDialog.dismiss();
             mDialog = null;
@@ -87,6 +129,52 @@ public class SplashActivity extends BaseActivity {
             unregisterReceiver(mLocalBroadcast);
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        boolean isOk = mMyPermissionManager.onRequestPermissionsResults(this, requestCode, permissions, grantResults);
+        if (isOk) {
+            init();
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        super.onActivityResult(requestCode, resultCode, intent);
+        switch (requestCode) {
+            case MyPermissionManager.REQUEST_SETTING_CODE:
+                boolean isOk = mMyPermissionManager.onActivityResults(requestCode);
+                if (isOk) {
+                    init();
+                }
+                break;
+            case ACTIVITY_MAIN:
+                if (mDialog != null) {
+                    mDialog.dismiss();
+                }
+                break;
+            case ACTIVITY_SETTING:
+                mLocalVideoProfile = intent.getIntExtra("LVP", mLocalVideoProfile);
+                mPushVideoProfile = intent.getIntExtra("PVP", mPushVideoProfile);
+                mLocalWidth = intent.getIntExtra("LWIDTH", mLocalWidth);
+                mLocalHeight = intent.getIntExtra("LHEIGHT", mLocalHeight);
+                mLocalBitRate = intent.getIntExtra("LBRATE", mLocalBitRate);
+                mLocalFrameRate = intent.getIntExtra("LFRATE", mLocalFrameRate);
+                mLocalIP = intent.getStringExtra("LIP");
+                mLocalPort = intent.getIntExtra("LPORT", mLocalPort);
+                mPushWidth = intent.getIntExtra("PWIDTH", mPushWidth);
+                mPushHeight = intent.getIntExtra("PHEIGHT", mPushHeight);
+                mPushBitRate = intent.getIntExtra("PBRATE", mPushBitRate);
+                mPushFrameRate = intent.getIntExtra("PFRATE", mPushFrameRate);
+                mUseHQAudio = intent.getBooleanExtra("HQA", mUseHQAudio);
+                mUseHQAudio = intent.getBooleanExtra("HQA", mUseHQAudio);
+                mEncodeType = intent.getIntExtra("EDT", mEncodeType);
+                mAudioSRate = intent.getIntExtra("ASR", mAudioSRate);
+                isSetting = false;
+                break;
         }
     }
 
@@ -168,7 +256,7 @@ public class SplashActivity extends BaseActivity {
         Long aLong = Long.valueOf(mRoomName);
         if (aLong <= 0) {
             Toast.makeText(this, "房间号必须大于0", Toast.LENGTH_SHORT).show();
-            return ;
+            return;
         }
 
         if (mIsLoging) return;
@@ -203,37 +291,6 @@ public class SplashActivity extends BaseActivity {
         intent.putExtra("EDT", mEncodeType);
         intent.putExtra("ASR", mAudioSRate);
         startActivityForResult(intent, ACTIVITY_SETTING);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
-        super.onActivityResult(requestCode, resultCode, intent);
-        switch (requestCode) {
-            case ACTIVITY_MAIN:
-                if (mDialog != null) {
-                    mDialog.dismiss();
-                }
-                break;
-            case ACTIVITY_SETTING:
-                mLocalVideoProfile = intent.getIntExtra("LVP", mLocalVideoProfile);
-                mPushVideoProfile = intent.getIntExtra("PVP", mPushVideoProfile);
-                mLocalWidth = intent.getIntExtra("LWIDTH", mLocalWidth);
-                mLocalHeight = intent.getIntExtra("LHEIGHT", mLocalHeight);
-                mLocalBitRate = intent.getIntExtra("LBRATE", mLocalBitRate);
-                mLocalFrameRate = intent.getIntExtra("LFRATE", mLocalFrameRate);
-                mLocalIP = intent.getStringExtra("LIP");
-                mLocalPort = intent.getIntExtra("LPORT", mLocalPort);
-                mPushWidth = intent.getIntExtra("PWIDTH", mPushWidth);
-                mPushHeight = intent.getIntExtra("PHEIGHT", mPushHeight);
-                mPushBitRate = intent.getIntExtra("PBRATE", mPushBitRate);
-                mPushFrameRate = intent.getIntExtra("PFRATE", mPushFrameRate);
-                mUseHQAudio = intent.getBooleanExtra("HQA", mUseHQAudio);
-                mUseHQAudio = intent.getBooleanExtra("HQA", mUseHQAudio);
-                mEncodeType = intent.getIntExtra("EDT", mEncodeType);
-                mAudioSRate = intent.getIntExtra("ASR", mAudioSRate);
-                isSetting = false;
-                break;
-        }
     }
 
     /**

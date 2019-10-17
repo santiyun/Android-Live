@@ -3,7 +3,6 @@ package com.tttrtclive.live.fragment;
 import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,6 +18,7 @@ import com.tttrtclive.live.R;
 import com.tttrtclive.live.bean.VideoProfileManager;
 import com.tttrtclive.live.ui.SetActivity;
 
+import androidx.fragment.app.Fragment;
 import so.library.SoSpinner;
 
 @SuppressLint("ValidFragment")
@@ -59,10 +59,6 @@ public class LocalFragment extends Fragment implements SoSpinner.OnItemSelectedL
             mLocalIp.setVisibility(View.INVISIBLE);
             mLocalPort.setVisibility(View.INVISIBLE);
         }
-//        mLocalIp.setVisibility(View.VISIBLE);
-//        mLocalPort.setVisibility(View.VISIBLE);
-//        mFrameIP.setVisibility(View.VISIBLE);
-//        mFramePort.setVisibility(View.VISIBLE);
 
         SoSpinner localPixSpinner = v.findViewById(R.id.local_pix_spinner);
         localPixSpinner.setOnItemSelectedListener(this);

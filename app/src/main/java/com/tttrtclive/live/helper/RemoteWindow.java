@@ -1,7 +1,6 @@
-package com.tttrtclive.live.Helper;
+package com.tttrtclive.live.helper;
 
 import android.content.Context;
-import android.support.constraint.ConstraintLayout;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.SurfaceView;
@@ -15,7 +14,9 @@ import com.wushuangtech.library.Constants;
 import com.wushuangtech.wstechapi.TTTRtcEngine;
 import com.wushuangtech.wstechapi.model.VideoCanvas;
 
-public class AudioRemoteWindow extends RelativeLayout {
+import androidx.constraintlayout.widget.ConstraintLayout;
+
+public class RemoteWindow extends RelativeLayout {
 
     private TTTRtcEngine mTTTEngine;
     private Context mContext;
@@ -33,7 +34,7 @@ public class AudioRemoteWindow extends RelativeLayout {
     private ConstraintLayout mVideoLayout;
     public int mIndex;
 
-    public AudioRemoteWindow(Context context, AttributeSet attrs) {
+    public RemoteWindow(Context context, AttributeSet attrs) {
         super(context, attrs);
         mContext = context;
 

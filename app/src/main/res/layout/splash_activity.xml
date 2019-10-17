@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-											 xmlns:app="http://schemas.android.com/apk/res-auto"
-											 android:layout_width="match_parent"
-											 android:layout_height="match_parent"
-											 android:splitMotionEvents="false"
-											 android:background="@drawable/st_bg_login">
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:background="@drawable/st_bg_login"
+	android:splitMotionEvents="false">
 
 	<ImageView
 		android:id="@+id/imageView2"
 		android:layout_width="96dp"
 		android:layout_height="96dp"
-		android:layout_marginEnd="8dp"
 		android:layout_marginStart="8dp"
 		android:layout_marginTop="64dp"
+		android:layout_marginEnd="8dp"
 		android:src="@drawable/logo"
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintTop_toTopOf="parent"/>
+		app:layout_constraintTop_toTopOf="parent" />
 
 	<TextView
 		android:id="@+id/splash_app_name"
@@ -28,7 +28,7 @@
 		android:textSize="18sp"
 		app:layout_constraintLeft_toLeftOf="parent"
 		app:layout_constraintRight_toRightOf="parent"
-		app:layout_constraintTop_toBottomOf="@+id/imageView2"/>
+		app:layout_constraintTop_toBottomOf="@+id/imageView2" />
 
 	<TextView
 		android:id="@+id/room_id_text"
@@ -40,7 +40,7 @@
 		android:textColor="#FFFFFF"
 		android:textSize="14sp"
 		app:layout_constraintLeft_toLeftOf="@+id/room_id"
-		app:layout_constraintTop_toBottomOf="@+id/splash_app_name"/>
+		app:layout_constraintTop_toBottomOf="@+id/splash_app_name" />
 
 	<EditText
 		android:id="@+id/room_id"
@@ -57,7 +57,7 @@
 		android:textSize="12sp"
 		app:layout_constraintLeft_toLeftOf="parent"
 		app:layout_constraintRight_toRightOf="parent"
-		app:layout_constraintTop_toBottomOf="@+id/room_id_text"/>
+		app:layout_constraintTop_toBottomOf="@+id/room_id_text" />
 
 	<TextView
 		android:id="@+id/textView"
@@ -68,7 +68,7 @@
 		android:textColor="#FFFFFF"
 		android:textSize="14sp"
 		app:layout_constraintStart_toStartOf="@+id/room_id_text"
-		app:layout_constraintTop_toBottomOf="@+id/room_id"/>
+		app:layout_constraintTop_toBottomOf="@+id/room_id" />
 
 	<RadioButton
 		android:id="@+id/host"
@@ -84,7 +84,7 @@
 		android:textColor="@color/splash_role_color"
 		android:textSize="16sp"
 		app:layout_constraintStart_toStartOf="@+id/room_id_text"
-		app:layout_constraintTop_toBottomOf="@+id/textView"/>
+		app:layout_constraintTop_toBottomOf="@+id/textView" />
 
 	<RadioButton
 		android:id="@+id/vice"
@@ -99,7 +99,7 @@
 		android:textColor="@color/splash_role_color"
 		android:textSize="16sp"
 		app:layout_constraintLeft_toRightOf="@id/host"
-		app:layout_constraintTop_toTopOf="@+id/host"/>
+		app:layout_constraintTop_toTopOf="@+id/host" />
 
 	<RadioButton
 		android:id="@+id/enter"
@@ -115,7 +115,7 @@
 		android:textSize="16sp"
 		app:layout_constraintEnd_toEndOf="@+id/room_id"
 		app:layout_constraintStart_toStartOf="@+id/room_id"
-		app:layout_constraintTop_toBottomOf="@+id/host"/>
+		app:layout_constraintTop_toBottomOf="@+id/host" />
 
 	<RadioButton
 		android:id="@+id/set"
@@ -131,32 +131,32 @@
 		android:textSize="16sp"
 		app:layout_constraintEnd_toEndOf="@+id/room_id"
 		app:layout_constraintStart_toStartOf="@+id/room_id"
-		app:layout_constraintTop_toBottomOf="@+id/enter"/>
+		app:layout_constraintTop_toBottomOf="@+id/enter" />
 
 	<TextView
 		android:id="@+id/version"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_marginBottom="10dp"
+		android:gravity="center"
 		android:text="@string/version_info"
 		android:textColor="#FFFFFF"
 		android:textSize="12sp"
-		android:gravity="center"
 		app:layout_constraintBottom_toTopOf="@+id/company_info"
 		app:layout_constraintLeft_toLeftOf="parent"
-		app:layout_constraintRight_toRightOf="parent"/>
+		app:layout_constraintRight_toRightOf="parent" />
 
 	<TextView
 		android:id="@+id/company_info"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:layout_marginBottom="20dp"
-		android:layout_marginEnd="8dp"
 		android:layout_marginStart="8dp"
+		android:layout_marginEnd="8dp"
+		android:layout_marginBottom="20dp"
 		android:text="@string/copyright_info"
 		android:textColor="#B3FFFFFF"
 		android:textSize="10sp"
 		app:layout_constraintBottom_toBottomOf="parent"
 		app:layout_constraintLeft_toLeftOf="parent"
-		app:layout_constraintRight_toRightOf="parent"/>
-</android.support.constraint.ConstraintLayout>
+		app:layout_constraintRight_toRightOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>
