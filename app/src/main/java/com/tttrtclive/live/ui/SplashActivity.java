@@ -119,7 +119,10 @@ public class SplashActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mMyPermissionManager.clearResource();
+        if (mMyPermissionManager != null) {
+            mMyPermissionManager.checkPermission();
+        }
+
         if (mDialog != null) {
             mDialog.dismiss();
             mDialog = null;
@@ -135,9 +138,11 @@ public class SplashActivity extends BaseActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        boolean isOk = mMyPermissionManager.onRequestPermissionsResults(this, requestCode, permissions, grantResults);
-        if (isOk) {
-            init();
+        if (mMyPermissionManager != null) {
+            boolean isOk = mMyPermissionManager.onRequestPermissionsResults(this, requestCode, permissions, grantResults);
+            if (isOk) {
+                init();
+            }
         }
     }
 
@@ -146,9 +151,11 @@ public class SplashActivity extends BaseActivity {
         super.onActivityResult(requestCode, resultCode, intent);
         switch (requestCode) {
             case MyPermissionManager.REQUEST_SETTING_CODE:
-                boolean isOk = mMyPermissionManager.onActivityResults(requestCode);
-                if (isOk) {
-                    init();
+                if (mMyPermissionManager != null) {
+                    boolean isOk = mMyPermissionManager.onActivityResults(requestCode);
+                    if (isOk) {
+                        init();
+                    }
                 }
                 break;
             case ACTIVITY_MAIN:
@@ -253,10 +260,14 @@ public class SplashActivity extends BaseActivity {
             return;
         }
 
-        Long aLong = Long.valueOf(mRoomName);
-        if (aLong <= 0) {
-            Toast.makeText(this, "房间号必须大于0", Toast.LENGTH_SHORT).show();
-            return;
+        try {
+            long roomId = Long.valueOf(mRoomName);
+            if (roomId <= 0) {
+                Toast.makeText(this, "房间号必须大于0", Toast.LENGTH_SHORT).show();
+                return;
+            }
+        } catch (Exception e) {
+            Toast.makeText(this, "房间号只支持整型字符串", Toast.LENGTH_SHORT).show();
         }
 
         if (mIsLoging) return;
@@ -317,17 +328,17 @@ public class SplashActivity extends BaseActivity {
             } else {
                 pushUrl = "rtmp://push.wushuangtech.com/sdk/" + mRoomName + "?trans=1";
             }
-            // 4.设置服务器地址
-            if (!TextUtils.isEmpty(mLocalIP)) {
-                MyLog.d("set server address : " + mLocalIP);
-                mTTTEngine.setServerIp(String.valueOf(mLocalIP), mLocalPort);
-            }
         } else {
             if (mEncodeType == 0) {
                 pushUrl = "rtmp://push.3ttest.cn/sdk2/" + mRoomName;
             } else {
                 pushUrl = "rtmp://push.3ttest.cn/sdk2/" + mRoomName + "?trans=1";
             }
+        }
+        // 4.设置服务器地址
+        if (!TextUtils.isEmpty(mLocalIP)) {
+            MyLog.d("set server address : " + mLocalIP);
+            mTTTEngine.setServerIp(String.valueOf(mLocalIP), mLocalPort);
         }
         // 5.设置推流地址
         PublisherConfiguration mPublisherConfiguration = new PublisherConfiguration();
