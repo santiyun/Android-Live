@@ -73,7 +73,7 @@ public class LocalFragment extends Fragment implements SoSpinner.OnItemSelectedL
             mBiteView.setText(mSetActivity.mLocalBitRate + "");
             mFrameView.setText(mSetActivity.mLocalFrameRate + "");
 
-            localPixSpinner.setSelectedIndex(5);
+            localPixSpinner.setSelectedIndex(7);
         }
 
         ((Switch) v.findViewById(R.id.local_audio_switch)).setChecked(mSetActivity.mUseHQAudio);

@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="SoVideoItems">
-        <item>120P</item>
-        <item>240P</item>
-        <item>360P</item>
-        <item>480P</item>
-        <item>720P</item>
+		<item>120P</item>
+		<item>180P</item>
+		<item>240P</item>
+		<item>360P</item>
+		<item>480P</item>
+		<item>720P</item>
+		<item>1080P</item>
         <item>自定义</item>
     </string-array>
     <string-array name="SoEncodeItems">

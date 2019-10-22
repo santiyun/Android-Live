@@ -70,7 +70,7 @@ public class PushFragment extends Fragment implements SoSpinner.OnItemSelectedLi
     public void onItemSelected(View parent, int position) {
         switch (parent.getId()) {
             case R.id.push_pix_spinner:
-                if (position != 5) {
+                if (position != 7) {
                     mVideoProfile = mVideoProfileManager.mVideoProfiles.get(position);
                     mSetActivity.mPushVideoProfile = mVideoProfile.videoProfile;
                     mPixView.setText(mVideoProfile.width + "x" + mVideoProfile.height);

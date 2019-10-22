@@ -10,3 +10,4 @@
 /.idea/*
 /app/libs/*.aar
 /local.properties
+/app/release/*
