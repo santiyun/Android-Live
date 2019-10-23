@@ -72,8 +72,8 @@ public class LocalFragment extends Fragment implements SoSpinner.OnItemSelectedL
             mPixView.setText(mSetActivity.mLocalWidth + "x" + mSetActivity.mLocalHeight);
             mBiteView.setText(mSetActivity.mLocalBitRate + "");
             mFrameView.setText(mSetActivity.mLocalFrameRate + "");
-
-            localPixSpinner.setSelectedIndex(7);
+            mPixView.requestFocus();
+            localPixSpinner.setSelectedIndex(mVideoProfileManager.mVideoProfiles.size());
         }
 
         ((Switch) v.findViewById(R.id.local_audio_switch)).setChecked(mSetActivity.mUseHQAudio);
@@ -87,13 +87,13 @@ public class LocalFragment extends Fragment implements SoSpinner.OnItemSelectedL
 
     @Override
     public void onItemSelected(View parent, int position) {
-        if (position != 5) {
+        if (position < mVideoProfileManager.mVideoProfiles.size()) {
             mVideoProfile = mVideoProfileManager.mVideoProfiles.get(position);
             mSetActivity.mLocalVideoProfile = mVideoProfile.videoProfile;
             mPixView.setText(mVideoProfile.width + "x" + mVideoProfile.height);
             mBiteView.setText(mVideoProfile.bRate + "");
             mFrameView.setText(mVideoProfile.fRate + "");
-
+            mPixView.requestFocus();
             mPixView.setEnabled(false);
             mBiteView.setEnabled(false);
             mFrameView.setEnabled(false);

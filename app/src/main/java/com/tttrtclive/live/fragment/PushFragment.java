@@ -56,8 +56,8 @@ public class PushFragment extends Fragment implements SoSpinner.OnItemSelectedLi
             mPixView.setText(mSetActivity.mPushWidth + "x" + mSetActivity.mPushHeight);
             mBiteView.setText(mSetActivity.mPushBitRate + "");
             mFrameView.setText(mSetActivity.mPushFrameRate + "");
-
-            pushPixSpinner.setSelectedIndex(5);
+            mPixView.requestFocus();
+            pushPixSpinner.setSelectedIndex(mVideoProfileManager.mVideoProfiles.size());
         }
 
         pushEncodeSpinner.setSelectedIndex(mSetActivity.mEncodeType);
@@ -70,13 +70,13 @@ public class PushFragment extends Fragment implements SoSpinner.OnItemSelectedLi
     public void onItemSelected(View parent, int position) {
         switch (parent.getId()) {
             case R.id.push_pix_spinner:
-                if (position != 7) {
+                if (position < mVideoProfileManager.mVideoProfiles.size()) {
                     mVideoProfile = mVideoProfileManager.mVideoProfiles.get(position);
                     mSetActivity.mPushVideoProfile = mVideoProfile.videoProfile;
                     mPixView.setText(mVideoProfile.width + "x" + mVideoProfile.height);
                     mBiteView.setText(mVideoProfile.bRate + "");
                     mFrameView.setText(mVideoProfile.fRate + "");
-
+                    mPixView.requestFocus();
                     mPixView.setEnabled(false);
                     mBiteView.setEnabled(false);
                     mFrameView.setEnabled(false);
