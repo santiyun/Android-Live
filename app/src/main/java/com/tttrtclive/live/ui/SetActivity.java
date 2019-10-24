@@ -22,6 +22,8 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
+import static com.tttrtclive.live.ui.SplashActivity.ACTIVITY_SETTING;
+
 public class SetActivity extends BaseActivity {
 
     private ArrayList<Fragment> mFragments = new ArrayList<>();
@@ -188,7 +190,7 @@ public class SetActivity extends BaseActivity {
         intent.putExtra("HQA", mUseHQAudio);
         intent.putExtra("EDT", mEncodeType);
         intent.putExtra("ASR", mAudioSRate);
-        setResult(1, intent);
+        setResult(ACTIVITY_SETTING, intent);
         finish();
     }
 }

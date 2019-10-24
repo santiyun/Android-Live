@@ -41,7 +41,7 @@ import static com.wushuangtech.library.Constants.CLIENT_ROLE_BROADCASTER;
 public class SplashActivity extends BaseActivity {
 
     public static final int ACTIVITY_MAIN = 100;
-    private static final int ACTIVITY_SETTING = 101;
+    public static final int ACTIVITY_SETTING = 101;
     private ProgressDialog mDialog;
     private MyPermissionManager mMyPermissionManager;
     private MyLocalBroadcastReceiver mLocalBroadcast;
@@ -164,6 +164,9 @@ public class SplashActivity extends BaseActivity {
                 }
                 break;
             case ACTIVITY_SETTING:
+                if (mDialog != null) {
+                    mDialog.dismiss();
+                }
                 mLocalVideoProfile = intent.getIntExtra("LVP", mLocalVideoProfile);
                 mPushVideoProfile = intent.getIntExtra("PVP", mPushVideoProfile);
                 mLocalWidth = intent.getIntExtra("LWIDTH", mLocalWidth);
@@ -233,77 +236,6 @@ public class SplashActivity extends BaseActivity {
         }
     }
 
-    public void onClickRoleButton(View v) {
-        mHostBT.setChecked(false);
-        mAuthorBT.setChecked(false);
-
-        ((RadioButton) v).setChecked(true);
-        switch (v.getId()) {
-            case R.id.host:
-                mAdvanceSetting.setVisibility(View.VISIBLE);
-                break;
-            case R.id.vice:
-                mAdvanceSetting.setVisibility(View.GONE);
-                break;
-        }
-    }
-
-    public void onClickEnterButton(View v) {
-        mRoomName = mRoomIDET.getText().toString().trim();
-        if (TextUtils.isEmpty(mRoomName)) {
-            Toast.makeText(this, getString(R.string.ttt_error_enterchannel_check_channel_empty), Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        if (TextUtils.getTrimmedLength(mRoomName) > 19) {
-            Toast.makeText(this, R.string.hint_channel_name_limit, Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        try {
-            long roomId = Long.valueOf(mRoomName);
-            if (roomId <= 0) {
-                Toast.makeText(this, "房间号必须大于0", Toast.LENGTH_SHORT).show();
-                return;
-            }
-        } catch (Exception e) {
-            Toast.makeText(this, "房间号只支持整型字符串", Toast.LENGTH_SHORT).show();
-        }
-
-        if (mIsLoging) return;
-        mIsLoging = true;
-
-        // 保存配置
-        SharedPreferencesUtil.setParam(this, "RoomID", mRoomName);
-        initSDK();
-        // 6.加入频道
-        mTTTEngine.joinChannel("", mRoomName, LocalConfig.mLocalUserID);
-        mDialog.show();
-    }
-
-    public void onSetButtonClick(View v) {
-        if (isSetting) return;
-        isSetting = true;
-
-        Intent intent = new Intent(this, SetActivity.class);
-        intent.putExtra("LVP", mLocalVideoProfile);
-        intent.putExtra("PVP", mPushVideoProfile);
-        intent.putExtra("LWIDTH", mLocalWidth);
-        intent.putExtra("LHEIGHT", mLocalHeight);
-        intent.putExtra("LBRATE", mLocalBitRate);
-        intent.putExtra("LFRATE", mLocalFrameRate);
-        intent.putExtra("LIP", mLocalIP);
-        intent.putExtra("LPORT", mLocalPort);
-        intent.putExtra("PWIDTH", mPushWidth);
-        intent.putExtra("PHEIGHT", mPushHeight);
-        intent.putExtra("PBRATE", mPushBitRate);
-        intent.putExtra("PFRATE", mPushFrameRate);
-        intent.putExtra("HQA", mUseHQAudio);
-        intent.putExtra("EDT", mEncodeType);
-        intent.putExtra("ASR", mAudioSRate);
-        startActivityForResult(intent, ACTIVITY_SETTING);
-    }
-
     /**
      * TODO ***SDK 进房间前的配置。*** 重要操作!加TODO高亮
      */
@@ -344,6 +276,89 @@ public class SplashActivity extends BaseActivity {
         PublisherConfiguration mPublisherConfiguration = new PublisherConfiguration();
         mPublisherConfiguration.setPushUrl(pushUrl);
         mTTTEngine.configPublisher(mPublisherConfiguration);
+    }
+
+    public void onClickRoleButton(View v) {
+        if (mDialog.isShowing()) {
+            return;
+        }
+
+        mHostBT.setChecked(false);
+        mAuthorBT.setChecked(false);
+
+        ((RadioButton) v).setChecked(true);
+        switch (v.getId()) {
+            case R.id.host:
+                mAdvanceSetting.setVisibility(View.VISIBLE);
+                break;
+            case R.id.vice:
+                mAdvanceSetting.setVisibility(View.GONE);
+                break;
+        }
+    }
+
+    public void onClickEnterButton(View v) {
+        if (mDialog.isShowing()) {
+            return;
+        }
+
+        mRoomName = mRoomIDET.getText().toString().trim();
+        if (TextUtils.isEmpty(mRoomName)) {
+            Toast.makeText(this, getString(R.string.ttt_error_enterchannel_check_channel_empty), Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (TextUtils.getTrimmedLength(mRoomName) > 19) {
+            Toast.makeText(this, R.string.hint_channel_name_limit, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        try {
+            long roomId = Long.valueOf(mRoomName);
+            if (roomId <= 0) {
+                Toast.makeText(this, "房间号必须大于0", Toast.LENGTH_SHORT).show();
+                return;
+            }
+        } catch (Exception e) {
+            Toast.makeText(this, "房间号只支持整型字符串", Toast.LENGTH_SHORT).show();
+        }
+
+        if (mIsLoging) return;
+        mIsLoging = true;
+        mDialog.show();
+        // 保存配置
+        SharedPreferencesUtil.setParam(this, "RoomID", mRoomName);
+        initSDK();
+        // 6.加入频道
+        mTTTEngine.joinChannel("", mRoomName, LocalConfig.mLocalUserID);
+    }
+
+    public void onSetButtonClick(View v) {
+        if (mDialog.isShowing()) {
+            return;
+        }
+
+        if (isSetting) return;
+        isSetting = true;
+
+        mDialog.show();
+        Intent intent = new Intent(this, SetActivity.class);
+        intent.putExtra("LVP", mLocalVideoProfile);
+        intent.putExtra("PVP", mPushVideoProfile);
+        intent.putExtra("LWIDTH", mLocalWidth);
+        intent.putExtra("LHEIGHT", mLocalHeight);
+        intent.putExtra("LBRATE", mLocalBitRate);
+        intent.putExtra("LFRATE", mLocalFrameRate);
+        intent.putExtra("LIP", mLocalIP);
+        intent.putExtra("LPORT", mLocalPort);
+        intent.putExtra("PWIDTH", mPushWidth);
+        intent.putExtra("PHEIGHT", mPushHeight);
+        intent.putExtra("PBRATE", mPushBitRate);
+        intent.putExtra("PFRATE", mPushFrameRate);
+        intent.putExtra("HQA", mUseHQAudio);
+        intent.putExtra("EDT", mEncodeType);
+        intent.putExtra("ASR", mAudioSRate);
+        startActivityForResult(intent, ACTIVITY_SETTING);
     }
 
     private class MyLocalBroadcastReceiver extends BroadcastReceiver {
