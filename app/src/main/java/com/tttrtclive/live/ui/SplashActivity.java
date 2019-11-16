@@ -228,12 +228,6 @@ public class SplashActivity extends BaseActivity {
         mVersion.setText(result);
         TextView mLogoTextTV = findViewById(R.id.room_id_text);
         mLogoTextTV.setText(getString(R.string.ttt_prefix_live_channel_name) + ": ");
-
-        if (LocalConfig.VERSION_FLAG == LocalConstans.VERSION_WHITE) {
-            mVersion.setVisibility(View.INVISIBLE);
-            mSplashAppName.setVisibility(View.INVISIBLE);
-            mSplashCompany.setVisibility(View.INVISIBLE);
-        }
     }
 
     /**
@@ -253,26 +247,17 @@ public class SplashActivity extends BaseActivity {
         LocalConfig.mLocalRole = mRole;
         mTTTEngine.setClientRole(mRole);
         String pushUrl;
-        // 设置推流格式H264/H265
-        if (LocalConfig.VERSION_FLAG == LocalConstans.VERSION_WHITE) {
-            if (mEncodeType == 0) {
-                pushUrl = "rtmp://push.wushuangtech.com/sdk/" + mRoomName;
-            } else {
-                pushUrl = "rtmp://push.wushuangtech.com/sdk/" + mRoomName + "?trans=1";
-            }
-        } else {
-            if (mEncodeType == 0) {
-                pushUrl = "rtmp://push.3ttest.cn/sdk2/" + mRoomName;
-            } else {
-                pushUrl = "rtmp://push.3ttest.cn/sdk2/" + mRoomName + "?trans=1";
-            }
-        }
         // 4.设置服务器地址
         if (!TextUtils.isEmpty(mLocalIP)) {
             MyLog.d("set server address : " + mLocalIP);
             mTTTEngine.setServerIp(String.valueOf(mLocalIP), mLocalPort);
         }
-        // 5.设置推流地址
+        // 5.设置推流地址，该推流地址仅供Demo运行演示使用，不可在正式环境中使用。
+        if (mEncodeType == 0) {
+            pushUrl = "rtmp://push.3ttest.cn/sdk2/" + mRoomName; // H264视频推流格式，默认使用即可
+        } else {
+            pushUrl = "rtmp://push.3ttest.cn/sdk2/" + mRoomName + "?trans=1"; //H265视频推流格式
+        }
         PublisherConfiguration mPublisherConfiguration = new PublisherConfiguration();
         mPublisherConfiguration.setPushUrl(pushUrl);
         mTTTEngine.configPublisher(mPublisherConfiguration);

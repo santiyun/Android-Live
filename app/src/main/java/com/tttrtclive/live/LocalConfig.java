@@ -2,7 +2,6 @@ package com.tttrtclive.live;
 
 public class LocalConfig {
 
-    public static int VERSION_FLAG = LocalConstans.VERSION_NORMAL;
     public static long mLocalUserID;
     public static long mLocalRole;
 

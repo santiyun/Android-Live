@@ -18,8 +18,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.tencent.mm.opensdk.modelmsg.SendMessageToWX;
-import com.tttrtclive.live.helper.WEChatShare;
-import com.tttrtclive.live.helper.WindowManager;
 import com.tttrtclive.live.LocalConfig;
 import com.tttrtclive.live.LocalConstans;
 import com.tttrtclive.live.MainApplication;
@@ -29,6 +27,8 @@ import com.tttrtclive.live.bean.JniObjs;
 import com.tttrtclive.live.callback.MyTTTRtcEngineEventHandler;
 import com.tttrtclive.live.callback.PhoneListener;
 import com.tttrtclive.live.dialog.ExitRoomDialog;
+import com.tttrtclive.live.helper.WEChatShare;
+import com.tttrtclive.live.helper.WindowManager;
 import com.tttrtclive.live.utils.MyLog;
 import com.wushuangtech.library.Constants;
 import com.wushuangtech.wstechapi.TTTRtcEngine;
@@ -189,23 +189,12 @@ public class MainActivity extends BaseActivity {
 
         mWEChatShare = new WEChatShare(this);
         findViewById(R.id.main_share_layout).findViewById(R.id.friend).setOnClickListener(v -> {
-            if (LocalConfig.VERSION_FLAG == LocalConstans.VERSION_WHITE) {
-                mWEChatShare.sendText(SendMessageToWX.Req.WXSceneSession, mRoomID,
-                        "http://wushuangtech.com/live.html?flv=http://pull.wushuangtech.com/sdk/" + mRoomID + ".flv&hls=http://pull.wushuangtech.com/sdk/" + mRoomID + ".m3u8");
-            } else {
-                mWEChatShare.sendText(SendMessageToWX.Req.WXSceneSession, mRoomID, getWXLink());
-            }
+            mWEChatShare.sendText(SendMessageToWX.Req.WXSceneSession, mRoomID, getWXLink());
             findViewById(R.id.main_share_layout).setVisibility(View.GONE);
         });
 
         findViewById(R.id.friend_circle).setOnClickListener(v -> {
-            if (LocalConfig.VERSION_FLAG == LocalConstans.VERSION_WHITE) {
-                mWEChatShare.sendText(SendMessageToWX.Req.WXSceneTimeline, mRoomID,
-                        "http://wushuangtech.com/live.html?flv=http://pull.wushuangtech.com/sdk/" + mRoomID + ".flv&hls=http://pull.wushuangtech.com/sdk/" + mRoomID + ".m3u8");
-            } else {
-                mWEChatShare.sendText(SendMessageToWX.Req.WXSceneTimeline, mRoomID, getWXLink());
-            }
-
+            mWEChatShare.sendText(SendMessageToWX.Req.WXSceneTimeline, mRoomID, getWXLink());
             findViewById(R.id.main_share_layout).setVisibility(View.GONE);
         });
 
