@@ -48,7 +48,6 @@ public class SplashActivity extends BaseActivity {
     private boolean mIsLoging;
     private boolean isSetting;
     private String mRoomName;
-    private int mRole = CLIENT_ROLE_ANCHOR;
 
     private EditText mRoomIDET;
     private View mAdvanceSetting;
@@ -219,8 +218,6 @@ public class SplashActivity extends BaseActivity {
         mHostBT = findViewById(R.id.host);
         mRoomIDET = findViewById(R.id.room_id);
         mAdvanceSetting = findViewById(R.id.set);
-        View mSplashCompany = findViewById(R.id.company_info);
-        View mSplashAppName = findViewById(R.id.splash_app_name);
         TextView mVersion = findViewById(R.id.version);
         String string = getResources().getString(R.string.version_info);
         String result = String.format(string, TTTRtcEngine.getInstance().getSdkVersion());
@@ -238,24 +235,27 @@ public class SplashActivity extends BaseActivity {
         // 2.启用视频功能
         mTTTEngine.enableVideo();
         // 3.设置角色
+        int mRole = CLIENT_ROLE_ANCHOR;
         if (mHostBT.isChecked()) {
             mRole = CLIENT_ROLE_ANCHOR;
         } else if (mAuthorBT.isChecked()) {
             mRole = CLIENT_ROLE_BROADCASTER;
         }
         LocalConfig.mLocalRole = mRole;
-        mTTTEngine.setClientRole(mRole);
-        // 4.设置推流地址，该推流地址仅供Demo运行演示使用，不可在正式环境中使用。
-        String mPushUrlPrefix = "rtmp://push.3ttest.cn/sdk2/";
-        String mPushUrl;
-        if (mEncodeType == 0) {
-            mPushUrl = mPushUrlPrefix + mRoomName; // H264视频推流格式，默认使用即可
-        } else {
-            mPushUrl = mPushUrlPrefix + mRoomName + "?trans=1"; //H265视频推流格式
+        mTTTEngine.setClientRole(LocalConfig.mLocalRole);
+        if (LocalConfig.mLocalRole == CLIENT_ROLE_ANCHOR) {
+            // 4.设置推流地址，该推流地址仅供Demo运行演示使用，不可在正式环境中使用。
+            String mPushUrlPrefix = "rtmp://push.3ttest.cn/sdk2/";
+            String mPushUrl;
+            if (mEncodeType == 0) {
+                mPushUrl = mPushUrlPrefix + mRoomName; // H264视频推流格式，默认使用即可
+            } else {
+                mPushUrl = mPushUrlPrefix + mRoomName + "?trans=1"; //H265视频推流格式
+            }
+            PublisherConfiguration mPublisherConfiguration = new PublisherConfiguration();
+            mPublisherConfiguration.setPushUrl(mPushUrl);
+            mTTTEngine.configPublisher(mPublisherConfiguration);
         }
-        PublisherConfiguration mPublisherConfiguration = new PublisherConfiguration();
-        mPublisherConfiguration.setPushUrl(mPushUrl);
-        mTTTEngine.configPublisher(mPublisherConfiguration);
     }
 
     public void onClickRoleButton(View v) {
@@ -354,7 +354,6 @@ public class SplashActivity extends BaseActivity {
                         Intent activityIntent = new Intent();
                         activityIntent.putExtra("ROOM_ID", Long.parseLong(mRoomName));
                         activityIntent.putExtra("USER_ID", LocalConfig.mLocalUserID);
-                        activityIntent.putExtra("ROLE", mRole);
                         activityIntent.setClass(mContext, MainActivity.class);
                         startActivityForResult(activityIntent, ACTIVITY_MAIN);
                         mIsLoging = false;

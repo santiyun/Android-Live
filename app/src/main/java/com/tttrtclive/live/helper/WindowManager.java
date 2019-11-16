@@ -58,6 +58,16 @@ public class WindowManager {
         }
     }
 
+    public void add(long localId, long id, int oratation) {
+        for (int i = 0; i < mRemoteWindowList.size(); i++) {
+            RemoteWindow remoteWindow = mRemoteWindowList.get(i);
+            if (remoteWindow.mId == -1) {
+                remoteWindow.show(localId, id, oratation);
+                return;
+            }
+        }
+    }
+
     public void addAndSendSei(long loginId, EnterUserInfo userInfo) {
         for (int i = 0; i < mRemoteWindowList.size(); i++) {
             RemoteWindow remoteWindow = mRemoteWindowList.get(i);
