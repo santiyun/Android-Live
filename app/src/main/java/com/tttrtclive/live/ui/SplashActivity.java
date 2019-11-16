@@ -23,7 +23,6 @@ import com.tttrtclive.live.bean.JniObjs;
 import com.tttrtclive.live.bean.MyPermissionBean;
 import com.tttrtclive.live.callback.MyTTTRtcEngineEventHandler;
 import com.tttrtclive.live.helper.MyPermissionManager;
-import com.tttrtclive.live.utils.MyLog;
 import com.tttrtclive.live.utils.SharedPreferencesUtil;
 import com.wushuangtech.library.Constants;
 import com.wushuangtech.wstechapi.TTTRtcEngine;
@@ -246,20 +245,16 @@ public class SplashActivity extends BaseActivity {
         }
         LocalConfig.mLocalRole = mRole;
         mTTTEngine.setClientRole(mRole);
-        String pushUrl;
-        // 4.设置服务器地址
-        if (!TextUtils.isEmpty(mLocalIP)) {
-            MyLog.d("set server address : " + mLocalIP);
-            mTTTEngine.setServerIp(String.valueOf(mLocalIP), mLocalPort);
-        }
-        // 5.设置推流地址，该推流地址仅供Demo运行演示使用，不可在正式环境中使用。
+        // 4.设置推流地址，该推流地址仅供Demo运行演示使用，不可在正式环境中使用。
+        String mPushUrlPrefix = "rtmp://push.3ttest.cn/sdk2/";
+        String mPushUrl;
         if (mEncodeType == 0) {
-            pushUrl = "rtmp://push.3ttest.cn/sdk2/" + mRoomName; // H264视频推流格式，默认使用即可
+            mPushUrl = mPushUrlPrefix + mRoomName; // H264视频推流格式，默认使用即可
         } else {
-            pushUrl = "rtmp://push.3ttest.cn/sdk2/" + mRoomName + "?trans=1"; //H265视频推流格式
+            mPushUrl = mPushUrlPrefix + mRoomName + "?trans=1"; //H265视频推流格式
         }
         PublisherConfiguration mPublisherConfiguration = new PublisherConfiguration();
-        mPublisherConfiguration.setPushUrl(pushUrl);
+        mPublisherConfiguration.setPushUrl(mPushUrl);
         mTTTEngine.configPublisher(mPublisherConfiguration);
     }
 
