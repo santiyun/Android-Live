@@ -6,13 +6,11 @@ import android.view.View;
 
 import com.flyco.tablayout.SegmentTabLayout;
 import com.flyco.tablayout.listener.OnTabSelectListener;
-import com.tttrtclive.live.LocalConfig;
 import com.tttrtclive.live.R;
 import com.tttrtclive.live.fragment.LocalFragment;
 import com.tttrtclive.live.fragment.PushFragment;
 import com.tttrtclive.live.utils.DensityUtils;
 import com.wushuangtech.library.Constants;
-import com.wushuangtech.wstechapi.TTTRtcEngine;
 
 import java.util.ArrayList;
 
@@ -158,18 +156,6 @@ public class SetActivity extends BaseActivity {
         if (!params2) {
             return ;
         }
-        TTTRtcEngine.getInstance().setVideoMixerParams(mPushBitRate, mPushFrameRate, mPushHeight, mPushWidth);
-        TTTRtcEngine.getInstance().setAudioMixerParams(mAudioSRate, mAudioSRate == 0 ? 48000 : 44100, mChannels);
-        if (mLocalVideoProfile != 0) {
-            LocalConfig.mLocalVideoProfile = mLocalVideoProfile;
-        } else {
-            LocalConfig.mLocalHeight = mLocalHeight;
-            LocalConfig.mLocalWidth = mLocalWidth;
-            LocalConfig.mLocalBitRate = mLocalBitRate;
-            LocalConfig.mLocalFrameRate = mLocalFrameRate;
-            LocalConfig.mLocalVideoProfile = 0;
-        }
-        TTTRtcEngine.getInstance().setHighQualityAudioParameters(mUseHQAudio);
         exit();
     }
 

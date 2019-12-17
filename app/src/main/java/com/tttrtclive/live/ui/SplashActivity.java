@@ -197,19 +197,6 @@ public class SplashActivity extends BaseActivity {
         IntentFilter filter = new IntentFilter();
         filter.addAction(MyTTTRtcEngineEventHandler.TAG);
         registerReceiver(mLocalBroadcast, filter);
-
-        mDialog = new ProgressDialog(this);
-        mDialog.setTitle("");
-        mDialog.setCancelable(false);
-        mDialog.setMessage(getString(R.string.ttt_hint_loading_channel));
-
-        if (LocalConfig.mLocalRole == CLIENT_ROLE_ANCHOR) {
-            mHostBT.setChecked(true);
-            mAuthorBT.setChecked(false);
-        } else if (LocalConfig.mLocalRole == CLIENT_ROLE_BROADCASTER) {
-            mHostBT.setChecked(false);
-            mAuthorBT.setChecked(true);
-        }
     }
 
     @SuppressLint("SetTextI18n")
@@ -224,37 +211,18 @@ public class SplashActivity extends BaseActivity {
         mVersion.setText(result);
         TextView mLogoTextTV = findViewById(R.id.room_id_text);
         mLogoTextTV.setText(getString(R.string.ttt_prefix_live_channel_name) + ": ");
-    }
 
-    /**
-     * TODO ***SDK 进房间前的配置。*** 重要操作!加TODO高亮
-     */
-    private void initSDK() {
-        // 1.设置频道模式，这里用直播模式
-        mTTTEngine.setChannelProfile(Constants.CHANNEL_PROFILE_LIVE_BROADCASTING);
-        // 2.启用视频功能
-        mTTTEngine.enableVideo();
-        // 3.设置角色
-        int mRole = CLIENT_ROLE_ANCHOR;
-        if (mHostBT.isChecked()) {
-            mRole = CLIENT_ROLE_ANCHOR;
-        } else if (mAuthorBT.isChecked()) {
-            mRole = CLIENT_ROLE_BROADCASTER;
-        }
-        LocalConfig.mLocalRole = mRole;
-        mTTTEngine.setClientRole(LocalConfig.mLocalRole);
+        mDialog = new ProgressDialog(this);
+        mDialog.setTitle("");
+        mDialog.setCancelable(false);
+        mDialog.setMessage(getString(R.string.ttt_hint_loading_channel));
+
         if (LocalConfig.mLocalRole == CLIENT_ROLE_ANCHOR) {
-            // 4.设置推流地址，该推流地址仅供Demo运行演示使用，不可在正式环境中使用。
-            String mPushUrlPrefix = "rtmp://push.3ttest.cn/sdk2/";
-            String mPushUrl;
-            if (mEncodeType == 0) {
-                mPushUrl = mPushUrlPrefix + mRoomName; // H264视频推流格式，默认使用即可
-            } else {
-                mPushUrl = mPushUrlPrefix + mRoomName + "?trans=1"; //H265视频推流格式
-            }
-            PublisherConfiguration mPublisherConfiguration = new PublisherConfiguration();
-            mPublisherConfiguration.setPushUrl(mPushUrl);
-            mTTTEngine.configPublisher(mPublisherConfiguration);
+            mHostBT.setChecked(true);
+            mAuthorBT.setChecked(false);
+        } else if (LocalConfig.mLocalRole == CLIENT_ROLE_BROADCASTER) {
+            mHostBT.setChecked(false);
+            mAuthorBT.setChecked(true);
         }
     }
 
@@ -274,6 +242,91 @@ public class SplashActivity extends BaseActivity {
             case R.id.vice:
                 mAdvanceSetting.setVisibility(View.GONE);
                 break;
+        }
+    }
+
+    /**
+     * TODO ***SDK 进房间前的配置。*** 重要操作!加TODO高亮
+     */
+    private void mustConfigSdk() {
+        // 创建 SDK 实例对象，请看 MainApplication 类。
+
+        /*
+         * 1.设置频道模式，SDK 默认就是 CHANNEL_PROFILE_COMMUNICATION(通信模式)，这里需要显式调用设置为 CHANNEL_PROFILE_LIVE_BROADCASTING(直播模式)。
+         * 注意:该接口是全局接口，离开频道后状态不会清除，所以在模式需要发生变化时调用即可，无需每次加入频道都设置。Demo在这里设置是为了简化代码。
+         */
+        mTTTEngine.setChannelProfile(Constants.CHANNEL_PROFILE_LIVE_BROADCASTING); // 必须设置的 API
+        /*
+         * 2.设置角色身份，CHANNEL_PROFILE_LIVE_BROADCASTING 模式下可以设置三种角色
+         * CLIENT_ROLE_ANCHOR(主播) ：频道的创建者，只有主播可以创建频道，创建成功后，其他角色的用户才能加入频道。
+         * CLIENT_ROLE_BROADCASTER(副播) ：默认可以收发音视频流。
+         * CLIENT_ROLE_AUDIENCE(观众) ：默认音视频流只收不发。
+         *
+         * SDK 默认是 CLIENT_ROLE_BROADCASTER 角色，Demo 不展示观众角色。
+         * 注意:该接口是全局接口，离开频道后状态不会清除，所以在角色需要发生变化时调用即可，无需每次加入频道都设置。Demo在这里设置是为了简化代码。
+         */
+        int mRole = CLIENT_ROLE_ANCHOR;
+        if (mAuthorBT.isChecked()) {
+            mRole = CLIENT_ROLE_BROADCASTER;
+        }
+        LocalConfig.mLocalRole = mRole;
+        mTTTEngine.setClientRole(LocalConfig.mLocalRole); // 必须设置的 API
+        // 3.启用视频模块功能
+        mTTTEngine.enableVideo(); // 必须设置的 API
+        // 4.设置推流地址，只有主播角色的用户设置有效。该推流地址仅供Demo运行演示使用，不可在正式环境中使用。
+        // 必须设置的 API
+        if (LocalConfig.mLocalRole == CLIENT_ROLE_ANCHOR) {
+            String mPushUrlPrefix = "rtmp://push.3ttest.cn/sdk2/";
+            String mPushUrl;
+            if (mEncodeType == 0) {
+                mPushUrl = mPushUrlPrefix + mRoomName; // H264视频推流格式，默认使用即可
+            } else {
+                mPushUrl = mPushUrlPrefix + mRoomName + "?trans=1"; //H265视频推流格式
+            }
+            PublisherConfiguration mPublisherConfiguration = new PublisherConfiguration();
+            mPublisherConfiguration.setPushUrl(mPushUrl);
+            mTTTEngine.configPublisher(mPublisherConfiguration);
+        }
+    }
+
+    /**
+     * TODO ***SDK 进房间前的配置。*** 重要操作!加TODO高亮
+     */
+    private void optConfigSdk() {
+        // 1.设置音频编码参数，SDK 默认为 ISAC 音频编码格式，32kbps 音频码率，适用于通话；高音质选用 AAC 格式编码，码率设置为96kbps。
+        //  可选操作的 API
+        if (mUseHQAudio) {
+            mTTTEngine.setPreferAudioCodec(Constants.TTT_AUDIO_CODEC_AAC, 96, 1);
+        } else {
+            mTTTEngine.setPreferAudioCodec(Constants.TTT_AUDIO_CODEC_ISAC, 32, 1);
+        }
+        // 2.设置视频编码参数，SDK 默认为 360P 质量等级。
+        // 可选操作的 API
+        if (LocalConfig.mLocalRole == Constants.CLIENT_ROLE_BROADCASTER) {
+            // 若角色为副播，视频质量等级设置为 120P，若感觉视频不清晰，可自行调整等级，如360P。
+            mTTTEngine.setVideoProfile(Constants.TTTRTC_VIDEOPROFILE_120P, false);
+        } else {
+            // 若角色为主播，视频质量根据 SetActivity 设置界面所设置的参数来决定。
+            if (mLocalVideoProfile != 0) {
+                mTTTEngine.setVideoProfile(mLocalVideoProfile, false);
+            } else {
+                // 自定义视频参数，而不用 SDK 内部定义的视频质量等级。
+                if (mLocalHeight != 0 && mLocalWidth != 0 && mLocalBitRate != 0 && mLocalFrameRate != 0) {
+                    mTTTEngine.setVideoProfile(mLocalHeight, mLocalWidth, mLocalFrameRate, mLocalBitRate);
+                } else {
+                    mTTTEngine.setVideoProfile(Constants.TTTRTC_VIDEOPROFILE_360P, false);
+                }
+            }
+        }
+        // 3.设置直播推流，连麦场景下服务器混屏的视频参数。不连麦，即单主播推流场景，无需设置该 API。
+        // 可选操作的 API
+        if (mPushBitRate != 0 && mPushFrameRate != 0 && mPushHeight != 0 && mPushWidth != 0) {
+            mTTTEngine.setVideoMixerParams(mPushBitRate, mPushFrameRate, mPushHeight, mPushWidth);
+        }
+        // 4.设置直播推流，连麦场景下服务器混屏的音频参数。不连麦，即单主播推流场景，无需设置该 API。
+        // 可选操作的 API
+        if (mAudioSRate != 0) {
+            mTTTEngine.setAudioMixerParams(mAudioSRate, mAudioSRate == 0 ? 48000 : 44100, 1);
         }
     }
 
@@ -305,11 +358,15 @@ public class SplashActivity extends BaseActivity {
 
         if (mIsLoging) return;
         mIsLoging = true;
+        mDialog.setMessage(getString(R.string.ttt_hint_loading_channel));
         mDialog.show();
         // 保存配置
         SharedPreferencesUtil.setParam(this, "RoomID", mRoomName);
-        initSDK();
-        // 6.加入频道
+        // SDK必须配置的 API
+        mustConfigSdk();
+        // SDK可选配置的 API
+        optConfigSdk();
+        // 加入频道
         mTTTEngine.joinChannel("", mRoomName, LocalConfig.mLocalUserID);
     }
 
@@ -321,6 +378,7 @@ public class SplashActivity extends BaseActivity {
         if (isSetting) return;
         isSetting = true;
 
+        mDialog.setMessage(getString(R.string.ttt_hint_progress_channel));
         mDialog.show();
         Intent intent = new Intent(this, SetActivity.class);
         intent.putExtra("LVP", mLocalVideoProfile);
@@ -352,8 +410,6 @@ public class SplashActivity extends BaseActivity {
                     case LocalConstans.CALL_BACK_ON_ENTER_ROOM:
                         //界面跳转
                         Intent activityIntent = new Intent();
-                        activityIntent.putExtra("ROOM_ID", Long.parseLong(mRoomName));
-                        activityIntent.putExtra("USER_ID", LocalConfig.mLocalUserID);
                         activityIntent.setClass(mContext, MainActivity.class);
                         startActivityForResult(activityIntent, ACTIVITY_MAIN);
                         mIsLoging = false;

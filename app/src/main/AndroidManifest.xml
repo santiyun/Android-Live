@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:tools="http://schemas.android.com/tools"
 	package="com.tttrtclive.live">
+
+	<!-- Demo需求的权限，与SDK无关 -->
 	<!-- 允许程序在手机屏幕关闭后后台进程仍然运行 -->
 	<uses-permission android:name="android.permission.WAKE_LOCK" />
 	<!-- 获取网络信息状态，如当前的网络连接是否有效 -->
@@ -10,9 +12,28 @@
 	<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
 	<!-- 程序可以读取设备外部存储空间 -->
 	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+	<!-- SDK若提供完整功能，可能需要以下的权限 -->
+	<!-- SDK视频模块需要使用此权限用来打开关闭和摄像头，用于获取本地视频预览数据。-->
+	<uses-permission android:name="android.permission.CAMERA" />
+	<!-- SDK音频模块需要使用此权限用来访问麦克风，用于获取本地音频数据。-->
+	<uses-permission android:name="android.permission.RECORD_AUDIO" />
+	<!-- SDK的直播和通讯功能，均需要使用网络进行上传。-->
+	<uses-permission android:name="android.permission.INTERNET" />
+	<!-- SDK的直播和通讯功能，均需要访问蓝牙权限，保证用户能正常使用蓝牙耳机。 -->
+	<uses-permission android:name="android.permission.BLUETOOTH" />
+	<!-- SDK的直播和通讯功能，均需要访问音频路由，保证能正常切换听筒，扬声器，耳机等路由切换。 -->
+	<uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+	<!-- SDK的直播和通讯功能，均需要访问网络状态。 -->
+	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+	<!-- SDK的直播和通讯功能，均需要访问手机通话状态。 -->
+	<uses-permission android:name="android.permission.READ_PHONE_STATE" />
+	<!-- 获取当前WiFi接入的状态以及WLAN热点的信息 -->
+	<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+	<!-- 如果您使用的是 Android 10.0 及以上设备，还需要添加如下权限： -->
+	<uses-permission android:name="android.permission.READ_PRIVILEGED_PHONE_STATE" />
 	<application
 		android:name=".MainApplication"
-		android:hardwareAccelerated="false"
 		android:icon="@mipmap/ic_launcher"
 		android:label="@string/app_name"
 		android:theme="@style/AppTheme"

@@ -23,6 +23,7 @@
 	<string name="ttt_enter_channel">进入房间</string>
 	<string name="ttt_hint_loading_channel">正在进入房间&#8230;</string>
 	<string name="ttt_hint_linking_channel">正在连麦中&#8230;</string>
+	<string name="ttt_hint_progress_channel">正在处理中&#8230;</string>
 	<string name="ttt_error_network_disconnected">网络连接断开，请检查网络</string>
 	<string name="ttt_error_enterchannel_check_channel_empty">房间号不能为空</string>
 	<string name="ttt_error_enterchannel_check_userid_empty">用户ID不能为空</string>

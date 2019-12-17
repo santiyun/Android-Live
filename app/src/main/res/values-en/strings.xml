@@ -46,6 +46,7 @@
 	<string name="ttt_enter_channel">Entering room</string>
 	<string name="ttt_hint_loading_channel">Entering the room&#8230;</string>
 	<string name="ttt_hint_linking_channel">Linking#8230;</string>
+	<string name="ttt_hint_progress_channel">Waiting#8230;</string>
 	<string name="ttt_link_start">Start linking</string>
 	<string name="ttt_link_finish">End linking</string>
 	<string name="ttt_error_network_disconnected">The network connection is disconnected, please check the network</string>

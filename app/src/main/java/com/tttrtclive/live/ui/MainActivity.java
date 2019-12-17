@@ -31,7 +31,6 @@ import com.tttrtclive.live.helper.WEChatShare;
 import com.tttrtclive.live.helper.WindowManager;
 import com.tttrtclive.live.utils.MyLog;
 import com.wushuangtech.library.Constants;
-import com.wushuangtech.wstechapi.TTTRtcEngine;
 import com.wushuangtech.wstechapi.model.VideoCanvas;
 
 import org.json.JSONArray;
@@ -52,7 +51,6 @@ import static com.wushuangtech.library.Constants.CLIENT_ROLE_AUDIENCE;
 
 public class MainActivity extends BaseActivity {
 
-    private long mUserId;
     private long mAnchorId = -1;
 
     private TextView mAudioSpeedShow, mVideoSpeedShow, mFpsSpeedShow;
@@ -71,7 +69,6 @@ public class MainActivity extends BaseActivity {
     private PhoneListener mPhoneListener;
     private boolean mHasLocalView = false;
     private WEChatShare mWEChatShare;
-    private long mRoomID;
     private final Object obj = new Object();
     private boolean mIsReceiveSei;
     private Map<Long, Boolean> mUserMutes = new HashMap<>();
@@ -94,26 +91,6 @@ public class MainActivity extends BaseActivity {
         }
         // 启用 sdk 上报所有说话者的音量大小
         mTTTEngine.enableAudioVolumeIndication(300, 3);
-        // 设置 SDK 的本地视频等级或参数，主播和副播设置即可，观众忽略
-        if (LocalConfig.mLocalRole != Constants.CLIENT_ROLE_AUDIENCE) {
-            if (LocalConfig.mLocalRole == Constants.CLIENT_ROLE_BROADCASTER) {
-                // 若角色为副播，视频质量等级设置为120P
-                mTTTEngine.setVideoProfile(Constants.TTTRTC_VIDEOPROFILE_120P, false);
-            } else {
-                // 若角色为主播，视频质量根据登录界面的设置参数决定
-                if (LocalConfig.mLocalVideoProfile != 0) {
-                    TTTRtcEngine.getInstance().setVideoProfile(LocalConfig.mLocalVideoProfile, false);
-                } else {
-                    if (LocalConfig.mLocalHeight != 0 && LocalConfig.mLocalWidth != 0 &&
-                            LocalConfig.mLocalBitRate != 0 && LocalConfig.mLocalFrameRate != 0) {
-                        TTTRtcEngine.getInstance().setVideoProfile(LocalConfig.mLocalHeight, LocalConfig.mLocalWidth,
-                                LocalConfig.mLocalFrameRate, LocalConfig.mLocalBitRate);
-                    } else {
-                        mTTTEngine.setVideoProfile(Constants.TTTRTC_VIDEOPROFILE_360P, false);
-                    }
-                }
-            }
-        }
         MyLog.d("MainActivity onCreate ...");
     }
 
@@ -150,15 +127,12 @@ public class MainActivity extends BaseActivity {
         mFpsSpeedShow = findViewById(R.id.main_btn_fpsup);
         mAudioChannel = findViewById(R.id.main_btn_audio_channel);
 
-        Intent intent = getIntent();
-        mRoomID = intent.getLongExtra("ROOM_ID", 0);
-        mUserId = intent.getLongExtra("USER_ID", 0);
-        String localChannelName = getString(R.string.ttt_prefix_channel_name) + ":" + mRoomID;
+        String localChannelName = getString(R.string.ttt_prefix_channel_name) + ":" + LocalConfig.mRoomID;
         ((TextView) findViewById(R.id.main_btn_title)).setText(localChannelName);
         // 如果角色是主播，打开自己的本地视频
         if (LocalConfig.mLocalRole == CLIENT_ROLE_ANCHOR) {
             // 打开本地预览视频，并开始推流
-            String localUserName = getString(R.string.ttt_prefix_user_name) + ":" + mUserId;
+            String localUserName = getString(R.string.ttt_prefix_user_name) + ":" + LocalConfig.mLocalUserID;
             ((TextView) findViewById(R.id.main_btn_host)).setText(localUserName);
             // 创建 SurfaceView
             SurfaceView mSurfaceView = mTTTEngine.CreateRendererView(this);
@@ -196,12 +170,12 @@ public class MainActivity extends BaseActivity {
 
         mWEChatShare = new WEChatShare(this);
         findViewById(R.id.main_share_layout).findViewById(R.id.friend).setOnClickListener(v -> {
-            mWEChatShare.sendText(SendMessageToWX.Req.WXSceneSession, mRoomID, getWXLink());
+            mWEChatShare.sendText(SendMessageToWX.Req.WXSceneSession, LocalConfig.mRoomID, getWXLink());
             findViewById(R.id.main_share_layout).setVisibility(View.GONE);
         });
 
         findViewById(R.id.friend_circle).setOnClickListener(v -> {
-            mWEChatShare.sendText(SendMessageToWX.Req.WXSceneTimeline, mRoomID, getWXLink());
+            mWEChatShare.sendText(SendMessageToWX.Req.WXSceneTimeline, LocalConfig.mRoomID, getWXLink());
             findViewById(R.id.main_share_layout).setVisibility(View.GONE);
         });
 
@@ -275,7 +249,7 @@ public class MainActivity extends BaseActivity {
     }
 
     public String getWXLink() {
-        return "http://3ttech.cn/3tplayer.html?flv=http://pull.3ttest.cn/sdk2/" + mRoomID + ".flv&hls=http://pull.3ttest.cn/sdk2/" + mRoomID + ".m3u8";
+        return "http://3ttech.cn/3tplayer.html?flv=http://pull.3ttest.cn/sdk2/" + LocalConfig.mRoomID + ".flv&hls=http://pull.3ttest.cn/sdk2/" + LocalConfig.mRoomID + ".m3u8";
     }
 
     /**
@@ -334,7 +308,7 @@ public class MainActivity extends BaseActivity {
                         int identity = mJniObjs.mIdentity;
                         if (identity == CLIENT_ROLE_ANCHOR) {
                             mAnchorId = uid;
-                            String localAnchorName = getString(R.string.ttt_role_anchor) + "ID: " + mRoomID;
+                            String localAnchorName = getString(R.string.ttt_role_anchor) + "ID: " + LocalConfig.mRoomID;
                             ((TextView) findViewById(R.id.main_btn_host)).setText(localAnchorName);
                         }
                         // 如果自己角色是观众
@@ -347,16 +321,16 @@ public class MainActivity extends BaseActivity {
                                     ((ConstraintLayout) findViewById(R.id.local_view_layout)).addView(mSurfaceView);
                                 }
                             } else {
-                                mWindowManager.add(mUserId, uid, getRequestedOrientation());
+                                mWindowManager.add(LocalConfig.mLocalUserID, uid, getRequestedOrientation());
                             }
                         } else if (LocalConfig.mLocalRole == CLIENT_ROLE_ANCHOR) {
                             EnterUserInfo userInfo = new EnterUserInfo(uid, identity);
-                            mWindowManager.addAndSendSei(mUserId, userInfo);
+                            mWindowManager.addAndSendSei(LocalConfig.mLocalUserID, userInfo);
                         }
                         break;
                     case LocalConstans.CALL_BACK_ON_USER_OFFLINE:
                         long offLineUserID = mJniObjs.mUid;
-                        mWindowManager.removeAndSendSei(mUserId, offLineUserID);
+                        mWindowManager.removeAndSendSei(LocalConfig.mLocalUserID, offLineUserID);
                         break;
                     case LocalConstans.CALL_BACK_ON_SEI:
                         TreeSet<EnterUserInfo> mInfos = new TreeSet<>();
@@ -403,7 +377,7 @@ public class MainActivity extends BaseActivity {
 
                         for (EnterUserInfo next : mInfos) {
                             MyLog.d("CALL_BACK_ON_SEI", "user list : " + next.getId() + " | index : " + next.mShowIndex);
-                            mWindowManager.add(mUserId, next.getId(), getRequestedOrientation(), next.mShowIndex);
+                            mWindowManager.add(LocalConfig.mLocalUserID, next.getId(), getRequestedOrientation(), next.mShowIndex);
                         }
 
                         synchronized (obj) {
@@ -439,7 +413,7 @@ public class MainActivity extends BaseActivity {
                         else {
                             String localAudioString = getResources().getString(R.string.ttt_audio_upspeed);
                             String localAudioResult = String.format(localAudioString, String.valueOf(mJniObjs.mLocalAudioStats.getSentBitrate()));
-                            mWindowManager.updateAudioBitrate(mUserId, localAudioResult);
+                            mWindowManager.updateAudioBitrate(LocalConfig.mLocalUserID, localAudioResult);
                         }
                         break;
                     case LocalConstans.CALL_BACK_ON_LOCAL_VIDEO_STATE:
@@ -449,7 +423,7 @@ public class MainActivity extends BaseActivity {
                         } else {
                             String localVideoString = getResources().getString(R.string.ttt_video_upspeed);
                             String localVideoResult = String.format(localVideoString, String.valueOf(mJniObjs.mLocalVideoStats.getSentBitrate()));
-                            mWindowManager.updateVideoBitrate(mUserId, localVideoResult);
+                            mWindowManager.updateVideoBitrate(LocalConfig.mLocalUserID, localVideoResult);
                         }
                         break;
                     case LocalConstans.CALL_BACK_ON_MUTE_AUDIO:
@@ -514,7 +488,7 @@ public class MainActivity extends BaseActivity {
                     case LocalConstans.CALL_BACK_ON_AUDIO_VOLUME_INDICATION:
                         if (mIsMute) return;
                         int volumeLevel = mJniObjs.mAudioLevel;
-                        if (mJniObjs.mUid == mUserId) {
+                        if (mJniObjs.mUid == LocalConfig.mLocalUserID) {
                             if (mIsHeadset) {
                                 if (volumeLevel >= 0 && volumeLevel <= 3) {
                                     mAudioChannel.setImageResource(R.drawable.mainly_btn_headset_small_selector);
