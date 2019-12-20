@@ -362,6 +362,7 @@ public class SplashActivity extends BaseActivity {
         mDialog.show();
         // 保存配置
         SharedPreferencesUtil.setParam(this, "RoomID", mRoomName);
+        LocalConfig.mRoomID = Long.valueOf(mRoomName);
         // SDK必须配置的 API
         mustConfigSdk();
         // SDK可选配置的 API
