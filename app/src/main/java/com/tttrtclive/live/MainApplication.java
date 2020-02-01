@@ -25,8 +25,7 @@ public class MainApplication extends Application {
         //1.创建自定义的 SDK 的回调接收类，继承自SDK的回调基类 TTTRtcEngineEventHandler
         mMyTTTRtcEngineEventHandler = new MyTTTRtcEngineEventHandler(getApplicationContext());
         //2.创建SDK的实例对象，APPID需要去官网上申请获取。
-        TTTRtcEngine mTTTEngine = TTTRtcEngine.create(getApplicationContext(), <这里填三体APPID>,
-        false, mMyTTTRtcEngineEventHandler);
+        TTTRtcEngine mTTTEngine = TTTRtcEngine.create(getApplicationContext(), <这里填三体APPID>, mMyTTTRtcEngineEventHandler);
         if (mTTTEngine == null) {
             System.exit(0);
             return;

@@ -408,14 +408,13 @@ public class SplashActivity extends BaseActivity {
             if (MyTTTRtcEngineEventHandler.TAG.equals(action)) {
                 JniObjs mJniObjs = intent.getParcelableExtra(MyTTTRtcEngineEventHandler.MSG_TAG);
                 switch (mJniObjs.mJniType) {
-                    case LocalConstans.CALL_BACK_ON_ENTER_ROOM:
-                        //界面跳转
+                    case LocalConstans.CALL_BACK_ON_ENTER_ROOM: // 接收到加入频道成功到信令，跳转界面。
                         Intent activityIntent = new Intent();
                         activityIntent.setClass(mContext, MainActivity.class);
                         startActivityForResult(activityIntent, ACTIVITY_MAIN);
                         mIsLoging = false;
                         break;
-                    case LocalConstans.CALL_BACK_ON_ERROR:
+                    case LocalConstans.CALL_BACK_ON_ERROR: // 接收到加入频道失败到信令，提示用户。
                         mDialog.dismiss();
                         mIsLoging = false;
                         int errorType = mJniObjs.mErrorType;
