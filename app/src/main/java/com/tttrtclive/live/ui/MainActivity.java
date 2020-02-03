@@ -273,7 +273,7 @@ public class MainActivity extends BaseActivity {
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
             if (MyTTTRtcEngineEventHandler.TAG.equals(action)) {
-                JniObjs mJniObjs = intent.getParcelableExtra(MyTTTRtcEngineEventHandler.MSG_TAG);
+                JniObjs mJniObjs = (JniObjs) intent.getSerializableExtra(MyTTTRtcEngineEventHandler.MSG_TAG);
                 MyLog.d("UI onReceive callBack... mJniType : " + mJniObjs.mJniType);
                 switch (mJniObjs.mJniType) {
                     case LocalConstans.CALL_BACK_ON_USER_KICK:
@@ -392,37 +392,37 @@ public class MainActivity extends BaseActivity {
                         }
                         break;
                     case LocalConstans.CALL_BACK_ON_REMOTE_AUDIO_STATE:
-                        if (mJniObjs.mRemoteAudioStats.getUid() != mAnchorId) {
+                        if (mJniObjs.mUid != mAnchorId) {
                             String audioString = getResources().getString(R.string.ttt_audio_downspeed);
-                            String audioResult = String.format(audioString, String.valueOf(mJniObjs.mRemoteAudioStats.getReceivedBitrate()));
-                            mWindowManager.updateAudioBitrate(mJniObjs.mRemoteAudioStats.getUid(), audioResult);
+                            String audioResult = String.format(audioString, String.valueOf(mJniObjs.mAudioRecvBitrate));
+                            mWindowManager.updateAudioBitrate(mJniObjs.mUid, audioResult);
                         } else
-                            setTextViewContent(mAudioSpeedShow, R.string.ttt_audio_downspeed, String.valueOf(mJniObjs.mRemoteAudioStats.getReceivedBitrate()));
+                            setTextViewContent(mAudioSpeedShow, R.string.ttt_audio_downspeed, String.valueOf(mJniObjs.mAudioRecvBitrate));
                         break;
                     case LocalConstans.CALL_BACK_ON_REMOTE_VIDEO_STATE:
-                        if (mJniObjs.mRemoteVideoStats.getUid() != mAnchorId) {
+                        if (mJniObjs.mUid != mAnchorId) {
                             String videoString = getResources().getString(R.string.ttt_video_downspeed);
-                            String videoResult = String.format(videoString, String.valueOf(mJniObjs.mRemoteVideoStats.getReceivedBitrate()));
-                            mWindowManager.updateVideoBitrate(mJniObjs.mRemoteVideoStats.getUid(), videoResult);
+                            String videoResult = String.format(videoString, String.valueOf(mJniObjs.mVideoRecvBitrate));
+                            mWindowManager.updateVideoBitrate(mJniObjs.mUid, videoResult);
                         } else
-                            setTextViewContent(mVideoSpeedShow, R.string.ttt_video_downspeed, String.valueOf(mJniObjs.mRemoteVideoStats.getReceivedBitrate()));
+                            setTextViewContent(mVideoSpeedShow, R.string.ttt_video_downspeed, String.valueOf(mJniObjs.mVideoRecvBitrate));
                         break;
                     case LocalConstans.CALL_BACK_ON_LOCAL_AUDIO_STATE:
                         if (LocalConfig.mLocalRole == CLIENT_ROLE_ANCHOR)
-                            setTextViewContent(mAudioSpeedShow, R.string.ttt_audio_upspeed, String.valueOf(mJniObjs.mLocalAudioStats.getSentBitrate()));
+                            setTextViewContent(mAudioSpeedShow, R.string.ttt_audio_upspeed, String.valueOf(mJniObjs.mAudioSentBitrate));
                         else {
                             String localAudioString = getResources().getString(R.string.ttt_audio_upspeed);
-                            String localAudioResult = String.format(localAudioString, String.valueOf(mJniObjs.mLocalAudioStats.getSentBitrate()));
+                            String localAudioResult = String.format(localAudioString, String.valueOf(mJniObjs.mAudioSentBitrate));
                             mWindowManager.updateAudioBitrate(LocalConfig.mLocalUserID, localAudioResult);
                         }
                         break;
                     case LocalConstans.CALL_BACK_ON_LOCAL_VIDEO_STATE:
                         if (LocalConfig.mLocalRole == CLIENT_ROLE_ANCHOR) {
-                            mFpsSpeedShow.setText("FPS-" + mJniObjs.mLocalVideoStats.getSentFrameRate());
-                            setTextViewContent(mVideoSpeedShow, R.string.ttt_video_upspeed, String.valueOf(mJniObjs.mLocalVideoStats.getSentBitrate()));
+                            mFpsSpeedShow.setText("FPS-" + mJniObjs.mVideoSentFps);
+                            setTextViewContent(mVideoSpeedShow, R.string.ttt_video_upspeed, String.valueOf(mJniObjs.mVideoSentBitrate));
                         } else {
                             String localVideoString = getResources().getString(R.string.ttt_video_upspeed);
-                            String localVideoResult = String.format(localVideoString, String.valueOf(mJniObjs.mLocalVideoStats.getSentBitrate()));
+                            String localVideoResult = String.format(localVideoString, String.valueOf(mJniObjs.mVideoSentBitrate));
                             mWindowManager.updateVideoBitrate(LocalConfig.mLocalUserID, localVideoResult);
                         }
                         break;
