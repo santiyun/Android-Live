@@ -57,8 +57,8 @@ public class SplashActivity extends BaseActivity {
     private int mLocalVideoProfile = Constants.TTTRTC_VIDEOPROFILE_DEFAULT;
     private int mPushVideoProfile = Constants.TTTRTC_VIDEOPROFILE_DEFAULT;
     private String mLocalIP;
-    public int mLocalWidth, mLocalHeight, mLocalFrameRate, mLocalBitRate, mLocalPort;
-    public int mPushWidth, mPushHeight, mPushFrameRate, mPushBitRate;
+    public int mLocalWidth = 640, mLocalHeight = 360, mLocalFrameRate = 15, mLocalBitRate = 400, mLocalPort;
+    public int mPushWidth = 640, mPushHeight = 360, mPushFrameRate = 15, mPushBitRate = 400;
     private boolean mUseHQAudio = false;
     private int mEncodeType = 0;//0:H.264  1:H.265
     private int mAudioSRate = 0;// 0:48000 1:44100

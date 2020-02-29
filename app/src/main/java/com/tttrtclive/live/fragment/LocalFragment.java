@@ -87,7 +87,6 @@ public class LocalFragment extends Fragment implements SoSpinner.OnItemSelectedL
             mFrameView.setTextColor(Color.parseColor("#FF999999"));
         } else {
             mSetActivity.mLocalVideoProfile = 0;
-
             mPixView.setEnabled(true);
             mBiteView.setEnabled(true);
             mFrameView.setEnabled(true);
@@ -103,30 +102,22 @@ public class LocalFragment extends Fragment implements SoSpinner.OnItemSelectedL
     }
 
     public boolean getParams() {
-        if (mPixView.getText() == null || TextUtils.isEmpty(mPixView.getText().toString())) {
+        if (TextUtils.isEmpty(mPixView.getText())) {
             Toast.makeText(getContext(), "自定义视频分辨率不能为空", Toast.LENGTH_SHORT).show();
             return false;
         }
+
         String[] wh = mPixView.getText().toString().trim().split("x");
         if (wh.length != 2) {
             Toast.makeText(getContext(), "自定义视频分辨率格式错误", Toast.LENGTH_SHORT).show();
             return false;
         }
 
+        int width, height, birrate, fps;
         try {
-            mSetActivity.mLocalWidth = Integer.parseInt(wh[0]);
-            if (mSetActivity.mLocalWidth <= 0) {
-                Toast.makeText(getContext(), "自定义视频分辨率宽必须大于0", Toast.LENGTH_SHORT).show();
-                return false;
-            }
-        } catch (Exception e) {
-            Toast.makeText(getContext(), "自定义视频分辨率格式错误", Toast.LENGTH_SHORT).show();
-            return false;
-        }
-        try {
-            mSetActivity.mLocalHeight = Integer.parseInt(wh[1]);
-            if (mSetActivity.mLocalHeight <= 0) {
-                Toast.makeText(getContext(), "自定义视频分辨率高必须大于0", Toast.LENGTH_SHORT).show();
+            width = Integer.parseInt(wh[0]);
+            if (width <= 0) {
+                Toast.makeText(getContext(), "自定义视频分辨率宽必须大于0，输入正确参数", Toast.LENGTH_SHORT).show();
                 return false;
             }
         } catch (Exception e) {
@@ -134,25 +125,68 @@ public class LocalFragment extends Fragment implements SoSpinner.OnItemSelectedL
             return false;
         }
 
-        if (mBiteView.getText() == null || TextUtils.isEmpty(mBiteView.getText().toString())) {
+        try {
+            height = Integer.parseInt(wh[1]);
+            if (height <= 0) {
+                Toast.makeText(getContext(), "自定义视频分辨率高必须大于0，输入正确参数", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+        } catch (Exception e) {
+            Toast.makeText(getContext(), "自定义视频分辨率格式错误", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        if (width * height > 1920 * 1080) {
+            Toast.makeText(getContext(), "自定义视频分辨率最大值为1920*1080", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        if (TextUtils.isEmpty(mBiteView.getText())) {
             Toast.makeText(getContext(), "自定义视频码率不能为空", Toast.LENGTH_SHORT).show();
             return false;
         }
-        mSetActivity.mLocalBitRate = Integer.parseInt(mBiteView.getText().toString().trim());
-        if (mSetActivity.mLocalBitRate <= 0) {
-            Toast.makeText(getContext(), "自定义视频码率必须大于0", Toast.LENGTH_SHORT).show();
+
+        try {
+            birrate = Integer.parseInt(mBiteView.getText().toString().trim());
+            if (birrate <= 0) {
+                Toast.makeText(getContext(), "自定义视频码率必须大于0，输入正确参数", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+        } catch (Exception e) {
+            Toast.makeText(getContext(), "自定义视频码率格式错误", Toast.LENGTH_SHORT).show();
             return false;
         }
 
-        if (mFrameView.getText() == null || TextUtils.isEmpty(mFrameView.getText().toString())) {
+        if (birrate > 5000) {
+            Toast.makeText(getContext(), "自定义视频码率最大值为5000kbps", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        if (TextUtils.isEmpty(mFrameView.getText())) {
             Toast.makeText(getContext(), "自定义视频帧率不能为空", Toast.LENGTH_SHORT).show();
             return false;
         }
-        mSetActivity.mLocalFrameRate = Integer.parseInt(mFrameView.getText().toString().trim());
-        if (mSetActivity.mLocalFrameRate <= 0) {
-            Toast.makeText(getContext(), "自定义视频帧率必须大于0", Toast.LENGTH_SHORT).show();
+
+        try {
+            fps = Integer.parseInt(mFrameView.getText().toString().trim());
+            if (fps <= 0) {
+                Toast.makeText(getContext(), "自定义视频帧率必须大于0，输入正确参数", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+        } catch (Exception e) {
+            Toast.makeText(getContext(), "自定义视频帧率格式错误", Toast.LENGTH_SHORT).show();
             return false;
         }
+
+        if (fps > 25) {
+            Toast.makeText(getContext(), "自定义视频帧率最大值为25", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        mSetActivity.mLocalWidth = width;
+        mSetActivity.mLocalHeight = height;
+        mSetActivity.mLocalBitRate = birrate;
+        mSetActivity.mLocalFrameRate = fps;
 
         mSetActivity.mLocalIP = mFrameIP.getText().toString().trim();
         if (!TextUtils.isEmpty(mFramePort.getText())) {

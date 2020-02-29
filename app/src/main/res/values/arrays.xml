@@ -8,7 +8,7 @@
 		<item>480P</item>
 		<item>720P</item>
 		<item>1080P</item>
-        <item>自定义</item>
+        <item>自定义(测试)</item>
     </string-array>
     <string-array name="SoEncodeItems">
         <item>H.264</item>
