@@ -1,5 +1,5 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	xmlns:tl="http://schemas.android.com/apk/res-auto"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
 	android:background="#FFFFFF"
@@ -9,7 +9,7 @@
 		android:id="@+id/set_head"
 		android:layout_width="match_parent"
 		android:layout_height="68dp"
-		tl:layout_constraintTop_toTopOf="parent">
+		app:layout_constraintTop_toTopOf="parent">
 
 		<ImageView
 			android:layout_width="wrap_content"
@@ -17,33 +17,33 @@
 			android:layout_marginStart="14dp"
 			android:onClick="onExitButtonClick"
 			android:paddingRight="15dp"
-			tl:layout_constraintBottom_toBottomOf="@+id/textView"
-			tl:layout_constraintStart_toStartOf="parent"
-			tl:layout_constraintTop_toTopOf="parent"
-			tl:srcCompat="@drawable/icon_arrow_left" />
+			app:layout_constraintBottom_toBottomOf="@+id/textView"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintTop_toTopOf="parent"
+			app:srcCompat="@drawable/icon_arrow_left" />
 
-		<com.flyco.tablayout.SegmentTabLayout
+		<com.google.android.material.tabs.TabLayout
 			android:id="@+id/tl_1"
 			android:layout_width="220dp"
 			android:layout_height="32dp"
-			tl:layout_constraintBottom_toBottomOf="@+id/textView"
-			tl:layout_constraintEnd_toEndOf="parent"
-			tl:layout_constraintStart_toStartOf="parent"
-			tl:layout_constraintTop_toTopOf="parent"
-			tl:tl_bar_color="#ffffff"
-			tl:tl_bar_stroke_color="#FFCCCCCC"
-			tl:tl_indicator_color="#FFBF2F61"
-			tl:tl_indicator_corner_radius="50dp"
-			tl:tl_tab_padding="20dp"
-			tl:tl_textUnselectColor="#FF666666"
-			tl:tl_textsize="12sp"></com.flyco.tablayout.SegmentTabLayout>
+			app:layout_constraintBottom_toBottomOf="@+id/textView"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintTop_toTopOf="parent"
+			app:tabBackground="@color/transparent"
+			app:tabMode="fixed"
+			app:tabPaddingBottom="0dp"
+			app:tabPaddingEnd="0dp"
+			app:tabPaddingStart="0dp"
+			app:tabPaddingTop="0dp"
+			app:tabRippleColor="@color/transparent" />
 
 		<TextView
 			android:id="@+id/textView"
 			android:layout_width="match_parent"
 			android:layout_height="1dp"
 			android:background="#80C4C4C4"
-			tl:layout_constraintBottom_toBottomOf="parent" />
+			app:layout_constraintBottom_toBottomOf="parent" />
 	</androidx.constraintlayout.widget.ConstraintLayout>
 
 	<androidx.viewpager.widget.ViewPager
@@ -51,10 +51,10 @@
 		android:layout_width="match_parent"
 		android:layout_height="0dp"
 		android:layout_marginBottom="8dp"
-		tl:layout_constraintBottom_toTopOf="@+id/local_ok_button2"
-		tl:layout_constraintEnd_toEndOf="parent"
-		tl:layout_constraintStart_toStartOf="parent"
-		tl:layout_constraintTop_toBottomOf="@+id/set_head" />
+		app:layout_constraintBottom_toTopOf="@+id/local_ok_button2"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toBottomOf="@+id/set_head" />
 
 	<TextView
 		android:id="@+id/local_ok_button2"
@@ -69,7 +69,7 @@
 		android:text="@string/ttt_confirm"
 		android:textColor="#FFFFFF"
 		android:textSize="16sp"
-		tl:layout_constraintBottom_toBottomOf="parent"
-		tl:layout_constraintEnd_toEndOf="parent"
-		tl:layout_constraintStart_toStartOf="parent" />
+		app:layout_constraintBottom_toBottomOf="parent"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintStart_toStartOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

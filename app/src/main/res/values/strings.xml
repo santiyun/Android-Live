@@ -30,7 +30,7 @@
 	<string name="ttt_error_enterchannel_check_owner">房间号不能为本房间</string>
 	<string name="ttt_error_enterchannel_check_format">房间号只能为数字</string>
 	<string name="ttt_error_enterchannel_check_member_max">房间人数已达上限</string>
-	<string name="hint_channel_name_limit">请输入19位以内的房间ID</string>
+	<string name="hint_channel_name_limit">请输入小于19位以内的房间ID</string>
 	<string name="hint_user_name_limit">请输入19位以内的用户ID</string>
 	<string name="main_item_volume">音量:%1$s</string>
 	<string name="ttt_audio_upspeed">A-%1$skbps\u2191</string>

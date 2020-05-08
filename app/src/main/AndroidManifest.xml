@@ -6,10 +6,6 @@
 	<!-- Demo需求的权限，与SDK无关 -->
 	<!-- 允许程序在手机屏幕关闭后后台进程仍然运行 -->
 	<uses-permission android:name="android.permission.WAKE_LOCK" />
-	<!-- 获取网络信息状态，如当前的网络连接是否有效 -->
-	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-	<!-- 获取当前WiFi接入的状态以及WLAN热点的信息 -->
-	<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
 	<!-- 程序可以读取设备外部存储空间 -->
 	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 

@@ -4,7 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.view.WindowManager;
 
-import com.gyf.barlibrary.ImmersionBar;
+import com.gyf.immersionbar.ImmersionBar;
 import com.wushuangtech.wstechapi.TTTRtcEngine;
 
 import androidx.annotation.Nullable;
@@ -39,11 +39,5 @@ public class BaseActivity extends AppCompatActivity {
         mTTTEngine = TTTRtcEngine.getInstance();
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON,
                 WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        ImmersionBar.with(this).destroy();
     }
 }

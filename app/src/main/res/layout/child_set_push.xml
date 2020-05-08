@@ -24,26 +24,20 @@
 		app:layout_constraintEnd_toStartOf="@+id/divider"
 		app:layout_constraintTop_toTopOf="parent" />
 
-	<so.library.SoSpinner
+	<Spinner
 		android:id="@+id/push_pix_spinner"
 		android:layout_width="0dp"
 		android:layout_height="40dp"
 		android:layout_marginEnd="20dp"
 		android:background="@drawable/spinner_bg"
 		android:gravity="center_vertical"
-		android:paddingLeft="20dp"
-		android:textColor="#FF666666"
+		android:paddingLeft="13dp"
+		android:textColor="#FF999999"
 		android:textSize="15sp"
 		app:layout_constraintBottom_toBottomOf="@+id/textView2"
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintStart_toEndOf="@+id/divider"
-		app:layout_constraintTop_toTopOf="@+id/textView2"
-		app:so_itemBackground="#FFFFFF"
-		app:so_itemDatas="@array/SoVideoItems"
-		app:so_itemHeight="40dp"
-		app:so_itemPaddingLeft="20dp"
-		app:so_itemTextColor="#FF666666"
-		app:so_itemTextSize="15sp" />
+		app:layout_constraintTop_toTopOf="@+id/textView2" />
 
 	<TextView
 		android:id="@+id/textView3"
@@ -154,26 +148,20 @@
 		app:layout_constraintEnd_toStartOf="@+id/divider"
 		app:layout_constraintTop_toBottomOf="@+id/textView9" />
 
-	<so.library.SoSpinner
+	<Spinner
 		android:id="@+id/push_audio_spinner"
 		android:layout_width="0dp"
 		android:layout_height="30dp"
 		android:layout_marginEnd="24dp"
 		android:background="@drawable/spinner_bg"
 		android:gravity="center_vertical"
-		android:paddingLeft="20dp"
-		android:textColor="#FF666666"
+		android:paddingLeft="13dp"
+		android:textColor="#FF999999"
 		android:textSize="16sp"
 		app:layout_constraintBottom_toBottomOf="@+id/textView11"
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintStart_toEndOf="@+id/divider"
-		app:layout_constraintTop_toTopOf="@+id/textView11"
-		app:so_itemBackground="#FFFFFF"
-		app:so_itemDatas="@array/SoAudioItems"
-		app:so_itemHeight="40dp"
-		app:so_itemPaddingLeft="20dp"
-		app:so_itemTextColor="#FF666666"
-		app:so_itemTextSize="15sp" />
+		app:layout_constraintTop_toTopOf="@+id/textView11" />
 
 	<TextView
 		android:id="@+id/textView11"
@@ -195,26 +183,20 @@
 		app:layout_constraintEnd_toStartOf="@+id/divider"
 		app:layout_constraintTop_toBottomOf="@+id/textView5" />
 
-	<so.library.SoSpinner
+	<Spinner
 		android:id="@+id/push_encode_spinner"
 		android:layout_width="0dp"
 		android:layout_height="30dp"
 		android:layout_marginEnd="24dp"
 		android:background="@drawable/spinner_bg"
 		android:gravity="center_vertical"
-		android:paddingLeft="20dp"
-		android:textColor="#FF666666"
+		android:paddingLeft="13dp"
+		android:textColor="#FF999999"
 		android:textSize="16sp"
 		app:layout_constraintBottom_toBottomOf="@+id/textView12"
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintStart_toEndOf="@+id/divider"
-		app:layout_constraintTop_toTopOf="@+id/textView12"
-		app:so_itemBackground="#FFFFFF"
-		app:so_itemDatas="@array/SoEncodeItems"
-		app:so_itemHeight="40dp"
-		app:so_itemPaddingLeft="20dp"
-		app:so_itemTextColor="#FF666666"
-		app:so_itemTextSize="15sp" />
+		app:layout_constraintTop_toTopOf="@+id/textView12" />
 
 	<ImageView
 		android:layout_width="wrap_content"

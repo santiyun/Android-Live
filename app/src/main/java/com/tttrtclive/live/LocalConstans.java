@@ -21,6 +21,7 @@ public class LocalConstans {
     public static final int CALL_BACK_ON_MUTE_AUDIO = 16;
     public static final int CALL_BACK_ON_AUDIO_ROUTE = 17;
     public static final int CALL_BACK_ON_USER_KICK = 20;
+    public static final int CALL_BACK_ON_CAMERA_CONNECT_ERROR = 21;
 
     public static final int CALL_BACK_ON_PHONE_LISTENER_COME = 9;
     public static final int CALL_BACK_ON_PHONE_LISTENER_IDLE = 10;

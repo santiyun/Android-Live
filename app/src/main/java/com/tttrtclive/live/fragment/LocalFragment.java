@@ -1,38 +1,32 @@
 package com.tttrtclive.live.fragment;
 
-import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.Toast;
 
 import com.tttrtclive.live.R;
 import com.tttrtclive.live.bean.VideoProfileManager;
 import com.tttrtclive.live.ui.SetActivity;
+import com.tttrtclive.live.utils.MyLog;
 
 import androidx.fragment.app.Fragment;
-import so.library.SoSpinner;
 
-@SuppressLint("ValidFragment")
-public class LocalFragment extends Fragment implements SoSpinner.OnItemSelectedListener, CompoundButton.OnCheckedChangeListener {
+public class LocalFragment extends Fragment implements Spinner.OnItemSelectedListener, CompoundButton.OnCheckedChangeListener {
 
     private VideoProfileManager mVideoProfileManager = new VideoProfileManager();
     private EditText mPixView, mBiteView, mFrameView, mFrameIP, mFramePort;
     private VideoProfileManager.VideoProfile mVideoProfile;
     private SetActivity mSetActivity;
-    private static LocalFragment sf;
-
-    public static LocalFragment getInstance() {
-        if (sf == null)
-            sf = new LocalFragment();
-        return sf;
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -45,20 +39,23 @@ public class LocalFragment extends Fragment implements SoSpinner.OnItemSelectedL
         mFrameIP = v.findViewById(R.id.local_frame_ip);
         mFramePort = v.findViewById(R.id.local_frame_port);
 
-        SoSpinner localPixSpinner = v.findViewById(R.id.local_pix_spinner);
+        Spinner localPixSpinner = v.findViewById(R.id.local_pix_spinner);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(mSetActivity, R.array.SoVideoItems, R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        localPixSpinner.setAdapter(adapter);
         localPixSpinner.setOnItemSelectedListener(this);
 
         ((Switch) v.findViewById(R.id.local_audio_switch)).setOnCheckedChangeListener(this);
 
         if (mSetActivity.mLocalVideoProfile != 0) {
             mVideoProfile = mVideoProfileManager.getVideoProfile(mSetActivity.mLocalVideoProfile);
-            localPixSpinner.setSelectedIndex(mVideoProfileManager.mVideoProfiles.indexOf(mVideoProfile));
+            localPixSpinner.setSelection(mVideoProfileManager.mVideoProfiles.indexOf(mVideoProfile));
         } else {
             mPixView.setText(mSetActivity.mLocalWidth + "x" + mSetActivity.mLocalHeight);
             mBiteView.setText(mSetActivity.mLocalBitRate + "");
             mFrameView.setText(mSetActivity.mLocalFrameRate + "");
             mPixView.requestFocus();
-            localPixSpinner.setSelectedIndex(mVideoProfileManager.mVideoProfiles.size());
+            localPixSpinner.setSelection(mVideoProfileManager.mVideoProfiles.size());
         }
 
         ((Switch) v.findViewById(R.id.local_audio_switch)).setChecked(mSetActivity.mUseHQAudio);
@@ -67,11 +64,20 @@ public class LocalFragment extends Fragment implements SoSpinner.OnItemSelectedL
         if (mSetActivity.mLocalPort != 0) {
             mFramePort.setText(String.valueOf(mSetActivity.mLocalPort));
         }
+
+        MyLog.d("LocalFragment onCreateView invoked!");
         return v;
     }
 
     @Override
-    public void onItemSelected(View parent, int position) {
+    public void onDestroy() {
+        super.onDestroy();
+        MyLog.d("LocalFragment onDestroy invoked!");
+        mSetActivity = null;
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         if (position < mVideoProfileManager.mVideoProfiles.size()) {
             mVideoProfile = mVideoProfileManager.mVideoProfiles.get(position);
             mSetActivity.mLocalVideoProfile = mVideoProfile.videoProfile;
@@ -103,13 +109,13 @@ public class LocalFragment extends Fragment implements SoSpinner.OnItemSelectedL
 
     public boolean getParams() {
         if (TextUtils.isEmpty(mPixView.getText())) {
-            Toast.makeText(getContext(), "自定义视频分辨率不能为空", Toast.LENGTH_SHORT).show();
+            Toast.makeText(mSetActivity, "自定义视频分辨率不能为空", Toast.LENGTH_SHORT).show();
             return false;
         }
 
         String[] wh = mPixView.getText().toString().trim().split("x");
         if (wh.length != 2) {
-            Toast.makeText(getContext(), "自定义视频分辨率格式错误", Toast.LENGTH_SHORT).show();
+            Toast.makeText(mSetActivity, "自定义视频分辨率格式错误", Toast.LENGTH_SHORT).show();
             return false;
         }
 
@@ -117,69 +123,69 @@ public class LocalFragment extends Fragment implements SoSpinner.OnItemSelectedL
         try {
             width = Integer.parseInt(wh[0]);
             if (width <= 0) {
-                Toast.makeText(getContext(), "自定义视频分辨率宽必须大于0，输入正确参数", Toast.LENGTH_SHORT).show();
+                Toast.makeText(mSetActivity, "自定义视频分辨率宽必须大于0，输入正确参数", Toast.LENGTH_SHORT).show();
                 return false;
             }
         } catch (Exception e) {
-            Toast.makeText(getContext(), "自定义视频分辨率格式错误", Toast.LENGTH_SHORT).show();
+            Toast.makeText(mSetActivity, "自定义视频分辨率格式错误", Toast.LENGTH_SHORT).show();
             return false;
         }
 
         try {
             height = Integer.parseInt(wh[1]);
             if (height <= 0) {
-                Toast.makeText(getContext(), "自定义视频分辨率高必须大于0，输入正确参数", Toast.LENGTH_SHORT).show();
+                Toast.makeText(mSetActivity, "自定义视频分辨率高必须大于0，输入正确参数", Toast.LENGTH_SHORT).show();
                 return false;
             }
         } catch (Exception e) {
-            Toast.makeText(getContext(), "自定义视频分辨率格式错误", Toast.LENGTH_SHORT).show();
+            Toast.makeText(mSetActivity, "自定义视频分辨率格式错误", Toast.LENGTH_SHORT).show();
             return false;
         }
 
         if (width * height > 1920 * 1080) {
-            Toast.makeText(getContext(), "自定义视频分辨率最大值为1920*1080", Toast.LENGTH_SHORT).show();
+            Toast.makeText(mSetActivity, "自定义视频分辨率最大值为1920*1080", Toast.LENGTH_SHORT).show();
             return false;
         }
 
         if (TextUtils.isEmpty(mBiteView.getText())) {
-            Toast.makeText(getContext(), "自定义视频码率不能为空", Toast.LENGTH_SHORT).show();
+            Toast.makeText(mSetActivity, "自定义视频码率不能为空", Toast.LENGTH_SHORT).show();
             return false;
         }
 
         try {
             birrate = Integer.parseInt(mBiteView.getText().toString().trim());
             if (birrate <= 0) {
-                Toast.makeText(getContext(), "自定义视频码率必须大于0，输入正确参数", Toast.LENGTH_SHORT).show();
+                Toast.makeText(mSetActivity, "自定义视频码率必须大于0，输入正确参数", Toast.LENGTH_SHORT).show();
                 return false;
             }
         } catch (Exception e) {
-            Toast.makeText(getContext(), "自定义视频码率格式错误", Toast.LENGTH_SHORT).show();
+            Toast.makeText(mSetActivity, "自定义视频码率格式错误", Toast.LENGTH_SHORT).show();
             return false;
         }
 
         if (birrate > 5000) {
-            Toast.makeText(getContext(), "自定义视频码率最大值为5000kbps", Toast.LENGTH_SHORT).show();
+            Toast.makeText(mSetActivity, "自定义视频码率最大值为5000kbps", Toast.LENGTH_SHORT).show();
             return false;
         }
 
         if (TextUtils.isEmpty(mFrameView.getText())) {
-            Toast.makeText(getContext(), "自定义视频帧率不能为空", Toast.LENGTH_SHORT).show();
+            Toast.makeText(mSetActivity, "自定义视频帧率不能为空", Toast.LENGTH_SHORT).show();
             return false;
         }
 
         try {
             fps = Integer.parseInt(mFrameView.getText().toString().trim());
             if (fps <= 0) {
-                Toast.makeText(getContext(), "自定义视频帧率必须大于0，输入正确参数", Toast.LENGTH_SHORT).show();
+                Toast.makeText(mSetActivity, "自定义视频帧率必须大于0，输入正确参数", Toast.LENGTH_SHORT).show();
                 return false;
             }
         } catch (Exception e) {
-            Toast.makeText(getContext(), "自定义视频帧率格式错误", Toast.LENGTH_SHORT).show();
+            Toast.makeText(mSetActivity, "自定义视频帧率格式错误", Toast.LENGTH_SHORT).show();
             return false;
         }
 
-        if (fps > 25) {
-            Toast.makeText(getContext(), "自定义视频帧率最大值为25", Toast.LENGTH_SHORT).show();
+        if (fps > 30) {
+            Toast.makeText(mSetActivity, "自定义视频帧率最大值为30", Toast.LENGTH_SHORT).show();
             return false;
         }
 
@@ -195,5 +201,10 @@ public class LocalFragment extends Fragment implements SoSpinner.OnItemSelectedL
             mSetActivity.mLocalPort = 0;
         }
         return true;
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
     }
 }

@@ -100,6 +100,16 @@ public class WindowManager {
         TTTRtcEngine.getInstance().setVideoCompositingLayout(layout);
     }
 
+    public void hide(long id) {
+        for (int i = 0; i < mRemoteWindowList.size(); i++) {
+            RemoteWindow remoteWindow = mRemoteWindowList.get(i);
+            if (remoteWindow.mId == id) {
+                remoteWindow.hide();
+                return;
+            }
+        }
+    }
+
     public void muteAudio(long id, boolean mute) {
         for (int i = 0; i < mRemoteWindowList.size(); i++) {
             RemoteWindow remoteWindow = mRemoteWindowList.get(i);
@@ -143,23 +153,24 @@ public class WindowManager {
     private VideoCompositingLayout.Region[] buildRemoteLayoutLocation(long loginId) {
         List<VideoCompositingLayout.Region> tempList = new ArrayList<>();
 
-        for (RemoteWindow remoteWindow : mRemoteWindowList) {
+        for (RemoteWindow remoteWindow : mRemoteWindowList) { // 循环遍历副播用户
             if (remoteWindow.mId != -1) {
                 int[] location = new int[2];
                 remoteWindow.getLocationOnScreen(location);
                 VideoCompositingLayout.Region mRegion = new VideoCompositingLayout.Region();
-                mRegion.mUserID = remoteWindow.mId;
-                mRegion.x = (double) location[0] / mScreenWidth;
-                mRegion.y = (double) location[1] / mScreenHeight;
-                mRegion.width = (double) 1 / 3; // view宽度占屏幕宽度的比例
-                mRegion.height = (double) mScreenWidth / 3 * 4 / 3 / mScreenHeight; // view高度占屏幕的比例
-                mRegion.zOrder = 1;
+                mRegion.mUserID = remoteWindow.mId; // 副播id
+                mRegion.x = (double) location[0] / mScreenWidth;  // view左上角x轴位置，范围0-1
+                mRegion.y = (double) location[1] / mScreenHeight; // view左上角y轴位置，范围0-1
+                mRegion.width = (double) 1 / 3; // view宽度占屏幕宽度的比例，，范围0-1
+                mRegion.height = (double) mScreenWidth / 3 * 4 / 3 / mScreenHeight; // view高度占屏幕的比例，，范围0-1
+                mRegion.zOrder = 1; // view层级，数字大的覆盖数字小的
                 tempList.add(mRegion);
             }
         }
 
+
         VideoCompositingLayout.Region mRegion = new VideoCompositingLayout.Region();
-        mRegion.mUserID = loginId;
+        mRegion.mUserID = loginId; // 主播id
         mRegion.x = 0;
         mRegion.y = 0;
         mRegion.width = 1;

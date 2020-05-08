@@ -1,11 +1,12 @@
 package com.tttrtclive.live.ui;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.TextView;
 
-import com.flyco.tablayout.SegmentTabLayout;
-import com.flyco.tablayout.listener.OnTabSelectListener;
+import com.google.android.material.tabs.TabLayout;
 import com.tttrtclive.live.R;
 import com.tttrtclive.live.fragment.LocalFragment;
 import com.tttrtclive.live.fragment.PushFragment;
@@ -27,7 +28,7 @@ public class SetActivity extends BaseActivity {
     private ArrayList<Fragment> mFragments = new ArrayList<>();
 
     private String[] mTitles;
-    private SegmentTabLayout mTabLayout_1;
+    private TabLayout mTabLayout_1;
 
     /*-------------------------------配置参数---------------------------------*/
     public int mLocalVideoProfile = Constants.TTTRTC_VIDEOPROFILE_DEFAULT;
@@ -72,11 +73,34 @@ public class SetActivity extends BaseActivity {
         mEncodeType = intent.getIntExtra("EDT", mEncodeType);
         mAudioSRate = intent.getIntExtra("ASR", mAudioSRate);
 
-        mFragments.add(LocalFragment.getInstance());
-        mFragments.add(PushFragment.getInstance());
+        LocalFragment localFragment = new LocalFragment();
+        mFragments.add(localFragment);
+        PushFragment pushFragment = new PushFragment();
+        mFragments.add(pushFragment);
 
         mTabLayout_1 = findViewById(R.id.tl_1);
-        mTabLayout_1.setTabData(mTitles);
+        mTabLayout_1.setSelectedTabIndicator(null); // 去掉下划线
+
+        TabLayout.Tab tab = mTabLayout_1.newTab();
+
+
+        View rootView = View.inflate(this, R.layout.set_tab_ly, null);
+        rootView.setBackgroundResource(R.drawable.setly_local_tab_bg);
+        TextView view = rootView.findViewById(R.id.tab_text);
+        view.setText(mTitles[0]);
+        rootView.setTag(view);
+        tab.setCustomView(rootView);
+
+        TabLayout.Tab tab2 = mTabLayout_1.newTab();
+        View rootView2 = View.inflate(this, R.layout.set_tab_ly, null);
+        rootView2.setBackgroundResource(R.drawable.setly_push_tab_bg);
+        TextView view2 = rootView2.findViewById(R.id.tab_text);
+        view2.setText(mTitles[1]);
+        rootView2.setTag(view2);
+        tab2.setCustomView(rootView2);
+
+        mTabLayout_1.addTab(tab);
+        mTabLayout_1.addTab(tab2);
         tl_1();
     }
 
@@ -84,16 +108,33 @@ public class SetActivity extends BaseActivity {
     private void tl_1() {
         final ViewPager vp_3 = findViewById(R.id.vp_2);
         vp_3.setAdapter(new MyPagerAdapter(getSupportFragmentManager()));
-
-        mTabLayout_1.setTabData(mTitles);
-        mTabLayout_1.setOnTabSelectListener(new OnTabSelectListener() {
+        mTabLayout_1.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
-            public void onTabSelect(int position) {
-                vp_3.setCurrentItem(position);
+            public void onTabSelected(TabLayout.Tab tab) {
+                View customView = tab.getCustomView();
+                if (customView != null) {
+                    Object tag = customView.getTag();
+                    if (tag != null) {
+                        ((TextView) tag).setTextColor(Color.WHITE);
+                    }
+                }
+                vp_3.setCurrentItem(tab.getPosition());
             }
 
             @Override
-            public void onTabReselect(int position) {
+            public void onTabUnselected(TabLayout.Tab tab) {
+                View customView = tab.getCustomView();
+                if (customView != null) {
+                    Object tag = customView.getTag();
+                    if (tag != null) {
+                        ((TextView) tag).setTextColor(Color.BLACK);
+                    }
+                }
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
             }
         });
 
@@ -105,7 +146,10 @@ public class SetActivity extends BaseActivity {
 
             @Override
             public void onPageSelected(int position) {
-                mTabLayout_1.setCurrentTab(position);
+                TabLayout.Tab tabAt = mTabLayout_1.getTabAt(position);
+                if (tabAt != null) {
+                    tabAt.select();
+                }
             }
 
             @Override
@@ -113,12 +157,25 @@ public class SetActivity extends BaseActivity {
 
             }
         });
+
+        TabLayout.Tab tabAt = mTabLayout_1.getTabAt(0);
+        if (tabAt != null) {
+            View customView = tabAt.getCustomView();
+            if (customView != null) {
+                Object tag = customView.getTag();
+                if (tag != null) {
+                    ((TextView) tag).setTextColor(Color.WHITE);
+                }
+            }
+        }
         vp_3.setCurrentItem(0);
     }
 
     private class MyPagerAdapter extends FragmentPagerAdapter {
+
+
         MyPagerAdapter(FragmentManager fm) {
-            super(fm);
+            super(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
         }
 
         @Override
@@ -138,44 +195,51 @@ public class SetActivity extends BaseActivity {
     }
 
     public void onExitButtonClick(View v) {
-        exit();
+        exit(false);
     }
 
     @Override
     public void onBackPressed() {
-        exit();
+        exit(false);
         super.onBackPressed();
     }
 
     public void onOkButtonClick(View v) {
-        boolean params = LocalFragment.getInstance().getParams();
+        LocalFragment localFragment = (LocalFragment) mFragments.get(0);
+        boolean params = localFragment.getParams();
         if (!params) {
-            return ;
+            return;
         }
-        boolean params2 = PushFragment.getInstance().getParams();
+
+        PushFragment pushFragment = (PushFragment) mFragments.get(1);
+        boolean params2 = pushFragment.getParams();
         if (!params2) {
-            return ;
+            return;
         }
-        exit();
+        exit(true);
     }
 
-    private void exit() {
+    private void exit(boolean saveSetting) {
+        mFragments.clear();
+        mFragments = null;
         Intent intent = new Intent();
-        intent.putExtra("LVP", mLocalVideoProfile);
-        intent.putExtra("PVP", mPushVideoProfile);
-        intent.putExtra("LWIDTH", mLocalWidth);
-        intent.putExtra("LHEIGHT", mLocalHeight);
-        intent.putExtra("LBRATE", mLocalBitRate);
-        intent.putExtra("LFRATE", mLocalFrameRate);
-        intent.putExtra("LIP", mLocalIP);
-        intent.putExtra("LPORT", mLocalPort);
-        intent.putExtra("PWIDTH", mPushWidth);
-        intent.putExtra("PHEIGHT", mPushHeight);
-        intent.putExtra("PBRATE", mPushBitRate);
-        intent.putExtra("PFRATE", mPushFrameRate);
-        intent.putExtra("HQA", mUseHQAudio);
-        intent.putExtra("EDT", mEncodeType);
-        intent.putExtra("ASR", mAudioSRate);
+        if (saveSetting) {
+            intent.putExtra("LVP", mLocalVideoProfile);
+            intent.putExtra("PVP", mPushVideoProfile);
+            intent.putExtra("LWIDTH", mLocalWidth);
+            intent.putExtra("LHEIGHT", mLocalHeight);
+            intent.putExtra("LBRATE", mLocalBitRate);
+            intent.putExtra("LFRATE", mLocalFrameRate);
+            intent.putExtra("LIP", mLocalIP);
+            intent.putExtra("LPORT", mLocalPort);
+            intent.putExtra("PWIDTH", mPushWidth);
+            intent.putExtra("PHEIGHT", mPushHeight);
+            intent.putExtra("PBRATE", mPushBitRate);
+            intent.putExtra("PFRATE", mPushFrameRate);
+            intent.putExtra("HQA", mUseHQAudio);
+            intent.putExtra("EDT", mEncodeType);
+            intent.putExtra("ASR", mAudioSRate);
+        }
         setResult(ACTIVITY_SETTING, intent);
         finish();
     }
