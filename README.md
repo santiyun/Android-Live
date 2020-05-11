@@ -45,7 +45,7 @@
 #### 运行环境和要求
 
 > Android Studio 3.5 +  
-> minSdkVersion 16  
+> minSdkVersion 18  
 > gradle 5.4.1  
 > java 8.0  
 
