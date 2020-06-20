@@ -31,6 +31,7 @@ import com.tttrtclive.live.helper.WEChatShare;
 import com.tttrtclive.live.helper.WindowManager;
 import com.tttrtclive.live.utils.MyLog;
 import com.wushuangtech.library.Constants;
+import com.wushuangtech.myvideoimprove.view.VideoRenderView;
 import com.wushuangtech.wstechapi.TTTRtcEngine;
 import com.wushuangtech.wstechapi.model.PublisherConfiguration;
 import com.wushuangtech.wstechapi.model.VideoCanvas;
@@ -89,7 +90,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private Map<Long, Boolean> mUserMutes = new HashMap<>();
     private final Object obj = new Object();
 
-    private SurfaceView mAnchorSurfaceView;
+    private View mAnchorSurfaceView;
     public static int mCurrentAudioRoute;
 
     @Override
@@ -294,8 +295,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         // 2.设置视频编码参数，SDK 默认为 360P 质量等级。
         // 可选操作的 API
         if (userRole == Constants.CLIENT_ROLE_BROADCASTER) {
-            // 若角色为副播，视频质量等级设置为 120P，若感觉视频不清晰，可自行调整等级，如360P。
-            mTTTEngine.setVideoProfile(Constants.TTTRTC_VIDEOPROFILE_120P, false);
+            // 若角色为副播，视频质量等级设置为 240P，若感觉视频不清晰，可自行调整等级，如360P。
+            mTTTEngine.setVideoProfile(Constants.TTTRTC_VIDEOPROFILE_240P, false);
         } else {
             // 若角色为主播，视频质量根据 SetActivity 设置界面所设置的参数来决定。
             if (videoLevel != 0) {
@@ -330,13 +331,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     private void openLocalVideo() {
         if (userRole == CLIENT_ROLE_ANCHOR && mAnchorSurfaceView == null) {
-            mAnchorSurfaceView = TTTRtcEngine.CreateRendererView(mContext);
+            mAnchorSurfaceView = TTTRtcEngine.CreateRendererTextureView(mContext);
             mTTTEngine.setupLocalVideo(new VideoCanvas(0, Constants.RENDER_MODE_HIDDEN,
-                    mAnchorSurfaceView, null), getRequestedOrientation());
+                    (VideoRenderView) mAnchorSurfaceView, null), getRequestedOrientation());
             mTTTEngine.startPreview();
         }
 
-        mAnchorSurfaceView.setZOrderMediaOverlay(false);
         if (userRole == CLIENT_ROLE_ANCHOR) {
             mBigVideoLayout.addView(mAnchorSurfaceView);
         } else if (userRole == CLIENT_ROLE_BROADCASTER) {

@@ -8,7 +8,7 @@ android {
         minSdkVersion 18
         targetSdkVersion 29
         versionCode 1
-        versionName "2.9.4"
+        versionName "3.0.3"
         ndk {
             // 设置支持的SO库架构
             abiFilters 'armeabi-v7a' //, 'x86', 'armeabi-v7a', 'x86_64', 'arm64-v8a'
@@ -52,8 +52,8 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'com.google.android.material:material:1.1.0'
     implementation 'com.gyf.immersionbar:immersionbar:3.0.0'
-    implementation 'com.tencent.mm.opensdk:wechat-sdk-android-with-mta:+'
+    implementation 'com.tencent.mm.opensdk:wechat-sdk-android-with-mta:5.4.0'
 
-    implementation(name: <三体 SDK 的引用位置>, ext: 'aar')
+    implementation(name: <这里引用三体 SDK>, ext: 'aar')
 }
 

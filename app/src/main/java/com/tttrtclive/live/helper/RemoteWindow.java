@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.tttrtclive.live.R;
 import com.wushuangtech.library.Constants;
+import com.wushuangtech.myvideoimprove.view.VideoRenderView;
 import com.wushuangtech.wstechapi.TTTRtcEngine;
 import com.wushuangtech.wstechapi.model.VideoCanvas;
 
@@ -78,14 +79,15 @@ public class RemoteWindow extends RelativeLayout {
             });
         }
 
-        SurfaceView mSurfaceView = mTTTEngine.CreateRendererView(mContext);
-        mSurfaceView.setZOrderMediaOverlay(true);
+        View view;
         if (localId == id) {
-            mTTTEngine.setupLocalVideo(new VideoCanvas(0, Constants.RENDER_MODE_HIDDEN, mSurfaceView), oritation);
+            view = TTTRtcEngine.CreateRendererTextureView(mContext);
+            mTTTEngine.setupLocalVideo(new VideoCanvas(0, Constants.RENDER_MODE_HIDDEN, (VideoRenderView) view), oritation);
         } else {
-            mTTTEngine.setupRemoteVideo(new VideoCanvas(mId, Constants.RENDER_MODE_HIDDEN, mSurfaceView));
+            view = TTTRtcEngine.CreateRendererView(mContext);
+            mTTTEngine.setupRemoteVideo(new VideoCanvas(mId, Constants.RENDER_MODE_HIDDEN, (SurfaceView) view));
         }
-        mVideoLayout.addView(mSurfaceView);
+        mVideoLayout.addView(view);
         mSpeakImage.setImageResource(mIsMuted ? R.drawable.jinyan : R.drawable.mainly_btn_speaker_selector);
     }
 
