@@ -31,7 +31,6 @@ import com.tttrtclive.live.helper.WEChatShare;
 import com.tttrtclive.live.helper.WindowManager;
 import com.tttrtclive.live.utils.MyLog;
 import com.wushuangtech.library.Constants;
-import com.wushuangtech.myvideoimprove.view.VideoRenderView;
 import com.wushuangtech.wstechapi.TTTRtcEngine;
 import com.wushuangtech.wstechapi.model.PublisherConfiguration;
 import com.wushuangtech.wstechapi.model.VideoCanvas;
@@ -90,7 +89,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private Map<Long, Boolean> mUserMutes = new HashMap<>();
     private final Object obj = new Object();
 
-    private View mAnchorSurfaceView;
+    private SurfaceView mAnchorSurfaceView;
     public static int mCurrentAudioRoute;
 
     @Override
@@ -331,9 +330,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     private void openLocalVideo() {
         if (userRole == CLIENT_ROLE_ANCHOR && mAnchorSurfaceView == null) {
-            mAnchorSurfaceView = TTTRtcEngine.CreateRendererTextureView(mContext);
-            mTTTEngine.setupLocalVideo(new VideoCanvas(0, Constants.RENDER_MODE_HIDDEN,
-                    (VideoRenderView) mAnchorSurfaceView, null), getRequestedOrientation());
+            mAnchorSurfaceView = TTTRtcEngine.CreateRendererSurfaceView(mContext);
+            mAnchorSurfaceView.setZOrderMediaOverlay(false);
+            mTTTEngine.setupLocalVideo(new VideoCanvas(0, Constants.RENDER_MODE_HIDDEN, mAnchorSurfaceView, null), getRequestedOrientation());
             mTTTEngine.startPreview();
         }
 
